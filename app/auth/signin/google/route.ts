@@ -6,9 +6,13 @@ export async function POST(request: Request) {
   const origin = new URL(request.url).origin
 
   const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'github',
+    provider: 'google',
     options: {
       redirectTo: `${origin}/auth/callback`,
+      queryParams: {
+        access_type: 'offline',
+        prompt: 'consent',
+      },
     },
   })
 
@@ -24,9 +28,13 @@ export async function GET(request: Request) {
   const origin = new URL(request.url).origin
 
   const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'github',
+    provider: 'google',
     options: {
       redirectTo: `${origin}/auth/callback`,
+      queryParams: {
+        access_type: 'offline',
+        prompt: 'consent',
+      },
     },
   })
 

@@ -56,7 +56,7 @@ async function handleCheckoutCompleted(data: any) {
   }
 
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Get the project
     const { data: project, error: projectError } = await supabase

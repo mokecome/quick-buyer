@@ -12,10 +12,10 @@ export default function PricingPage() {
             {/* Page Header */}
             <div className="text-center space-y-4 mb-16">
               <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-                Simple, Transparent Pricing
+                簡單透明的定價方案
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Choose the plan that fits your needs. Start selling today with no upfront costs.
+                選擇適合您的方案。無需預付費用，立即開始銷售您的 AI 項目。
               </p>
             </div>
 

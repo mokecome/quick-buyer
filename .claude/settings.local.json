@@ -5,7 +5,17 @@
       "Bash(cmd /c \"robocopy \"\"C:\\Users\\User\\Desktop\\新增資料夾\\quick-buyer\"\" \"\"C:\\Users\\User\\Desktop\\projects\\quick-buyer\"\" /E /XD node_modules .next\")",
       "Bash(git init:*)",
       "Bash(git remote add:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "WebFetch(domain:supabase.com)",
+      "Bash(npx tsc:*)",
+      "WebFetch(domain:docs.creem.io)",
+      "Bash(taskkill //F //PID 27568)",
+      "Bash(npm i:*)",
+      "WebSearch",
+      "Bash(del \"C:\\Users\\User\\Desktop\\projects\\quick-buyer\\middleware.ts\")"
     ],
     "deny": [],
     "ask": []

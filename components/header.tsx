@@ -2,32 +2,93 @@
 
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { Menu, Github, ShoppingCart, Code2 } from "lucide-react"
-import { useState } from "react"
-import { usePathname } from "next/navigation"
+import { Menu, Github, ShoppingCart, Bot, LogOut, User, ChevronDown } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
+import { usePathname, useRouter } from "next/navigation"
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client"
+import type { User as SupabaseUser, AuthChangeEvent, Session } from "@supabase/supabase-js"
+
+// Google Icon Component
+function GoogleIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+    </svg>
+  )
+}
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [isSigningIn, setIsSigningIn] = useState(false)
+  const [loginMenuOpen, setLoginMenuOpen] = useState(false)
+  const [isSigningIn, setIsSigningIn] = useState<'github' | 'google' | null>(null)
+  const [user, setUser] = useState<SupabaseUser | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const pathname = usePathname()
+  const router = useRouter()
+  const loginMenuRef = useRef<HTMLDivElement>(null)
 
   // Check if we're on the home page
   const isHomePage = pathname === '/'
 
-  // Check if Supabase is configured
-  const isSupabaseConfigured =
-    typeof window !== 'undefined' &&
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_URL !== 'your-project-url.supabase.co' &&
-    process.env.NEXT_PUBLIC_SUPABASE_URL.startsWith('http')
+  // Close login menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (loginMenuRef.current && !loginMenuRef.current.contains(event.target as Node)) {
+        setLoginMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
-  const handleGitHubSignIn = async () => {
-    if (!isSupabaseConfigured) {
-      alert('GitHub login is not configured yet. Please configure Supabase in .env.local')
+  useEffect(() => {
+    // Skip if Supabase is not configured
+    if (!isSupabaseConfigured()) {
+      setIsLoading(false)
       return
     }
 
-    setIsSigningIn(true)
+    const supabase = createClient()
+    if (!supabase) {
+      setIsLoading(false)
+      return
+    }
+
+    // Get initial session
+    const getUser = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        setUser(user)
+      } catch (error) {
+        console.error('Error getting user:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    getUser()
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event: AuthChangeEvent, session: Session | null) => {
+        setUser(session?.user ?? null)
+        if (event === 'SIGNED_IN') {
+          router.refresh()
+        }
+      }
+    )
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [router])
+
+  const handleGitHubSignIn = async () => {
+    setIsSigningIn('github')
+    setLoginMenuOpen(false)
     try {
       const response = await fetch('/auth/signin', {
         method: 'POST',
@@ -37,13 +98,48 @@ export function Header() {
       if (data.url) {
         window.location.href = data.url
       } else if (data.error) {
-        alert(`Login error: ${data.error}`)
+        alert(`登入錯誤: ${data.error}`)
       }
     } catch (error) {
       console.error('Sign in error:', error)
-      alert('Failed to sign in. Please try again.')
+      alert('登入失敗，請重試。')
     } finally {
-      setIsSigningIn(false)
+      setIsSigningIn(null)
+    }
+  }
+
+  const handleGoogleSignIn = async () => {
+    setIsSigningIn('google')
+    setLoginMenuOpen(false)
+    try {
+      const response = await fetch('/auth/signin/google', {
+        method: 'POST',
+      })
+      const data = await response.json()
+
+      if (data.url) {
+        window.location.href = data.url
+      } else if (data.error) {
+        alert(`登入錯誤: ${data.error}`)
+      }
+    } catch (error) {
+      console.error('Sign in error:', error)
+      alert('登入失敗，請重試。')
+    } finally {
+      setIsSigningIn(null)
+    }
+  }
+
+  const handleSignOut = async () => {
+    try {
+      const supabase = createClient()
+      if (supabase) {
+        await supabase.auth.signOut()
+      }
+      setUser(null)
+      router.refresh()
+    } catch (error) {
+      console.error('Sign out error:', error)
     }
   }
 
@@ -51,7 +147,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
       <div className="container flex h-16 md:h-20 items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <Code2 className="h-8 w-8 text-primary" />
+          <Bot className="h-8 w-8 text-primary" />
           <span className="text-xl md:text-2xl font-bold text-foreground tracking-tight">Quick Buyer</span>
         </Link>
 
@@ -60,25 +156,25 @@ export function Header() {
             href="/projects"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all hover:after:w-full"
           >
-            Projects
+            AI 項目
           </Link>
           <Link
             href={isHomePage ? "#features" : "/#features"}
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all hover:after:w-full"
           >
-            Features
+            特色
           </Link>
           <Link
             href="/pricing"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all hover:after:w-full"
           >
-            Pricing
+            定價
           </Link>
           <Link
             href={isHomePage ? "#faq" : "/#faq"}
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all hover:after:w-full"
           >
-            FAQ
+            常見問題
           </Link>
         </nav>
 
@@ -90,16 +186,73 @@ export function Header() {
           >
             <ShoppingCart className="h-5 w-5" />
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="hover:bg-accent"
-            onClick={handleGitHubSignIn}
-            disabled={isSigningIn}
-          >
-            <Github className="h-4 w-4 mr-2" />
-            {isSigningIn ? 'Signing in...' : 'Sign In'}
-          </Button>
+
+          {isLoading ? (
+            <div className="w-20 h-9 bg-muted animate-pulse rounded-md" />
+          ) : user ? (
+            <div className="flex items-center gap-3">
+              <Link href="/dashboard">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  {user.user_metadata?.avatar_url ? (
+                    <img
+                      src={user.user_metadata.avatar_url}
+                      alt="Avatar"
+                      className="w-6 h-6 rounded-full"
+                    />
+                  ) : (
+                    <User className="h-4 w-4" />
+                  )}
+                  <span className="hidden sm:inline">
+                    {user.user_metadata?.user_name || user.user_metadata?.full_name || user.email?.split('@')[0]}
+                  </span>
+                </Button>
+              </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSignOut}
+                className="gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                登出
+              </Button>
+            </div>
+          ) : (
+            <div className="relative" ref={loginMenuRef}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="hover:bg-accent gap-2"
+                onClick={() => setLoginMenuOpen(!loginMenuOpen)}
+                disabled={isSigningIn !== null}
+              >
+                {isSigningIn ? '登入中...' : '登入'}
+                <ChevronDown className="h-3 w-3" />
+              </Button>
+
+              {/* Login Dropdown Menu */}
+              {loginMenuOpen && (
+                <div className="absolute right-0 mt-2 w-48 rounded-md border bg-background shadow-lg z-50">
+                  <div className="py-1">
+                    <button
+                      onClick={handleGitHubSignIn}
+                      className="flex w-full items-center gap-3 px-4 py-2 text-sm hover:bg-accent transition-colors"
+                    >
+                      <Github className="h-4 w-4" />
+                      使用 GitHub 登入
+                    </button>
+                    <button
+                      onClick={handleGoogleSignIn}
+                      className="flex w-full items-center gap-3 px-4 py-2 text-sm hover:bg-accent transition-colors"
+                    >
+                      <GoogleIcon className="h-4 w-4" />
+                      使用 Google 登入
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
           <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl">
             上架 AI 項目
           </Button>
@@ -124,40 +277,85 @@ export function Header() {
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Projects
+              AI 項目
             </Link>
             <Link
               href={isHomePage ? "#features" : "/#features"}
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Features
+              特色
             </Link>
             <Link
               href="/pricing"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Pricing
+              定價
             </Link>
             <Link
               href={isHomePage ? "#faq" : "/#faq"}
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              FAQ
+              常見問題
             </Link>
             <div className="flex flex-col gap-2 pt-4 border-t border-border/40">
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full"
-                onClick={handleGitHubSignIn}
-                disabled={isSigningIn}
-              >
-                <Github className="h-4 w-4 mr-2" />
-                {isSigningIn ? 'Signing in...' : 'Sign In with GitHub'}
-              </Button>
+              {isLoading ? (
+                <div className="w-full h-9 bg-muted animate-pulse rounded-md" />
+              ) : user ? (
+                <>
+                  <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="outline" size="sm" className="w-full gap-2">
+                      {user.user_metadata?.avatar_url ? (
+                        <img
+                          src={user.user_metadata.avatar_url}
+                          alt="Avatar"
+                          className="w-5 h-5 rounded-full"
+                        />
+                      ) : (
+                        <User className="h-4 w-4" />
+                      )}
+                      {user.user_metadata?.user_name || user.user_metadata?.full_name || user.email?.split('@')[0]}
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      handleSignOut()
+                      setMobileMenuOpen(false)
+                    }}
+                    className="w-full gap-2"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    登出
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full gap-2"
+                    onClick={handleGitHubSignIn}
+                    disabled={isSigningIn !== null}
+                  >
+                    <Github className="h-4 w-4" />
+                    {isSigningIn === 'github' ? '登入中...' : 'GitHub 登入'}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full gap-2"
+                    onClick={handleGoogleSignIn}
+                    disabled={isSigningIn !== null}
+                  >
+                    <GoogleIcon className="h-4 w-4" />
+                    {isSigningIn === 'google' ? '登入中...' : 'Google 登入'}
+                  </Button>
+                </>
+              )}
               <Button size="sm" className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
                 上架 AI 項目
               </Button>

@@ -3,58 +3,63 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Check } from "lucide-react"
+import { Check, Loader2 } from "lucide-react"
 
 const plans = [
   {
-    name: "Starter",
-    description: "Perfect for individual sellers",
+    name: "入門版",
+    nameEn: "Starter",
+    description: "適合個人賣家起步",
     monthlyPrice: 0,
     yearlyPrice: 0,
     features: [
-      "List up to 5 projects",
-      "15% platform fee",
-      "Basic analytics",
-      "Email support",
-      "Standard payouts (7 days)",
+      "上架最多 5 個 AI 項目",
+      "15% 平台手續費",
+      "基礎數據分析",
+      "Email 支援",
+      "標準結算 (7 天)",
     ],
-    productId: null, // Free plan
+    productId: null, // Free plan - no payment needed
     popular: false,
   },
   {
-    name: "Pro",
-    description: "For growing sellers",
+    name: "專業版",
+    nameEn: "Pro",
+    description: "適合成長中的賣家",
     monthlyPrice: 29,
     yearlyPrice: 290,
     features: [
-      "Unlimited projects",
-      "10% platform fee",
-      "Advanced analytics",
-      "Priority support",
-      "Fast payouts (3 days)",
-      "Custom seller profile",
-      "Featured listings",
+      "無限上架 AI 項目",
+      "10% 平台手續費",
+      "進階數據分析",
+      "優先客服支援",
+      "快速結算 (3 天)",
+      "自訂賣家頁面",
+      "精選推薦位置",
     ],
-    productId: "prod_pro_monthly", // Replace with actual Creem product ID
-    yearlyProductId: "prod_pro_yearly",
+    // Replace with your actual Creem Product IDs from dashboard
+    productId: process.env.NEXT_PUBLIC_CREEM_PRO_MONTHLY_ID || "prod_pro_monthly",
+    yearlyProductId: process.env.NEXT_PUBLIC_CREEM_PRO_YEARLY_ID || "prod_pro_yearly",
     popular: true,
   },
   {
-    name: "Enterprise",
-    description: "For established businesses",
+    name: "企業版",
+    nameEn: "Enterprise",
+    description: "適合成熟的商業團隊",
     monthlyPrice: 99,
     yearlyPrice: 990,
     features: [
-      "Everything in Pro",
-      "5% platform fee",
-      "White-label options",
-      "Dedicated account manager",
-      "Instant payouts",
-      "API access",
-      "Custom contracts",
+      "專業版所有功能",
+      "5% 平台手續費",
+      "白標方案選項",
+      "專屬客戶經理",
+      "即時結算",
+      "API 存取權限",
+      "客製化合約",
     ],
-    productId: "prod_enterprise_monthly", // Replace with actual Creem product ID
-    yearlyProductId: "prod_enterprise_yearly",
+    // Replace with your actual Creem Product IDs from dashboard
+    productId: process.env.NEXT_PUBLIC_CREEM_ENTERPRISE_MONTHLY_ID || "prod_enterprise_monthly",
+    yearlyProductId: process.env.NEXT_PUBLIC_CREEM_ENTERPRISE_YEARLY_ID || "prod_enterprise_yearly",
     popular: false,
   },
 ]
@@ -62,8 +67,11 @@ const plans = [
 export function PricingCards() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly")
   const [loading, setLoading] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSubscribe = async (plan: typeof plans[0]) => {
+    setError(null)
+
     if (!plan.productId) {
       // Free plan - redirect to sign up
       window.location.href = "/auth/signin"
@@ -74,7 +82,7 @@ export function PricingCards() {
       ? plan.yearlyProductId
       : plan.productId
 
-    setLoading(plan.name)
+    setLoading(plan.nameEn)
 
     try {
       const response = await fetch("/api/checkout", {
@@ -84,7 +92,7 @@ export function PricingCards() {
         },
         body: JSON.stringify({
           productId,
-          planName: plan.name,
+          planName: plan.nameEn,
           billingCycle,
           price: billingCycle === "yearly" ? plan.yearlyPrice : plan.monthlyPrice,
         }),
@@ -95,11 +103,12 @@ export function PricingCards() {
       if (data.url) {
         window.location.href = data.url
       } else if (data.error) {
-        alert(`Error: ${data.error}`)
+        setError(data.error)
+        console.error("Checkout error:", data)
       }
     } catch (error) {
       console.error("Checkout error:", error)
-      alert("Failed to start checkout. Please try again.")
+      setError("無法啟動結帳流程，請稍後重試。")
     } finally {
       setLoading(null)
     }
@@ -118,7 +127,7 @@ export function PricingCards() {
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            Monthly
+            月繳
           </button>
           <button
             onClick={() => setBillingCycle("yearly")}
@@ -128,17 +137,24 @@ export function PricingCards() {
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            Yearly
-            <span className="ml-2 text-xs text-green-600 dark:text-green-400">Save 20%</span>
+            年繳
+            <span className="ml-2 text-xs text-green-600 dark:text-green-400">省 20%</span>
           </button>
         </div>
       </div>
+
+      {/* Error Message */}
+      {error && (
+        <div className="max-w-md mx-auto p-4 bg-destructive/10 border border-destructive/20 rounded-lg text-center">
+          <p className="text-sm text-destructive">{error}</p>
+        </div>
+      )}
 
       {/* Pricing Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
         {plans.map((plan) => (
           <Card
-            key={plan.name}
+            key={plan.nameEn}
             className={`relative ${
               plan.popular
                 ? "border-primary shadow-lg scale-105"
@@ -147,7 +163,7 @@ export function PricingCards() {
           >
             {plan.popular && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-primary text-primary-foreground text-xs font-medium rounded-full">
-                Most Popular
+                最受歡迎
               </div>
             )}
             <CardHeader>
@@ -158,7 +174,7 @@ export function PricingCards() {
                   ${billingCycle === "yearly" ? plan.yearlyPrice : plan.monthlyPrice}
                 </span>
                 <span className="text-muted-foreground">
-                  /{billingCycle === "yearly" ? "year" : "month"}
+                  /{billingCycle === "yearly" ? "年" : "月"}
                 </span>
               </div>
             </CardHeader>
@@ -177,17 +193,28 @@ export function PricingCards() {
                 className="w-full"
                 variant={plan.popular ? "default" : "outline"}
                 onClick={() => handleSubscribe(plan)}
-                disabled={loading === plan.name}
+                disabled={loading === plan.nameEn}
               >
-                {loading === plan.name
-                  ? "Processing..."
-                  : plan.monthlyPrice === 0
-                  ? "Get Started Free"
-                  : "Subscribe"}
+                {loading === plan.nameEn ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    處理中...
+                  </>
+                ) : plan.monthlyPrice === 0 ? (
+                  "免費開始"
+                ) : (
+                  "立即訂閱"
+                )}
               </Button>
             </CardFooter>
           </Card>
         ))}
+      </div>
+
+      {/* Additional Info */}
+      <div className="text-center text-sm text-muted-foreground max-w-2xl mx-auto">
+        <p>所有付費方案均包含 14 天免費試用。隨時可取消訂閱。</p>
+        <p className="mt-2">需要更多功能？<a href="/contact" className="text-primary hover:underline">聯繫我們</a>獲取客製化方案。</p>
       </div>
     </div>
   )
