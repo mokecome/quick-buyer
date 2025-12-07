@@ -1,8 +1,13 @@
+"use client"
+
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { PricingCards } from "@/components/pricing-cards"
+import { useTranslation } from "react-i18next"
 
 export default function PricingPage() {
+  const { t } = useTranslation()
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -12,10 +17,10 @@ export default function PricingPage() {
             {/* Page Header */}
             <div className="text-center space-y-4 mb-16">
               <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-                簡單透明的定價方案
+                {t('pricing.title')}
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                選擇適合您的方案。無需預付費用，立即開始銷售您的 AI 項目。
+                {t('pricing.subtitle')}
               </p>
             </div>
 

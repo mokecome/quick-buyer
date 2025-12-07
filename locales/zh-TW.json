@@ -1,0 +1,241 @@
+{
+  "common": {
+    "signIn": "登入",
+    "signOut": "登出",
+    "signingIn": "登入中...",
+    "loading": "載入中...",
+    "processing": "處理中...",
+    "error": "錯誤",
+    "success": "成功",
+    "cancel": "取消",
+    "confirm": "確認",
+    "save": "儲存",
+    "delete": "刪除",
+    "edit": "編輯",
+    "back": "返回",
+    "next": "下一步",
+    "viewAll": "查看全部",
+    "learnMore": "了解更多",
+    "contactUs": "聯繫我們"
+  },
+  "nav": {
+    "projects": "AI 項目",
+    "features": "特色",
+    "pricing": "定價",
+    "faq": "常見問題",
+    "dashboard": "控制台",
+    "sellProject": "上架 AI 項目"
+  },
+  "hero": {
+    "badge": "AI 項目市集",
+    "title": "發現優質",
+    "titleHighlight": "AI 項目",
+    "titleEnd": "加速創新",
+    "subtitle": "專注於 AI 的交易市集。發現生產就緒的 AI 模板、機器學習工具、LLM 應用和智能自動化解決方案。使用經過驗證的 AI 代碼加速您的開發。",
+    "browseProjects": "瀏覽 AI 項目",
+    "sellYourProject": "上架您的 AI 項目",
+    "stats": {
+      "projects": "AI 項目",
+      "developers": "AI 開發者",
+      "categories": "AI 分類"
+    },
+    "trust": {
+      "securePayments": "安全支付",
+      "qualityVerified": "AI 品質認證"
+    }
+  },
+  "features": {
+    "title": "為什麼選擇 Quick Buyer？",
+    "subtitle": "AI 項目的優質交易市集。由 AI 開發者打造，為 AI 開發者服務。",
+    "items": {
+      "aiModels": {
+        "title": "優質 AI 模型與工具",
+        "description": "所有項目均經過審核和驗證。獲取生產就緒的 AI 解決方案，包括 LLM、計算機視覺、NLP 等。"
+      },
+      "instantDeploy": {
+        "title": "即時部署",
+        "description": "購買後立即下載。包含完整文檔和部署指南，快速整合到您的項目中。"
+      },
+      "secure": {
+        "title": "安全可靠",
+        "description": "所有交易均經過安全處理。您的數據和 AI 模型受到完全保護。"
+      },
+      "categories": {
+        "title": "多元 AI 分類",
+        "description": "涵蓋 ChatGPT 應用、圖像生成、語音識別、自動化機器人等熱門 AI 領域。"
+      },
+      "developerFriendly": {
+        "title": "AI 開發者友善",
+        "description": "低費用，快速提款。專注於打造優秀的 AI 產品，其餘的交給我們處理。"
+      },
+      "updates": {
+        "title": "持續更新",
+        "description": "一次購買，終身使用。AI 發展迅速，您將獲得所有未來更新。"
+      }
+    }
+  },
+  "featuredProjects": {
+    "title": "精選 AI 項目",
+    "subtitle": "精心挑選的優質 AI 解決方案",
+    "viewAll": "查看所有項目",
+    "projects": {
+      "chatgpt": {
+        "title": "ChatGPT SaaS 完整套件",
+        "description": "基於 GPT-4 的完整 SaaS 解決方案，包含用戶認證、對話管理、Token 計費和管理後台。Next.js 14 + OpenAI API。"
+      },
+      "imageGen": {
+        "title": "AI 圖像生成平台",
+        "description": "整合 DALL-E 3 和 Stable Diffusion 的圖像生成平台。支援文字生成圖像、圖像轉圖像、風格轉換。"
+      },
+      "rag": {
+        "title": "LangChain RAG 模板",
+        "description": "企業級 RAG 知識庫解決方案。支援多種文檔格式、向量數據庫整合、智能問答。Python + LangChain。"
+      },
+      "voice": {
+        "title": "AI 語音助手套件",
+        "description": "結合 Whisper 語音識別和 TTS 的完整語音助手解決方案。支援多語言、即時轉錄、語音合成。"
+      }
+    }
+  },
+  "faq": {
+    "title": "常見問題",
+    "subtitle": "關於 Quick Buyer AI 市集的所有問題",
+    "items": {
+      "whatGet": {
+        "question": "購買 AI 項目後我會得到什麼？",
+        "answer": "您將獲得完整的源代碼、詳細文檔、模型文件（如適用）以及所有相關資源。所有項目都包含商業授權，允許無限的個人和商業使用。"
+      },
+      "updates": {
+        "question": "購買後是否包含更新？",
+        "answer": "是的！所有購買都包含終身更新。當賣家發布新版本時，您可以從控制台免費下載。這在快速發展的 AI 領域尤其重要。"
+      },
+      "refund": {
+        "question": "我可以申請退款嗎？",
+        "answer": "我們提供 14 天退款保證。如果您對購買不滿意，請聯繫我們的支援團隊，我們將處理您的退款。"
+      },
+      "payment": {
+        "question": "有哪些付款方式？",
+        "answer": "所有付款均通過我們的付款合作夥伴 Creem 安全處理。我們支援所有主要信用卡、PayPal 以及各種本地付款方式。"
+      },
+      "sell": {
+        "question": "我可以在 Quick Buyer 上銷售我的 AI 項目嗎？",
+        "answer": "當然可以！註冊賣家帳戶並提交您的 AI 項目進行審核。一旦獲得批准，您就可以開始向我們的 AI 開發者社群銷售。"
+      },
+      "types": {
+        "question": "這裡有哪些類型的 AI 項目？",
+        "answer": "我們提供豐富的 AI 項目類型，包括：LLM 應用（ChatGPT 克隆、RAG 系統）、圖像生成、語音識別、NLP 工具、機器學習模板、AI Agent 框架等。"
+      }
+    }
+  },
+  "pricing": {
+    "title": "簡單透明的定價",
+    "subtitle": "選擇適合您需求的方案。無預付費用，立即開始銷售您的 AI 項目。",
+    "monthly": "月繳",
+    "yearly": "年繳",
+    "save": "省 20%",
+    "perMonth": "/月",
+    "perYear": "/年",
+    "mostPopular": "最受歡迎",
+    "getStartedFree": "免費開始",
+    "subscribe": "立即訂閱",
+    "trialInfo": "所有付費方案包含 14 天免費試用。隨時可取消。",
+    "customPlan": "需要更多功能？",
+    "customPlanLink": "聯繫我們定制方案。",
+    "plans": {
+      "starter": {
+        "name": "入門版",
+        "description": "適合個人賣家",
+        "features": [
+          "最多上架 5 個 AI 項目",
+          "15% 平台費用",
+          "基礎數據分析",
+          "電子郵件支援",
+          "標準提款（7 天）"
+        ]
+      },
+      "pro": {
+        "name": "專業版",
+        "description": "適合成長中的賣家",
+        "features": [
+          "無限 AI 項目",
+          "10% 平台費用",
+          "進階數據分析",
+          "優先支援",
+          "快速提款（3 天）",
+          "自訂賣家頁面",
+          "精選展示位置"
+        ]
+      },
+      "enterprise": {
+        "name": "企業版",
+        "description": "適合成熟企業",
+        "features": [
+          "專業版所有功能",
+          "5% 平台費用",
+          "白標選項",
+          "專屬客戶經理",
+          "即時提款",
+          "API 存取",
+          "自訂合約"
+        ]
+      }
+    }
+  },
+  "footer": {
+    "description": "AI 項目的優質交易市集，為 AI 開發者提供一站式解決方案。",
+    "aiCategories": "AI 分類",
+    "browseAll": "瀏覽所有項目",
+    "llmApps": "LLM 應用",
+    "imageAI": "圖像生成 AI",
+    "voiceAI": "語音 AI",
+    "aboutUs": "關於我們",
+    "about": "關於",
+    "pricingPlans": "定價方案",
+    "blog": "部落格",
+    "contact": "聯繫",
+    "legal": "法律",
+    "privacy": "隱私政策",
+    "terms": "服務條款",
+    "refund": "退款政策",
+    "copyright": "© {year} Quick Buyer. 保留所有權利。"
+  },
+  "auth": {
+    "signInWithGithub": "使用 GitHub 登入",
+    "signInWithGoogle": "使用 Google 登入",
+    "authError": {
+      "title": "認證失敗",
+      "description": "登入時發生錯誤，請重試。",
+      "reasons": "可能原因：",
+      "expiredCode": "授權碼過期或無效",
+      "cancelled": "GitHub 授權已取消",
+      "network": "網路連線問題",
+      "retry": "重試",
+      "backHome": "返回首頁"
+    }
+  },
+  "success": {
+    "subscription": {
+      "title": "訂閱成功！",
+      "description": "感謝您訂閱 {plan} 方案！您的帳戶已升級。",
+      "planActivated": "{plan} 方案已啟用",
+      "yearlyPlan": "年繳方案",
+      "monthlyPlan": "月繳方案",
+      "emailConfirm": "您將收到一封包含訂閱詳情和發票的確認郵件。",
+      "startUsing": "您現在可以開始使用所有進階功能！",
+      "goToDashboard": "前往控制台",
+      "startSelling": "開始銷售 AI 項目"
+    },
+    "purchase": {
+      "title": "付款成功！",
+      "description": "感謝您的購買。您的訂單已確認。",
+      "emailInstructions": "您將很快收到包含下載說明的電子郵件。",
+      "dashboardAccess": "您也可以從控制台存取您的購買項目。",
+      "goToDownloads": "前往下載",
+      "browseMore": "瀏覽更多 AI 項目"
+    }
+  },
+  "language": {
+    "en": "English",
+    "zh": "繁體中文"
+  }
+}

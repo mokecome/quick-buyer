@@ -1,8 +1,13 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { ArrowRight, Bot, Zap, Shield, Sparkles } from "lucide-react"
+import { ArrowRight, Bot, Shield, Sparkles } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 export function Hero() {
+  const { t } = useTranslation()
+
   return (
     <section className="relative overflow-hidden py-20 md:py-32">
       {/* Background gradient */}
@@ -17,33 +22,32 @@ export function Hero() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
             <Sparkles className="h-4 w-4" />
-            <span>AI 項目專屬市集</span>
+            <span>{t('hero.badge')}</span>
           </div>
 
           {/* Main heading */}
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight max-w-4xl">
-            探索優質{" "}
-            <span className="text-primary">AI 項目</span>{" "}
-            加速創新
+            {t('hero.title')}{" "}
+            <span className="text-primary">{t('hero.titleHighlight')}</span>{" "}
+            {t('hero.titleEnd')}
           </h1>
 
           {/* Subtitle */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl">
-            專注於 AI 領域的項目市集。發現生產就緒的 AI 模板、機器學習工具、
-            LLM 應用和智能自動化方案。用經過驗證的 AI 代碼加速您的開發。
+            {t('hero.subtitle')}
           </p>
 
           {/* CTA buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
             <Button size="lg" className="shadow-lg hover:shadow-xl" asChild>
               <Link href="/projects">
-                瀏覽 AI 項目
+                {t('hero.browseProjects')}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
               <Link href="/pricing">
-                上架您的 AI 項目
+                {t('hero.sellYourProject')}
               </Link>
             </Button>
           </div>
@@ -52,15 +56,15 @@ export function Hero() {
           <div className="flex flex-wrap justify-center gap-8 pt-8">
             <div className="flex flex-col items-center">
               <span className="text-3xl md:text-4xl font-bold">200+</span>
-              <span className="text-sm text-muted-foreground">AI 項目</span>
+              <span className="text-sm text-muted-foreground">{t('hero.stats.projects')}</span>
             </div>
             <div className="flex flex-col items-center">
               <span className="text-3xl md:text-4xl font-bold">5K+</span>
-              <span className="text-sm text-muted-foreground">AI 開發者</span>
+              <span className="text-sm text-muted-foreground">{t('hero.stats.developers')}</span>
             </div>
             <div className="flex flex-col items-center">
               <span className="text-3xl md:text-4xl font-bold">50+</span>
-              <span className="text-sm text-muted-foreground">AI 類別</span>
+              <span className="text-sm text-muted-foreground">{t('hero.stats.categories')}</span>
             </div>
           </div>
 
@@ -68,11 +72,11 @@ export function Hero() {
           <div className="flex items-center gap-6 pt-4 text-muted-foreground">
             <div className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
-              <span className="text-sm">安全交易</span>
+              <span className="text-sm">{t('hero.trust.securePayments')}</span>
             </div>
             <div className="flex items-center gap-2">
               <Bot className="h-4 w-4" />
-              <span className="text-sm">AI 品質認證</span>
+              <span className="text-sm">{t('hero.trust.qualityVerified')}</span>
             </div>
           </div>
         </div>

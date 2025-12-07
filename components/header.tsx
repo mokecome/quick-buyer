@@ -5,7 +5,9 @@ import Link from "next/link"
 import { Menu, Github, ShoppingCart, Bot, LogOut, User, ChevronDown } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import { usePathname, useRouter } from "next/navigation"
+import { useTranslation } from "react-i18next"
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client"
+import { LanguageSwitcher } from "@/components/language-switcher"
 import type { User as SupabaseUser, AuthChangeEvent, Session } from "@supabase/supabase-js"
 
 // Google Icon Component
@@ -29,6 +31,7 @@ export function Header() {
   const pathname = usePathname()
   const router = useRouter()
   const loginMenuRef = useRef<HTMLDivElement>(null)
+  const { t } = useTranslation()
 
   // Check if we're on the home page
   const isHomePage = pathname === '/'
@@ -98,11 +101,11 @@ export function Header() {
       if (data.url) {
         window.location.href = data.url
       } else if (data.error) {
-        alert(`登入錯誤: ${data.error}`)
+        alert(`${t('auth.authError.title')}: ${data.error}`)
       }
     } catch (error) {
       console.error('Sign in error:', error)
-      alert('登入失敗，請重試。')
+      alert(t('auth.authError.description'))
     } finally {
       setIsSigningIn(null)
     }
@@ -120,11 +123,11 @@ export function Header() {
       if (data.url) {
         window.location.href = data.url
       } else if (data.error) {
-        alert(`登入錯誤: ${data.error}`)
+        alert(`${t('auth.authError.title')}: ${data.error}`)
       }
     } catch (error) {
       console.error('Sign in error:', error)
-      alert('登入失敗，請重試。')
+      alert(t('auth.authError.description'))
     } finally {
       setIsSigningIn(null)
     }
@@ -156,29 +159,30 @@ export function Header() {
             href="/projects"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all hover:after:w-full"
           >
-            AI 項目
+            {t('nav.projects')}
           </Link>
           <Link
             href={isHomePage ? "#features" : "/#features"}
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all hover:after:w-full"
           >
-            特色
+            {t('nav.features')}
           </Link>
           <Link
             href="/pricing"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all hover:after:w-full"
           >
-            定價
+            {t('nav.pricing')}
           </Link>
           <Link
             href={isHomePage ? "#faq" : "/#faq"}
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all hover:after:w-full"
           >
-            常見問題
+            {t('nav.faq')}
           </Link>
         </nav>
 
         <div className="hidden md:flex items-center gap-3">
+          <LanguageSwitcher />
           <Button
             variant="ghost"
             size="icon"
@@ -214,7 +218,7 @@ export function Header() {
                 className="gap-2"
               >
                 <LogOut className="h-4 w-4" />
-                登出
+                {t('common.signOut')}
               </Button>
             </div>
           ) : (
@@ -226,7 +230,7 @@ export function Header() {
                 onClick={() => setLoginMenuOpen(!loginMenuOpen)}
                 disabled={isSigningIn !== null}
               >
-                {isSigningIn ? '登入中...' : '登入'}
+                {isSigningIn ? t('common.signingIn') : t('common.signIn')}
                 <ChevronDown className="h-3 w-3" />
               </Button>
 
@@ -239,14 +243,14 @@ export function Header() {
                       className="flex w-full items-center gap-3 px-4 py-2 text-sm hover:bg-accent transition-colors"
                     >
                       <Github className="h-4 w-4" />
-                      使用 GitHub 登入
+                      {t('auth.signInWithGithub')}
                     </button>
                     <button
                       onClick={handleGoogleSignIn}
                       className="flex w-full items-center gap-3 px-4 py-2 text-sm hover:bg-accent transition-colors"
                     >
                       <GoogleIcon className="h-4 w-4" />
-                      使用 Google 登入
+                      {t('auth.signInWithGoogle')}
                     </button>
                   </div>
                 </div>
@@ -254,7 +258,7 @@ export function Header() {
             </div>
           )}
           <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl">
-            上架 AI 項目
+            {t('nav.sellProject')}
           </Button>
         </div>
 
@@ -277,30 +281,33 @@ export function Header() {
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              AI 項目
+              {t('nav.projects')}
             </Link>
             <Link
               href={isHomePage ? "#features" : "/#features"}
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              特色
+              {t('nav.features')}
             </Link>
             <Link
               href="/pricing"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              定價
+              {t('nav.pricing')}
             </Link>
             <Link
               href={isHomePage ? "#faq" : "/#faq"}
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              常見問題
+              {t('nav.faq')}
             </Link>
             <div className="flex flex-col gap-2 pt-4 border-t border-border/40">
+              <div className="flex justify-center py-2">
+                <LanguageSwitcher />
+              </div>
               {isLoading ? (
                 <div className="w-full h-9 bg-muted animate-pulse rounded-md" />
               ) : user ? (
@@ -329,7 +336,7 @@ export function Header() {
                     className="w-full gap-2"
                   >
                     <LogOut className="h-4 w-4" />
-                    登出
+                    {t('common.signOut')}
                   </Button>
                 </>
               ) : (
@@ -342,7 +349,7 @@ export function Header() {
                     disabled={isSigningIn !== null}
                   >
                     <Github className="h-4 w-4" />
-                    {isSigningIn === 'github' ? '登入中...' : 'GitHub 登入'}
+                    {isSigningIn === 'github' ? t('common.signingIn') : t('auth.signInWithGithub')}
                   </Button>
                   <Button
                     variant="outline"
@@ -352,12 +359,12 @@ export function Header() {
                     disabled={isSigningIn !== null}
                   >
                     <GoogleIcon className="h-4 w-4" />
-                    {isSigningIn === 'google' ? '登入中...' : 'Google 登入'}
+                    {isSigningIn === 'google' ? t('common.signingIn') : t('auth.signInWithGoogle')}
                   </Button>
                 </>
               )}
               <Button size="sm" className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-                上架 AI 項目
+                {t('nav.sellProject')}
               </Button>
             </div>
           </nav>

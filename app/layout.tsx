@@ -3,15 +3,16 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { ThemeProvider } from "@/components/theme-provider"
+import { I18nProvider } from "@/components/i18n-provider"
 import "@/styles/globals.css"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Quick Buyer - Code Marketplace",
+  title: "Quick Buyer - AI 項目市集",
   description:
-    "Buy and sell quality code projects. The marketplace for developers to trade software, templates, and scripts.",
-  keywords: ["code marketplace", "software marketplace", "buy code", "sell code", "developer tools"],
+    "專注於 AI 的交易市集。發現生產就緒的 AI 模板、機器學習工具、LLM 應用和智能自動化解決方案。",
+  keywords: ["AI marketplace", "AI projects", "LLM", "machine learning", "ChatGPT", "AI tools", "AI 市集", "AI 項目"],
 }
 
 export default function RootLayout({
@@ -28,7 +29,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <I18nProvider>
+            {children}
+          </I18nProvider>
         </ThemeProvider>
         <Analytics />
       </body>

@@ -15,7 +15,10 @@
       "Bash(taskkill //F //PID 27568)",
       "Bash(npm i:*)",
       "WebSearch",
-      "Bash(del \"C:\\Users\\User\\Desktop\\projects\\quick-buyer\\middleware.ts\")"
+      "Bash(del \"C:\\Users\\User\\Desktop\\projects\\quick-buyer\\middleware.ts\")",
+      "Bash(npm install:*)",
+      "Bash(del \"C:\\Users\\User\\Desktop\\projects\\quick-buyer\\lib\\i18n\\config.ts\")",
+      "Bash(npx shadcn@latest add:*)"
     ],
     "deny": [],
     "ask": []
