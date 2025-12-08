@@ -27,11 +27,10 @@
     "sellProject": "上架 AI 項目"
   },
   "hero": {
-    "badge": "AI 項目市集",
     "title": "發現優質",
     "titleHighlight": "AI 項目",
     "titleEnd": "加速創新",
-    "subtitle": "專注於 AI 的交易市集。發現生產就緒的 AI 模板、機器學習工具、LLM 應用和智能自動化解決方案。使用經過驗證的 AI 代碼加速您的開發。",
+    "subtitle": "專注於 AI 的交易市集。發現生產就緒的 AI 模板、機器學習工具和 LLM 應用。",
     "browseProjects": "瀏覽 AI 項目",
     "sellYourProject": "上架您的 AI 項目",
     "stats": {
@@ -39,9 +38,23 @@
       "developers": "AI 開發者",
       "categories": "AI 分類"
     },
-    "trust": {
-      "securePayments": "安全支付",
-      "qualityVerified": "AI 品質認證"
+    "scenarios": {
+      "learner": {
+        "title": "學習成長",
+        "desc": "從完整項目學習 AI 最佳實踐"
+      },
+      "pm": {
+        "title": "快速驗證",
+        "desc": "現成應用作為 POC 展示"
+      },
+      "freelancer": {
+        "title": "接案利器",
+        "desc": "模板快速客製化交付"
+      },
+      "enterprise": {
+        "title": "企業開發",
+        "desc": "二次開發節省 70% 時間"
+      }
     }
   },
   "features": {

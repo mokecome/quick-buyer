@@ -27,11 +27,10 @@
     "sellProject": "上架 AI 项目"
   },
   "hero": {
-    "badge": "AI 项目市集",
     "title": "发现优质",
     "titleHighlight": "AI 项目",
     "titleEnd": "加速创新",
-    "subtitle": "专注于 AI 的交易市集。发现生产就绪的 AI 模板、机器学习工具、LLM 应用和智能自动化解决方案。使用经过验证的 AI 代码加速您的开发。",
+    "subtitle": "专注于 AI 的交易市集。发现生产就绪的 AI 模板、机器学习工具和 LLM 应用。",
     "browseProjects": "浏览 AI 项目",
     "sellYourProject": "上架您的 AI 项目",
     "stats": {
@@ -39,9 +38,23 @@
       "developers": "AI 开发者",
       "categories": "AI 分类"
     },
-    "trust": {
-      "securePayments": "安全支付",
-      "qualityVerified": "AI 品质认证"
+    "scenarios": {
+      "learner": {
+        "title": "学习成长",
+        "desc": "从完整项目学习 AI 最佳实践"
+      },
+      "pm": {
+        "title": "快速验证",
+        "desc": "现成应用作为 POC 展示"
+      },
+      "freelancer": {
+        "title": "接案利器",
+        "desc": "模板快速定制化交付"
+      },
+      "enterprise": {
+        "title": "企业开发",
+        "desc": "二次开发节省 70% 时间"
+      }
     }
   },
   "features": {

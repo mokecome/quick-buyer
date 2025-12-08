@@ -27,11 +27,10 @@
     "sellProject": "Sell AI Project"
   },
   "hero": {
-    "badge": "AI Project Marketplace",
     "title": "Discover Quality",
     "titleHighlight": "AI Projects",
     "titleEnd": "Accelerate Innovation",
-    "subtitle": "The marketplace focused on AI. Discover production-ready AI templates, machine learning tools, LLM applications, and intelligent automation solutions. Accelerate your development with verified AI code.",
+    "subtitle": "The marketplace focused on AI. Discover production-ready AI templates, ML tools, and LLM apps.",
     "browseProjects": "Browse AI Projects",
     "sellYourProject": "Sell Your AI Project",
     "stats": {
@@ -39,9 +38,23 @@
       "developers": "AI Developers",
       "categories": "AI Categories"
     },
-    "trust": {
-      "securePayments": "Secure Payments",
-      "qualityVerified": "AI Quality Verified"
+    "scenarios": {
+      "learner": {
+        "title": "Learn & Grow",
+        "desc": "Study AI best practices from real projects"
+      },
+      "pm": {
+        "title": "Quick Validation",
+        "desc": "Ready-made apps for POC demos"
+      },
+      "freelancer": {
+        "title": "Freelance Boost",
+        "desc": "Customize templates for fast delivery"
+      },
+      "enterprise": {
+        "title": "Enterprise Dev",
+        "desc": "Save 70% time with templates"
+      }
     }
   },
   "features": {
