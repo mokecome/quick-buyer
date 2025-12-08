@@ -58,9 +58,9 @@ export function FeaturedProjects() {
   const { t } = useTranslation()
 
   return (
-    <section className="py-12 md:py-16">
+    <section className="py-8 md:py-12">
       <div className="container px-4 md:px-6">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
           <div className="space-y-2">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
               {t('featuredProjects.title')}

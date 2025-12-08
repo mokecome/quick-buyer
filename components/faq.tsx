@@ -14,9 +14,9 @@ export function FAQ() {
   const { t } = useTranslation()
 
   return (
-    <section id="faq" className="py-12 md:py-16">
+    <section id="faq" className="py-8 md:py-12">
       <div className="container px-4 md:px-6 max-w-3xl mx-auto">
-        <div className="text-center space-y-4 mb-12">
+        <div className="text-center space-y-4 mb-8">
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
             {t('faq.title')}
           </h2>

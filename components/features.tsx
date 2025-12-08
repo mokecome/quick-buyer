@@ -17,7 +17,7 @@ export function Features() {
   const { t } = useTranslation()
 
   return (
-    <section id="features" className="py-12 md:py-16 bg-muted/30">
+    <section id="features" className="py-8 md:py-12 bg-muted/30">
       <div className="container px-4 md:px-6">
         <div className="text-center space-y-4 mb-10">
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
