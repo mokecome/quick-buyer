@@ -6,60 +6,192 @@ import { Badge } from "@/components/ui/badge"
 import { Star, ShoppingCart, Download, Check, Eye, Code2 } from "lucide-react"
 import Image from "next/image"
 
-// Mock project data - in production, fetch from Supabase
-const projectData = {
-  id: "1",
-  slug: "nextjs-saas-starter",
-  title: "Next.js SaaS Starter Kit",
-  description: "Complete SaaS boilerplate with authentication, payments, and dashboard. Built with Next.js 14, Tailwind CSS, and Stripe integration. Perfect for launching your next SaaS product quickly.",
-  longDescription: `
-## What's Included
+// AI Projects data - in production, fetch from Supabase
+const projectsData: Record<string, typeof defaultProject> = {
+  "agent-ptt-nano-banana": {
+    id: "1",
+    slug: "agent-ptt-nano-banana",
+    title: "Agent-PTT (Nano Banana)",
+    description: "智能 PTT 爬蟲與分析 Agent，自動追蹤熱門話題、情緒分析、關鍵字監控。支援即時通知與數據視覺化儀表板。",
+    longDescription: `
+## 功能特色
 
-- **Authentication**: Email/password, OAuth (Google, GitHub), Magic Links
-- **Payments**: Stripe integration with subscription management
-- **Dashboard**: Beautiful admin dashboard with charts and tables
-- **Database**: Prisma ORM with PostgreSQL support
-- **Email**: Transactional emails with Resend
-- **UI Components**: 50+ pre-built components with shadcn/ui
+- **智能爬蟲**: 自動追蹤 PTT 各版文章，支援關鍵字過濾
+- **情緒分析**: 基於 LLM 的情緒判斷，識別正負面評論
+- **熱門追蹤**: 即時監控爆文、熱門話題趨勢
+- **關鍵字監控**: 自訂關鍵字，新文章即時通知
+- **數據儀表板**: 視覺化呈現數據趨勢與統計
 
-## Tech Stack
+## 技術架構
 
-- Next.js 14 (App Router)
-- TypeScript
-- Tailwind CSS
-- Prisma ORM
-- Stripe
-- NextAuth.js
+- Python + Playwright 爬蟲引擎
+- LangChain + GPT-4 情緒分析
+- FastAPI 後端 API
+- Next.js 14 前端儀表板
+- PostgreSQL + Redis 數據存儲
+- LINE / Telegram Bot 通知
 
-## Features
+## 應用場景
 
-- Multi-tenant architecture
-- Role-based access control
-- API rate limiting
-- SEO optimized
-- Dark mode support
-- Responsive design
-  `,
-  price: 149,
-  category: "SaaS",
-  tags: ["Next.js", "React", "TypeScript", "Tailwind", "Stripe"],
-  rating: 4.9,
-  reviewCount: 128,
-  downloads: 1250,
-  author: {
-    name: "DevStudio",
-    avatar: null,
+- 品牌輿情監控
+- 投資情報收集
+- 市場趨勢分析
+- 競品監測
+    `,
+    price: 199,
+    category: "AI Agent",
+    tags: ["PTT", "爬蟲", "情緒分析", "LangChain", "GPT-4"],
+    rating: 4.9,
+    reviewCount: 87,
+    downloads: 520,
+    author: { name: "NanoBanana", avatar: null },
+    thumbnail: null,
+    images: [],
+    demoUrl: "https://demo.example.com",
+    features: ["完整源代碼", "終身更新", "商業授權", "部署文檔", "技術支援"],
   },
+  "ai-customer-service-sales": {
+    id: "2",
+    slug: "ai-customer-service-sales",
+    title: "智能客服 (銷售版)",
+    description: "專為銷售場景打造的 AI 客服系統，支援多輪對話、意圖識別、商品推薦、訂單查詢。整合 GPT-4 與知識庫 RAG。",
+    longDescription: `
+## 核心功能
+
+- **多輪對話**: 自然流暢的對話體驗，理解上下文
+- **意圖識別**: 精準識別用戶意圖，智能路由
+- **商品推薦**: 基於對話內容的個性化推薦
+- **訂單查詢**: 整合訂單系統，即時查詢狀態
+- **知識庫 RAG**: 自動檢索產品資料回答問題
+
+## 技術架構
+
+- Next.js 14 + TypeScript 前端
+- LangChain + GPT-4 對話引擎
+- Pinecone / Qdrant 向量數據庫
+- Supabase 後端服務
+- WebSocket 即時通訊
+
+## 適用場景
+
+- 電商客服
+- SaaS 產品支援
+- 線上銷售諮詢
+- 售前引導
+    `,
+    price: 299,
+    category: "AI Agent",
+    tags: ["客服", "銷售", "RAG", "GPT-4", "LangChain"],
+    rating: 4.8,
+    reviewCount: 156,
+    downloads: 890,
+    author: { name: "SalesAI", avatar: null },
+    thumbnail: null,
+    images: [],
+    demoUrl: "https://demo.example.com",
+    features: ["完整源代碼", "終身更新", "商業授權", "API 文檔", "整合指南"],
+  },
+  "agentic-rag": {
+    id: "3",
+    slug: "agentic-rag",
+    title: "Agentic RAG",
+    description: "下一代智能檢索增強生成系統，結合多 Agent 協作、自動規劃、工具調用。支援多數據源整合與複雜問答場景。",
+    longDescription: `
+## 核心特色
+
+- **多 Agent 協作**: 專業分工的 Agent 團隊，協同完成複雜任務
+- **自動規劃**: 智能拆解問題，制定執行計劃
+- **工具調用**: 支援網頁搜索、代碼執行、API 調用等工具
+- **多數據源**: 整合文檔、數據庫、API 等多種數據源
+- **引用溯源**: 回答附帶來源引用，可驗證可追溯
+
+## 技術架構
+
+- LangGraph 多 Agent 框架
+- GPT-4 / Claude 3 大模型
+- Qdrant / Weaviate 向量數據庫
+- FastAPI 後端服務
+- Next.js 14 前端介面
+
+## 進階功能
+
+- 自適應檢索策略
+- 混合搜索 (語義 + 關鍵字)
+- 多模態文檔處理
+- 對話記憶管理
+    `,
+    price: 249,
+    category: "RAG",
+    tags: ["RAG", "LangGraph", "Multi-Agent", "GPT-4", "向量數據庫"],
+    rating: 4.9,
+    reviewCount: 203,
+    downloads: 1150,
+    author: { name: "AgenticLabs", avatar: null },
+    thumbnail: null,
+    images: [],
+    demoUrl: "https://demo.example.com",
+    features: ["完整源代碼", "終身更新", "商業授權", "架構文檔", "技術支援"],
+  },
+  "sora-veo-video-generator": {
+    id: "4",
+    slug: "sora-veo-video-generator",
+    title: "無浮水印 Sora2/Veo3.1 視頻生成器",
+    description: "整合 Sora 2 與 Veo 3.1 API 的視頻生成平台，無浮水印輸出、批量生成、風格控制。支援 4K 高清與多種比例。",
+    longDescription: `
+## 核心功能
+
+- **雙引擎支援**: 整合 OpenAI Sora 2 與 Google Veo 3.1
+- **無浮水印**: 乾淨輸出，可直接商用
+- **批量生成**: 隊列管理，批量處理多個任務
+- **風格控制**: 預設風格模板，自訂風格提示
+- **多種比例**: 16:9、9:16、1:1 等多種輸出比例
+
+## 技術架構
+
+- Next.js 14 + TypeScript 前端
+- Node.js + Bull Queue 任務隊列
+- Sora 2 / Veo 3.1 API 整合
+- Supabase 數據存儲
+- S3 / R2 視頻存儲
+
+## 輸出規格
+
+- 最高 4K (2160p) 解析度
+- 最長 60 秒視頻
+- MP4 / WebM 格式
+- 可選幀率 24/30/60 fps
+    `,
+    price: 399,
+    category: "Video AI",
+    tags: ["Sora", "Veo", "視頻生成", "AI 視頻", "無浮水印"],
+    rating: 4.7,
+    reviewCount: 312,
+    downloads: 2100,
+    author: { name: "VideoGenPro", avatar: null },
+    thumbnail: null,
+    images: [],
+    demoUrl: "https://demo.example.com",
+    features: ["完整源代碼", "終身更新", "商業授權", "API 對接指南", "部署教程"],
+  },
+}
+
+const defaultProject = {
+  id: "1",
+  slug: "agent-ptt-nano-banana",
+  title: "Agent-PTT (Nano Banana)",
+  description: "智能 PTT 爬蟲與分析 Agent，自動追蹤熱門話題、情緒分析、關鍵字監控。",
+  longDescription: "",
+  price: 199,
+  category: "AI Agent",
+  tags: ["PTT", "爬蟲", "情緒分析"],
+  rating: 4.9,
+  reviewCount: 87,
+  downloads: 520,
+  author: { name: "NanoBanana", avatar: null },
   thumbnail: null,
   images: [],
   demoUrl: "https://demo.example.com",
-  features: [
-    "Full source code",
-    "Lifetime updates",
-    "Commercial license",
-    "Documentation",
-    "Support",
-  ],
+  features: ["完整源代碼", "終身更新", "商業授權", "部署文檔", "技術支援"],
 }
 
 export default function ProjectDetailPage({
@@ -67,7 +199,7 @@ export default function ProjectDetailPage({
 }: {
   params: { slug: string }
 }) {
-  const project = projectData // In production, fetch by slug
+  const project = projectsData[params.slug] || defaultProject // In production, fetch by slug
 
   return (
     <div className="min-h-screen flex flex-col">
