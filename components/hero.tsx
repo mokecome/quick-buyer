@@ -1,13 +1,13 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
-import { ArrowRight, GraduationCap, Lightbulb, Laptop, Building2 } from "lucide-react"
+import { ArrowRight, GraduationCap, Laptop, Building2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
 const scenarios = [
   { key: 'learner', icon: GraduationCap },
-  { key: 'pm', icon: Lightbulb },
   { key: 'freelancer', icon: Laptop },
   { key: 'enterprise', icon: Building2 },
 ]
@@ -25,50 +25,50 @@ export function Hero() {
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
 
       <div className="container px-4 md:px-6">
-        <div className="flex flex-col items-center text-center space-y-8">
+        <div className="flex flex-col items-center text-center space-y-10">
           {/* Main heading */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight max-w-3xl">
-            {t('hero.title')}{" "}
-            <span className="text-primary">{t('hero.titleHighlight')}</span>{" "}
-            {t('hero.titleEnd')}
-          </h1>
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight max-w-3xl">
+              {t('hero.title')}{" "}
+              <span className="text-primary">{t('hero.titleHighlight')}</span>{" "}
+              {t('hero.titleEnd')}
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              {t('hero.subtitle')}
+            </p>
+          </div>
 
-          {/* Subtitle */}
-          <p className="text-lg text-muted-foreground max-w-2xl">
-            {t('hero.subtitle')}
-          </p>
-
-          {/* Scenario Cards - 場景優先 */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 w-full max-w-4xl pt-4">
+          {/* Scenario Cards - 三欄 */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
             {scenarios.map((scenario) => (
-              <Link
+              <Card
                 key={scenario.key}
-                href="/projects"
-                className="group relative p-4 md:p-5 rounded-xl bg-card border hover:border-primary/50 hover:shadow-lg transition-all hover:-translate-y-1"
+                className="group bg-card hover:shadow-xl transition-all hover:-translate-y-1 border-2 hover:border-primary/30"
               >
-                <div className="flex flex-col items-center text-center space-y-2">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <scenario.icon className="h-5 w-5 text-primary" />
+                <CardContent className="p-6 flex flex-col items-center text-center space-y-4">
+                  <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                    <scenario.icon className="h-7 w-7 text-primary" />
                   </div>
-                  <h3 className="font-semibold text-sm md:text-base">
+                  <h3 className="text-xl font-bold">
                     {t(`hero.scenarios.${scenario.key}.title`)}
                   </h3>
-                  <p className="text-xs text-muted-foreground line-clamp-2">
+                  <p className="text-muted-foreground text-sm leading-relaxed">
                     {t(`hero.scenarios.${scenario.key}.desc`)}
                   </p>
-                </div>
-              </Link>
+                  <Button className="w-full mt-2" asChild>
+                    <Link href="/projects">
+                      {t(`hero.scenarios.${scenario.key}.cta`)}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
             ))}
           </div>
 
-          {/* CTA buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            <Button size="lg" className="shadow-lg hover:shadow-xl" asChild>
-              <Link href="/projects">
-                {t('hero.browseProjects')}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+          {/* Secondary CTA */}
+          <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
+            <span className="text-muted-foreground">{t('hero.orSell')}</span>
             <Button size="lg" variant="outline" asChild>
               <Link href="/pricing">
                 {t('hero.sellYourProject')}
@@ -76,7 +76,7 @@ export function Hero() {
             </Button>
           </div>
 
-          {/* Stats - 更簡潔 */}
+          {/* Stats */}
           <div className="flex flex-wrap justify-center gap-8 pt-4 text-muted-foreground">
             <div className="flex items-center gap-2">
               <span className="text-2xl font-bold text-foreground">200+</span>

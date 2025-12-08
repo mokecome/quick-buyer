@@ -38,22 +38,22 @@
       "developers": "AI 开发者",
       "categories": "AI 分类"
     },
+    "orSell": "想要销售？",
     "scenarios": {
       "learner": {
         "title": "学习成长",
-        "desc": "从完整项目学习 AI 最佳实践"
-      },
-      "pm": {
-        "title": "快速验证",
-        "desc": "现成应用作为 POC 展示"
+        "desc": "从完整项目学习 AI 开发最佳实践，掌握代码架构与设计模式",
+        "cta": "开始学习"
       },
       "freelancer": {
         "title": "接案利器",
-        "desc": "模板快速定制化交付"
+        "desc": "使用模板快速定制化交付，大幅提升接案效率与利润",
+        "cta": "提升效率"
       },
       "enterprise": {
         "title": "企业开发",
-        "desc": "二次开发节省 70% 时间"
+        "desc": "基于模板二次开发，节省 70% 开发时间与人力成本",
+        "cta": "浏览模板"
       }
     }
   },

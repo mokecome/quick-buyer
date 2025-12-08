@@ -38,22 +38,22 @@
       "developers": "AI Developers",
       "categories": "AI Categories"
     },
+    "orSell": "Want to sell?",
     "scenarios": {
       "learner": {
         "title": "Learn & Grow",
-        "desc": "Study AI best practices from real projects"
-      },
-      "pm": {
-        "title": "Quick Validation",
-        "desc": "Ready-made apps for POC demos"
+        "desc": "Master AI development best practices, code architecture and design patterns from real projects",
+        "cta": "Start Learning"
       },
       "freelancer": {
         "title": "Freelance Boost",
-        "desc": "Customize templates for fast delivery"
+        "desc": "Customize templates for fast delivery, boost your freelance efficiency and profits",
+        "cta": "Boost Efficiency"
       },
       "enterprise": {
         "title": "Enterprise Dev",
-        "desc": "Save 70% time with templates"
+        "desc": "Build on proven templates, save 70% development time and reduce costs",
+        "cta": "Browse Templates"
       }
     }
   },
