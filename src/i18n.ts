@@ -4,11 +4,13 @@ import LanguageDetector from 'i18next-browser-languagedetector'
 
 import enTranslation from '@/src/locales/en/translation.json'
 import zhTranslation from '@/src/locales/zh/translation.json'
+import chTranslation from '@/src/locales/ch/translation.json'
 
 // Supported languages
 export const supportedLanguages = [
   { code: 'en', name: 'English', nativeName: 'English' },
   { code: 'zh', name: 'Traditional Chinese', nativeName: '繁體中文' },
+  { code: 'ch', name: 'Simplified Chinese', nativeName: '简体中文' },
 ] as const
 
 export type SupportedLanguage = (typeof supportedLanguages)[number]['code']
@@ -17,6 +19,7 @@ export type SupportedLanguage = (typeof supportedLanguages)[number]['code']
 const resources = {
   en: { translation: enTranslation },
   zh: { translation: zhTranslation },
+  ch: { translation: chTranslation },
 }
 
 i18n
@@ -28,7 +31,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'zh', // Default fallback to Chinese
-    supportedLngs: ['en', 'zh'],
+    supportedLngs: ['en', 'zh', 'ch'],
 
     // Language detection options
     detection: {
