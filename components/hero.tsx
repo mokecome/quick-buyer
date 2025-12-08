@@ -33,7 +33,7 @@ export function Hero() {
               <span className="text-primary">{t('hero.titleHighlight')}</span>{" "}
               {t('hero.titleEnd')}
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-muted-foreground mx-auto leading-relaxed whitespace-nowrap">
               {t('hero.subtitle')}
             </p>
           </div>
