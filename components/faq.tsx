@@ -14,7 +14,7 @@ export function FAQ() {
   const { t } = useTranslation()
 
   return (
-    <section id="faq" className="py-20 md:py-32">
+    <section id="faq" className="py-12 md:py-16">
       <div className="container px-4 md:px-6 max-w-3xl mx-auto">
         <div className="text-center space-y-4 mb-12">
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
