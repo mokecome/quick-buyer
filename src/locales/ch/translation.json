@@ -238,5 +238,39 @@
     "en": "English",
     "zh": "繁體中文",
     "ch": "简体中文"
+  },
+  "useCases": {
+    "title": "谁适合使用？",
+    "subtitle": "无论你是学习者还是企业，都能找到适合的解决方案",
+    "items": {
+      "learner": {
+        "title": "学习成长",
+        "audience": "小白工程师 / AI 初学者",
+        "painPoint": "想学习 AI 但缺乏实际项目经验",
+        "solution": "购买完整项目学习最佳实践与代码架构",
+        "cta": "开始学习"
+      },
+      "pm": {
+        "title": "快速验证",
+        "audience": "产品经理 / 创业者",
+        "painPoint": "需要 AI Demo 但没有技术资源",
+        "solution": "现成应用作为 POC 展示给客户",
+        "cta": "查看 Demo"
+      },
+      "freelancer": {
+        "title": "接案利器",
+        "audience": "自由开发者 / 接案工程师",
+        "painPoint": "接案需快速交付，没时间从零开发",
+        "solution": "模板快速定制化，提高接案效率",
+        "cta": "提升效率"
+      },
+      "enterprise": {
+        "title": "企业开发",
+        "audience": "开发团队 / 技术公司",
+        "painPoint": "从零开发 AI 应用成本高周期长",
+        "solution": "模板二次开发，节省 70% 时间",
+        "cta": "浏览模板"
+      }
+    }
   }
 }

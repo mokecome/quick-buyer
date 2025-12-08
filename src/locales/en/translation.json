@@ -238,5 +238,39 @@
     "en": "English",
     "zh": "繁體中文",
     "ch": "简体中文"
+  },
+  "useCases": {
+    "title": "Who Is This For?",
+    "subtitle": "Whether you're a learner or an enterprise, find the solution that fits your needs",
+    "items": {
+      "learner": {
+        "title": "Learn & Grow",
+        "audience": "Junior Developers / AI Beginners",
+        "painPoint": "Want to learn AI but lack real project experience",
+        "solution": "Study best practices and code architecture from complete projects",
+        "cta": "Start Learning"
+      },
+      "pm": {
+        "title": "Quick Validation",
+        "audience": "Product Managers / Entrepreneurs",
+        "painPoint": "Need AI demos but lack technical resources",
+        "solution": "Ready-made apps for POC demonstrations to clients",
+        "cta": "View Demos"
+      },
+      "freelancer": {
+        "title": "Freelance Boost",
+        "audience": "Freelancers / Contract Developers",
+        "painPoint": "Projects require fast delivery, no time to build from scratch",
+        "solution": "Customize templates quickly to boost efficiency",
+        "cta": "Boost Efficiency"
+      },
+      "enterprise": {
+        "title": "Enterprise Dev",
+        "audience": "Dev Teams / Tech Companies",
+        "painPoint": "Building AI apps from scratch is costly and time-consuming",
+        "solution": "Secondary development on templates, save 70% time",
+        "cta": "Browse Templates"
+      }
+    }
   }
 }

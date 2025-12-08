@@ -2,6 +2,7 @@ import { Header } from "@/components/header"
 import { Hero } from "@/components/hero"
 import { Features } from "@/components/features"
 import { FeaturedProjects } from "@/components/featured-projects"
+import { UseCases } from "@/components/use-cases"
 import { FAQ } from "@/components/faq"
 import { Footer } from "@/components/footer"
 
@@ -12,6 +13,7 @@ export default function HomePage() {
       <main className="flex-1">
         <Hero />
         <FeaturedProjects />
+        <UseCases />
         <Features />
         <FAQ />
       </main>

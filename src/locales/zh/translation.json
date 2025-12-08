@@ -238,5 +238,39 @@
     "en": "English",
     "zh": "繁體中文",
     "ch": "简体中文"
+  },
+  "useCases": {
+    "title": "誰適合使用？",
+    "subtitle": "無論你是學習者還是企業，都能找到適合的解決方案",
+    "items": {
+      "learner": {
+        "title": "學習成長",
+        "audience": "小白工程師 / AI 初學者",
+        "painPoint": "想學習 AI 但缺乏實際項目經驗",
+        "solution": "購買完整項目學習最佳實踐與代碼架構",
+        "cta": "開始學習"
+      },
+      "pm": {
+        "title": "快速驗證",
+        "audience": "產品經理 / 創業者",
+        "painPoint": "需要 AI Demo 但沒有技術資源",
+        "solution": "現成應用作為 POC 展示給客戶",
+        "cta": "查看 Demo"
+      },
+      "freelancer": {
+        "title": "接案利器",
+        "audience": "自由開發者 / 接案工程師",
+        "painPoint": "接案需快速交付，沒時間從零開發",
+        "solution": "模板快速客製化，提高接案效率",
+        "cta": "提升效率"
+      },
+      "enterprise": {
+        "title": "企業開發",
+        "audience": "開發團隊 / 技術公司",
+        "painPoint": "從零開發 AI 應用成本高週期長",
+        "solution": "模板二次開發，節省 70% 時間",
+        "cta": "瀏覽模板"
+      }
+    }
   }
 }
