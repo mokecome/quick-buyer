@@ -242,6 +242,8 @@
   "useCases": {
     "title": "誰適合使用？",
     "subtitle": "無論你是學習者還是企業，都能找到適合的解決方案",
+    "painPointLabel": "痛點：",
+    "solutionLabel": "解決：",
     "items": {
       "learner": {
         "title": "學習成長",

@@ -242,6 +242,8 @@
   "useCases": {
     "title": "Who Is This For?",
     "subtitle": "Whether you're a learner or an enterprise, find the solution that fits your needs",
+    "painPointLabel": "Pain: ",
+    "solutionLabel": "Solution: ",
     "items": {
       "learner": {
         "title": "Learn & Grow",

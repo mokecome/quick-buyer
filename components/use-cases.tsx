@@ -49,13 +49,13 @@ export function UseCases() {
                 <div className="space-y-3 flex-1">
                   <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/10">
                     <p className="text-sm text-muted-foreground">
-                      <span className="font-medium text-destructive/80">痛點：</span>
+                      <span className="font-medium text-destructive/80">{t('useCases.painPointLabel')}</span>
                       {t(`useCases.items.${item.key}.painPoint`)}
                     </p>
                   </div>
                   <div className="p-3 rounded-lg bg-green-500/5 border border-green-500/10">
                     <p className="text-sm text-muted-foreground">
-                      <span className="font-medium text-green-600 dark:text-green-400">解決：</span>
+                      <span className="font-medium text-green-600 dark:text-green-400">{t('useCases.solutionLabel')}</span>
                       {t(`useCases.items.${item.key}.solution`)}
                     </p>
                   </div>
