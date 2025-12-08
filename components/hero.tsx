@@ -16,7 +16,7 @@ export function Hero() {
   const { t } = useTranslation()
 
   return (
-    <section className="relative overflow-hidden py-20 md:py-28 lg:py-32">
+    <section className="relative overflow-hidden pt-16 pb-12 md:pt-24 md:pb-16">
       {/* Background gradient */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background via-background to-muted/20" />
 

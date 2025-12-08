@@ -58,7 +58,7 @@ export function FeaturedProjects() {
   const { t } = useTranslation()
 
   return (
-    <section className="py-20 md:py-32">
+    <section className="py-12 md:py-16">
       <div className="container px-4 md:px-6">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
           <div className="space-y-2">
