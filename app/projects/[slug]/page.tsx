@@ -3,18 +3,19 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Star, ShoppingCart, Download, Check, Eye, Code2 } from "lucide-react"
+import { Star, ShoppingCart, Check, Eye, Code2 } from "lucide-react"
 import Image from "next/image"
+import { notFound } from "next/navigation"
+import { createClient } from "@/lib/supabase/server"
 
-// AI Projects data - in production, fetch from Supabase
-const projectsData: Record<string, typeof defaultProject> = {
-  "agent-ptt-nano-banana": {
+// Fallback project data
+const fallbackProjects: Record<string, Project> = {
+  "agent-ppt-nano-banana": {
     id: "1",
-    slug: "agent-ptt-nano-banana",
+    slug: "agent-ppt-nano-banana",
     title: "Agent-PPT (Nano Banana)",
     description: "智能 PTT 爬蟲與分析 Agent，自動追蹤熱門話題、情緒分析、關鍵字監控。支援即時通知與數據視覺化儀表板。",
-    longDescription: `
-## 功能特色
+    long_description: `## 功能特色
 
 - **智能爬蟲**: 自動追蹤 PTT 各版文章，支援關鍵字過濾
 - **情緒分析**: 基於 LLM 的情緒判斷，識別正負面評論
@@ -36,27 +37,23 @@ const projectsData: Record<string, typeof defaultProject> = {
 - 品牌輿情監控
 - 投資情報收集
 - 市場趨勢分析
-- 競品監測
-    `,
+- 競品監測`,
     price: 199,
     category: "AI Agent",
-    tags: ["PTT", "爬蟲", "情緒分析", "LangChain", "GPT-4"],
     rating: 4.9,
-    reviewCount: 87,
-    downloads: 520,
-    author: { name: "NanoBanana", avatar: null },
-    thumbnail: null,
-    images: [],
-    demoUrl: "https://demo.example.com",
-    features: ["完整源代碼", "終身更新", "商業授權", "部署文檔", "技術支援"],
+    review_count: 87,
+    download_count: 520,
+    author_name: "NanoBanana",
+    author_avatar: null,
+    thumbnail_url: null,
+    demo_url: "https://demo.example.com",
   },
   "ai-customer-service-sales": {
     id: "2",
     slug: "ai-customer-service-sales",
     title: "智能客服 (銷售版)",
     description: "專為銷售場景打造的 AI 客服系統，支援多輪對話、意圖識別、商品推薦、訂單查詢。整合 GPT-4 與知識庫 RAG。",
-    longDescription: `
-## 核心功能
+    long_description: `## 核心功能
 
 - **多輪對話**: 自然流暢的對話體驗，理解上下文
 - **意圖識別**: 精準識別用戶意圖，智能路由
@@ -70,128 +67,103 @@ const projectsData: Record<string, typeof defaultProject> = {
 - LangChain + GPT-4 對話引擎
 - Pinecone / Qdrant 向量數據庫
 - Supabase 後端服務
-- WebSocket 即時通訊
-
-## 適用場景
-
-- 電商客服
-- SaaS 產品支援
-- 線上銷售諮詢
-- 售前引導
-    `,
+- WebSocket 即時通訊`,
     price: 299,
     category: "AI Agent",
-    tags: ["客服", "銷售", "RAG", "GPT-4", "LangChain"],
     rating: 4.8,
-    reviewCount: 156,
-    downloads: 890,
-    author: { name: "SalesAI", avatar: null },
-    thumbnail: null,
-    images: [],
-    demoUrl: "https://demo.example.com",
-    features: ["完整源代碼", "終身更新", "商業授權", "API 文檔", "整合指南"],
+    review_count: 156,
+    download_count: 890,
+    author_name: "SalesAI",
+    author_avatar: null,
+    thumbnail_url: null,
+    demo_url: "https://demo.example.com",
   },
   "agentic-rag": {
     id: "3",
     slug: "agentic-rag",
     title: "Agentic RAG",
     description: "下一代智能檢索增強生成系統，結合多 Agent 協作、自動規劃、工具調用。支援多數據源整合與複雜問答場景。",
-    longDescription: `
-## 核心特色
+    long_description: `## 核心特色
 
 - **多 Agent 協作**: 專業分工的 Agent 團隊，協同完成複雜任務
 - **自動規劃**: 智能拆解問題，制定執行計劃
 - **工具調用**: 支援網頁搜索、代碼執行、API 調用等工具
 - **多數據源**: 整合文檔、數據庫、API 等多種數據源
-- **引用溯源**: 回答附帶來源引用，可驗證可追溯
-
-## 技術架構
-
-- LangGraph 多 Agent 框架
-- GPT-4 / Claude 3 大模型
-- Qdrant / Weaviate 向量數據庫
-- FastAPI 後端服務
-- Next.js 14 前端介面
-
-## 進階功能
-
-- 自適應檢索策略
-- 混合搜索 (語義 + 關鍵字)
-- 多模態文檔處理
-- 對話記憶管理
-    `,
+- **引用溯源**: 回答附帶來源引用，可驗證可追溯`,
     price: 249,
     category: "RAG",
-    tags: ["RAG", "LangGraph", "Multi-Agent", "GPT-4", "向量數據庫"],
     rating: 4.9,
-    reviewCount: 203,
-    downloads: 1150,
-    author: { name: "AgenticLabs", avatar: null },
-    thumbnail: null,
-    images: [],
-    demoUrl: "https://demo.example.com",
-    features: ["完整源代碼", "終身更新", "商業授權", "架構文檔", "技術支援"],
+    review_count: 203,
+    download_count: 1150,
+    author_name: "AgenticLabs",
+    author_avatar: null,
+    thumbnail_url: null,
+    demo_url: "https://demo.example.com",
   },
   "sora-veo-video-generator": {
     id: "4",
     slug: "sora-veo-video-generator",
     title: "無浮水印 Sora2/Veo3.1 視頻生成器",
     description: "整合 Sora 2 與 Veo 3.1 API 的視頻生成平台，無浮水印輸出、批量生成、風格控制。支援 4K 高清與多種比例。",
-    longDescription: `
-## 核心功能
+    long_description: `## 核心功能
 
 - **雙引擎支援**: 整合 OpenAI Sora 2 與 Google Veo 3.1
 - **無浮水印**: 乾淨輸出，可直接商用
 - **批量生成**: 隊列管理，批量處理多個任務
 - **風格控制**: 預設風格模板，自訂風格提示
-- **多種比例**: 16:9、9:16、1:1 等多種輸出比例
-
-## 技術架構
-
-- Next.js 14 + TypeScript 前端
-- Node.js + Bull Queue 任務隊列
-- Sora 2 / Veo 3.1 API 整合
-- Supabase 數據存儲
-- S3 / R2 視頻存儲
-
-## 輸出規格
-
-- 最高 4K (2160p) 解析度
-- 最長 60 秒視頻
-- MP4 / WebM 格式
-- 可選幀率 24/30/60 fps
-    `,
+- **多種比例**: 16:9、9:16、1:1 等多種輸出比例`,
     price: 399,
     category: "Video AI",
-    tags: ["Sora", "Veo", "視頻生成", "AI 視頻", "無浮水印"],
     rating: 4.7,
-    reviewCount: 312,
-    downloads: 2100,
-    author: { name: "VideoGenPro", avatar: null },
-    thumbnail: null,
-    images: [],
-    demoUrl: "https://demo.example.com",
-    features: ["完整源代碼", "終身更新", "商業授權", "API 對接指南", "部署教程"],
+    review_count: 312,
+    download_count: 2100,
+    author_name: "VideoGenPro",
+    author_avatar: null,
+    thumbnail_url: null,
+    demo_url: "https://demo.example.com",
   },
 }
 
-const defaultProject = {
-  id: "1",
-  slug: "agent-ptt-nano-banana",
-  title: "Agent-PTT (Nano Banana)",
-  description: "智能 PTT 爬蟲與分析 Agent，自動追蹤熱門話題、情緒分析、關鍵字監控。",
-  longDescription: "",
-  price: 199,
-  category: "AI Agent",
-  tags: ["PTT", "爬蟲", "情緒分析"],
-  rating: 4.9,
-  reviewCount: 87,
-  downloads: 520,
-  author: { name: "NanoBanana", avatar: null },
-  thumbnail: null,
-  images: [],
-  demoUrl: "https://demo.example.com",
-  features: ["完整源代碼", "終身更新", "商業授權", "部署文檔", "技術支援"],
+interface Project {
+  id: string
+  slug: string
+  title: string
+  description: string
+  long_description: string | null
+  price: number
+  category: string
+  rating: number | null
+  review_count: number | null
+  download_count: number | null
+  author_name: string
+  author_avatar: string | null
+  thumbnail_url: string | null
+  demo_url: string | null
+}
+
+const defaultFeatures = ["完整源代碼", "終身更新", "商業授權", "部署文檔", "技術支援"]
+
+async function getProject(slug: string): Promise<Project | null> {
+  try {
+    const supabase = await createClient()
+
+    const { data: project, error } = await supabase
+      .from('projects')
+      .select('*')
+      .eq('slug', slug)
+      .eq('status', 'approved')
+      .single()
+
+    if (error || !project) {
+      // Try fallback data
+      return fallbackProjects[slug] || null
+    }
+
+    return project
+  } catch (error) {
+    console.error('Error fetching project:', error)
+    return fallbackProjects[slug] || null
+  }
 }
 
 export default async function ProjectDetailPage({
@@ -200,7 +172,11 @@ export default async function ProjectDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const project = projectsData[slug] || defaultProject // In production, fetch by slug
+  const project = await getProject(slug)
+
+  if (!project) {
+    notFound()
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -213,9 +189,9 @@ export default async function ProjectDetailPage({
               <div className="lg:col-span-2 space-y-8">
                 {/* Hero Image */}
                 <div className="aspect-video bg-muted rounded-xl overflow-hidden">
-                  {project.thumbnail ? (
+                  {project.thumbnail_url ? (
                     <Image
-                      src={project.thumbnail}
+                      src={project.thumbnail_url}
                       alt={project.title}
                       width={800}
                       height={450}
@@ -234,29 +210,22 @@ export default async function ProjectDetailPage({
                     <Badge>{project.category}</Badge>
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
                       <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="font-medium text-foreground">{project.rating}</span>
-                      <span>({project.reviewCount} reviews)</span>
+                      <span className="font-medium text-foreground">{project.rating || 0}</span>
+                      <span>({project.review_count || 0} reviews)</span>
                     </div>
                   </div>
                   <h1 className="text-3xl md:text-4xl font-bold">{project.title}</h1>
                   <p className="text-lg text-muted-foreground">{project.description}</p>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2">
-                    {project.tags.map((tag) => (
-                      <Badge key={tag} variant="secondary">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
                 </div>
 
                 {/* Description */}
-                <div className="prose prose-neutral dark:prose-invert max-w-none">
-                  <div className="whitespace-pre-wrap text-muted-foreground">
-                    {project.longDescription}
+                {project.long_description && (
+                  <div className="prose prose-neutral dark:prose-invert max-w-none">
+                    <div className="whitespace-pre-wrap text-muted-foreground">
+                      {project.long_description}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Sidebar */}
@@ -272,7 +241,7 @@ export default async function ProjectDetailPage({
                   <CardContent className="space-y-6">
                     {/* Features */}
                     <ul className="space-y-3">
-                      {project.features.map((feature, index) => (
+                      {defaultFeatures.map((feature, index) => (
                         <li key={index} className="flex items-center gap-2">
                           <Check className="h-5 w-5 text-green-600 dark:text-green-400" />
                           <span className="text-sm">{feature}</span>
@@ -286,9 +255,9 @@ export default async function ProjectDetailPage({
                         <ShoppingCart className="mr-2 h-4 w-4" />
                         Add to Cart
                       </Button>
-                      {project.demoUrl && (
+                      {project.demo_url && (
                         <Button size="lg" variant="outline" className="w-full" asChild>
-                          <a href={project.demoUrl} target="_blank" rel="noopener noreferrer">
+                          <a href={project.demo_url} target="_blank" rel="noopener noreferrer">
                             <Eye className="mr-2 h-4 w-4" />
                             Live Demo
                           </a>
@@ -300,7 +269,7 @@ export default async function ProjectDetailPage({
                     <div className="pt-4 border-t">
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-muted-foreground">Downloads</span>
-                        <span className="font-medium">{project.downloads.toLocaleString()}</span>
+                        <span className="font-medium">{(project.download_count || 0).toLocaleString()}</span>
                       </div>
                     </div>
                   </CardContent>
@@ -314,22 +283,22 @@ export default async function ProjectDetailPage({
                   <CardContent>
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
-                        {project.author.avatar ? (
+                        {project.author_avatar ? (
                           <Image
-                            src={project.author.avatar}
-                            alt={project.author.name}
+                            src={project.author_avatar}
+                            alt={project.author_name}
                             width={48}
                             height={48}
                             className="rounded-full"
                           />
                         ) : (
                           <span className="text-lg font-medium">
-                            {project.author.name.charAt(0)}
+                            {project.author_name.charAt(0)}
                           </span>
                         )}
                       </div>
                       <div>
-                        <p className="font-medium">{project.author.name}</p>
+                        <p className="font-medium">{project.author_name}</p>
                         <p className="text-sm text-muted-foreground">Seller</p>
                       </div>
                     </div>

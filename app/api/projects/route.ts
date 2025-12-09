@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
+import { isAdmin } from "@/lib/admin/check-admin"
 
 // Generate URL-friendly slug from title
 function generateSlug(title: string): string {
@@ -108,14 +109,22 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
 
     const myProjects = searchParams.get('my') === 'true'
+    const allProjects = searchParams.get('all') === 'true' // Admin only: view all projects
     const status = searchParams.get('status')
+    const limit = searchParams.get('limit')
+    const category = searchParams.get('category')
+
+    // Get current user for permission checks
+    const { data: { user } } = await supabase.auth.getUser()
+    const userIsAdmin = user ? await isAdmin(supabase, user.id, user.email ?? undefined) : false
 
     let query = supabase.from('projects').select('*')
 
-    if (myProjects) {
+    if (allProjects && userIsAdmin) {
+      // Admin can view all projects (no status filter by default)
+      // Status can still be filtered via query param
+    } else if (myProjects) {
       // Get current user's projects
-      const { data: { user } } = await supabase.auth.getUser()
-
       if (!user) {
         return NextResponse.json(
           { error: "Unauthorized", message: "Please sign in to view your projects" },
@@ -133,7 +142,22 @@ export async function GET(request: Request) {
       query = query.eq('status', status)
     }
 
-    const { data: projects, error } = await query.order('created_at', { ascending: false })
+    if (category && category !== 'All') {
+      query = query.eq('category', category)
+    }
+
+    // Order by download count (popularity) then by created date
+    query = query.order('download_count', { ascending: false }).order('created_at', { ascending: false })
+
+    // Apply limit if specified
+    if (limit) {
+      const limitNum = parseInt(limit, 10)
+      if (!isNaN(limitNum) && limitNum > 0) {
+        query = query.limit(limitNum)
+      }
+    }
+
+    const { data: projects, error } = await query
 
     if (error) {
       console.error('Projects fetch error:', error)
@@ -143,7 +167,7 @@ export async function GET(request: Request) {
       )
     }
 
-    return NextResponse.json({ projects })
+    return NextResponse.json({ projects, isAdmin: userIsAdmin })
   } catch (error) {
     console.error('GET /api/projects error:', error)
     return NextResponse.json(

@@ -18,7 +18,18 @@
       "Bash(del \"C:\\Users\\User\\Desktop\\projects\\quick-buyer\\middleware.ts\")",
       "Bash(npm install:*)",
       "Bash(del \"C:\\Users\\User\\Desktop\\projects\\quick-buyer\\lib\\i18n\\config.ts\")",
-      "Bash(npx shadcn@latest add:*)"
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(del \"C:\\Users\\User\\Desktop\\projects\\quick-buyer\\components\\use-cases.tsx\")",
+      "mcp__chrome-devtools__list_console_messages",
+      "mcp__chrome-devtools__list_network_requests",
+      "mcp__chrome-devtools__take_snapshot",
+      "mcp__chrome-devtools__navigate_page",
+      "Bash(npm run dev:*)",
+      "Bash(taskkill //F //PID 34848)",
+      "Bash(cat:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill //F //PID 38020)"
     ],
     "deny": [],
     "ask": []

@@ -3,20 +3,21 @@ import { Footer } from "@/components/footer"
 import { ProjectCard } from "@/components/project-card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Search, Filter } from "lucide-react"
+import { Search } from "lucide-react"
+import { createClient } from "@/lib/supabase/server"
 
-// AI Projects data
-const projects = [
+// Fallback data in case database is not available
+const fallbackProjects = [
   {
     id: "1",
-    slug: "agent-ptt-nano-banana",
+    slug: "agent-ppt-nano-banana",
     title: "Agent-PPT (Nano Banana)",
     description: "智能 PTT 爬蟲與分析 Agent，自動追蹤熱門話題、情緒分析、關鍵字監控。支援即時通知與數據視覺化儀表板。",
     price: 199,
     category: "AI Agent",
     rating: 4.9,
-    reviewCount: 87,
-    author: { name: "NanoBanana" },
+    review_count: 87,
+    author_name: "NanoBanana",
   },
   {
     id: "2",
@@ -26,8 +27,8 @@ const projects = [
     price: 299,
     category: "AI Agent",
     rating: 4.8,
-    reviewCount: 156,
-    author: { name: "SalesAI" },
+    review_count: 156,
+    author_name: "SalesAI",
   },
   {
     id: "3",
@@ -37,8 +38,8 @@ const projects = [
     price: 249,
     category: "RAG",
     rating: 4.9,
-    reviewCount: 203,
-    author: { name: "AgenticLabs" },
+    review_count: 203,
+    author_name: "AgenticLabs",
   },
   {
     id: "4",
@@ -48,8 +49,8 @@ const projects = [
     price: 399,
     category: "Video AI",
     rating: 4.7,
-    reviewCount: 312,
-    author: { name: "VideoGenPro" },
+    review_count: 312,
+    author_name: "VideoGenPro",
   },
   {
     id: "5",
@@ -59,8 +60,8 @@ const projects = [
     price: 179,
     category: "LLM",
     rating: 4.8,
-    reviewCount: 245,
-    author: { name: "ChatSaaS" },
+    review_count: 245,
+    author_name: "ChatSaaS",
   },
   {
     id: "6",
@@ -70,8 +71,8 @@ const projects = [
     price: 159,
     category: "Image AI",
     rating: 4.6,
-    reviewCount: 178,
-    author: { name: "ImageGenAI" },
+    review_count: 178,
+    author_name: "ImageGenAI",
   },
   {
     id: "7",
@@ -81,8 +82,8 @@ const projects = [
     price: 189,
     category: "Voice AI",
     rating: 4.8,
-    reviewCount: 92,
-    author: { name: "VoiceAI" },
+    review_count: 92,
+    author_name: "VoiceAI",
   },
   {
     id: "8",
@@ -92,14 +93,38 @@ const projects = [
     price: 129,
     category: "RAG",
     rating: 4.7,
-    reviewCount: 167,
-    author: { name: "LangChainPro" },
+    review_count: 167,
+    author_name: "LangChainPro",
   },
 ]
 
 const categories = ["All", "AI Agent", "RAG", "LLM", "Video AI", "Image AI", "Voice AI"]
 
-export default function ProjectsPage() {
+async function getProjects() {
+  try {
+    const supabase = await createClient()
+
+    const { data: projects, error } = await supabase
+      .from('projects')
+      .select('id, slug, title, description, price, category, rating, review_count, author_name, thumbnail_url')
+      .eq('status', 'approved')
+      .order('download_count', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching projects:', error)
+      return fallbackProjects
+    }
+
+    return projects && projects.length > 0 ? projects : fallbackProjects
+  } catch (error) {
+    console.error('Error in getProjects:', error)
+    return fallbackProjects
+  }
+}
+
+export default async function ProjectsPage() {
+  const projects = await getProjects()
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -142,7 +167,18 @@ export default function ProjectsPage() {
             {/* Projects Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {projects.map((project) => (
-                <ProjectCard key={project.id} {...project} />
+                <ProjectCard
+                  key={project.id}
+                  id={project.id}
+                  slug={project.slug}
+                  title={project.title}
+                  description={project.description}
+                  price={project.price}
+                  category={project.category}
+                  rating={project.rating || 0}
+                  reviewCount={project.review_count || 0}
+                  author={{ name: project.author_name }}
+                />
               ))}
             </div>
 
