@@ -2,12 +2,13 @@
 
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { Menu, Github, ShoppingCart, Bot, LogOut, User, ChevronDown } from "lucide-react"
+import { Menu, Github, Bot, LogOut, User, ChevronDown } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { useTranslation } from "react-i18next"
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client"
 import { LanguageSwitcher } from "@/components/language-switcher"
+import { CartDrawer } from "@/components/cart-drawer"
 import type { User as SupabaseUser, AuthChangeEvent, Session } from "@supabase/supabase-js"
 
 // Google Icon Component
@@ -146,6 +147,14 @@ export function Header() {
     }
   }
 
+  const handleSellClick = () => {
+    if (!user) {
+      setLoginMenuOpen(true)
+    } else {
+      router.push('/dashboard/sell')
+    }
+  }
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
       <div className="container flex h-16 md:h-20 items-center justify-between px-4 md:px-6">
@@ -183,13 +192,7 @@ export function Header() {
 
         <div className="hidden md:flex items-center gap-3">
           <LanguageSwitcher />
-          <Button
-            variant="ghost"
-            size="icon"
-            className="hover:bg-accent"
-          >
-            <ShoppingCart className="h-5 w-5" />
-          </Button>
+          <CartDrawer />
 
           {isLoading ? (
             <div className="w-20 h-9 bg-muted animate-pulse rounded-md" />
@@ -257,7 +260,11 @@ export function Header() {
               )}
             </div>
           )}
-          <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl">
+          <Button
+            size="sm"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl"
+            onClick={handleSellClick}
+          >
             {t('nav.sellProject')}
           </Button>
         </div>
@@ -363,7 +370,14 @@ export function Header() {
                   </Button>
                 </>
               )}
-              <Button size="sm" className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+              <Button
+                size="sm"
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                onClick={() => {
+                  handleSellClick()
+                  setMobileMenuOpen(false)
+                }}
+              >
                 {t('nav.sellProject')}
               </Button>
             </div>

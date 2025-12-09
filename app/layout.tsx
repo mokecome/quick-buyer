@@ -4,6 +4,8 @@ import { Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { ThemeProvider } from "@/components/theme-provider"
 import { I18nProvider } from "@/components/i18n-provider"
+import { CartProvider } from "@/lib/cart-context"
+import { SubscriptionProvider } from "@/lib/subscription-context"
 import "@/styles/globals.css"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -30,7 +32,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <I18nProvider>
-            {children}
+            <SubscriptionProvider>
+              <CartProvider>
+                {children}
+              </CartProvider>
+            </SubscriptionProvider>
           </I18nProvider>
         </ThemeProvider>
         <Analytics />

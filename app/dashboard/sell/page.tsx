@@ -1,0 +1,269 @@
+"use client"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { useTranslation } from "react-i18next"
+import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Upload, Link as LinkIcon, FileText, DollarSign } from "lucide-react"
+
+const categories = [
+  "LLM",
+  "Image AI",
+  "Voice AI",
+  "RAG",
+  "Chatbot",
+  "Automation",
+  "NLP",
+  "Computer Vision",
+  "Other",
+]
+
+export default function SellPage() {
+  const { t } = useTranslation()
+  const router = useRouter()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    longDescription: "",
+    price: "",
+    category: "",
+    downloadUrl: "",
+    docsUrl: "",
+    demoUrl: "",
+  })
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+
+    try {
+      const response = await fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          price: parseFloat(formData.price) || 0,
+        }),
+      })
+
+      if (response.ok) {
+        router.push("/dashboard?submitted=true")
+      } else {
+        const error = await response.json()
+        alert(error.message || t('sell.error', 'Failed to submit project'))
+      }
+    } catch (error) {
+      console.error("Submit error:", error)
+      alert(t('sell.error', 'Failed to submit project'))
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1 py-8 md:py-12">
+        <div className="container px-4 md:px-6 max-w-3xl">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold tracking-tight">
+              {t('sell.title', 'Submit Your AI Project')}
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              {t('sell.subtitle', 'Share your AI project with our community of developers')}
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Basic Info */}
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('sell.basicInfo', 'Basic Information')}</CardTitle>
+                <CardDescription>
+                  {t('sell.basicInfoDesc', 'Tell us about your project')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="title">{t('sell.form.title', 'Project Title')} *</Label>
+                  <Input
+                    id="title"
+                    value={formData.title}
+                    onChange={(e) => handleChange("title", e.target.value)}
+                    placeholder={t('sell.form.titlePlaceholder', 'e.g., ChatGPT Clone with Next.js')}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="description">{t('sell.form.description', 'Short Description')} *</Label>
+                  <Textarea
+                    id="description"
+                    value={formData.description}
+                    onChange={(e) => handleChange("description", e.target.value)}
+                    placeholder={t('sell.form.descriptionPlaceholder', 'A brief description of your project (max 200 characters)')}
+                    maxLength={200}
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {formData.description.length}/200
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="longDescription">{t('sell.form.longDescription', 'Detailed Description')}</Label>
+                  <Textarea
+                    id="longDescription"
+                    value={formData.longDescription}
+                    onChange={(e) => handleChange("longDescription", e.target.value)}
+                    placeholder={t('sell.form.longDescriptionPlaceholder', 'Provide a detailed description of features, tech stack, and use cases...')}
+                    rows={6}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="category">{t('sell.form.category', 'Category')} *</Label>
+                    <Select
+                      value={formData.category}
+                      onValueChange={(value) => handleChange("category", value)}
+                      required
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('sell.form.categoryPlaceholder', 'Select a category')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((cat) => (
+                          <SelectItem key={cat} value={cat}>
+                            {cat}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="price">{t('sell.form.price', 'Price (USD)')} *</Label>
+                    <div className="relative">
+                      <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="price"
+                        type="number"
+                        min="0"
+                        step="1"
+                        value={formData.price}
+                        onChange={(e) => handleChange("price", e.target.value)}
+                        placeholder="99"
+                        className="pl-9"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Files & Links */}
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('sell.filesLinks', 'Files & Links')}</CardTitle>
+                <CardDescription>
+                  {t('sell.filesLinksDesc', 'Provide download and documentation links')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="downloadUrl">
+                    <Upload className="inline h-4 w-4 mr-2" />
+                    {t('sell.form.downloadUrl', 'Download URL')} *
+                  </Label>
+                  <Input
+                    id="downloadUrl"
+                    type="url"
+                    value={formData.downloadUrl}
+                    onChange={(e) => handleChange("downloadUrl", e.target.value)}
+                    placeholder="https://github.com/... or https://drive.google.com/..."
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {t('sell.form.downloadUrlHint', 'Link to download the source code (GitHub, Google Drive, etc.)')}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="docsUrl">
+                    <FileText className="inline h-4 w-4 mr-2" />
+                    {t('sell.form.docsUrl', 'Documentation URL')}
+                  </Label>
+                  <Input
+                    id="docsUrl"
+                    type="url"
+                    value={formData.docsUrl}
+                    onChange={(e) => handleChange("docsUrl", e.target.value)}
+                    placeholder="https://docs.example.com or https://notion.so/..."
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {t('sell.form.docsUrlHint', 'Link to project documentation or tutorial (Notion, GitBook, etc.)')}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="demoUrl">
+                    <LinkIcon className="inline h-4 w-4 mr-2" />
+                    {t('sell.form.demoUrl', 'Live Demo URL')}
+                  </Label>
+                  <Input
+                    id="demoUrl"
+                    type="url"
+                    value={formData.demoUrl}
+                    onChange={(e) => handleChange("demoUrl", e.target.value)}
+                    placeholder="https://demo.example.com"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Submit */}
+            <div className="flex justify-end gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.back()}
+              >
+                {t('common.cancel', 'Cancel')}
+              </Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting
+                  ? t('sell.submitting', 'Submitting...')
+                  : t('sell.submit', 'Submit for Review')}
+              </Button>
+            </div>
+
+            <p className="text-sm text-muted-foreground text-center">
+              {t('sell.reviewNote', 'Your project will be reviewed within 24-48 hours before being published.')}
+            </p>
+          </form>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  )
+}

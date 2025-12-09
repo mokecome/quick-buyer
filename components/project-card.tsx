@@ -1,9 +1,13 @@
+"use client"
+
 import Image from "next/image"
 import Link from "next/link"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Star, ShoppingCart } from "lucide-react"
+import { Star, ShoppingCart, Check } from "lucide-react"
+import { useCart } from "@/lib/cart-context"
+import { useTranslation } from "react-i18next"
 
 interface ProjectCardProps {
   id: string
@@ -22,6 +26,7 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({
+  id,
   slug,
   title,
   description,
@@ -32,6 +37,20 @@ export function ProjectCard({
   reviewCount = 0,
   author,
 }: ProjectCardProps) {
+  const { t } = useTranslation()
+  const { addItem, removeItem, isInCart } = useCart()
+  const inCart = isInCart(id)
+
+  const handleCartClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (inCart) {
+      removeItem(id)
+    } else {
+      addItem({ id, slug, title, price, thumbnail })
+    }
+  }
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-all group">
       <Link href={`/projects/${slug}`}>
@@ -94,9 +113,22 @@ export function ProjectCard({
 
       <CardFooter className="flex items-center justify-between pt-0">
         <span className="text-xl font-bold">${price}</span>
-        <Button size="sm">
-          <ShoppingCart className="h-4 w-4 mr-2" />
-          Add to Cart
+        <Button
+          size="sm"
+          variant={inCart ? "secondary" : "default"}
+          onClick={handleCartClick}
+        >
+          {inCart ? (
+            <>
+              <Check className="h-4 w-4 mr-2" />
+              {t('cart.inCart', 'In Cart')}
+            </>
+          ) : (
+            <>
+              <ShoppingCart className="h-4 w-4 mr-2" />
+              {t('cart.addToCart', 'Add to Cart')}
+            </>
+          )}
         </Button>
       </CardFooter>
     </Card>
