@@ -194,12 +194,13 @@ const defaultProject = {
   features: ["完整源代碼", "終身更新", "商業授權", "部署文檔", "技術支援"],
 }
 
-export default function ProjectDetailPage({
+export default async function ProjectDetailPage({
   params,
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) {
-  const project = projectsData[params.slug] || defaultProject // In production, fetch by slug
+  const { slug } = await params
+  const project = projectsData[slug] || defaultProject // In production, fetch by slug
 
   return (
     <div className="min-h-screen flex flex-col">

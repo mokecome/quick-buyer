@@ -3,7 +3,7 @@ import { Footer } from "@/components/footer"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { Package, Download, DollarSign, BarChart3 } from "lucide-react"
+import { Package, Download, DollarSign, Store, Plus, LayoutList } from "lucide-react"
 
 const stats = [
   {
@@ -58,6 +58,35 @@ export default function DashboardPage() {
                 </Card>
               ))}
             </div>
+
+            {/* Seller Section */}
+            <Card className="border-primary/20 bg-primary/5">
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Store className="h-5 w-5 text-primary" />
+                  <CardTitle>Seller Dashboard</CardTitle>
+                </div>
+                <CardDescription>
+                  Sell your AI projects and earn money
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button asChild>
+                    <Link href="/dashboard/sell">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Submit New Project
+                    </Link>
+                  </Button>
+                  <Button variant="outline" asChild>
+                    <Link href="/dashboard/my-projects">
+                      <LayoutList className="h-4 w-4 mr-2" />
+                      My Projects
+                    </Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Quick Actions */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

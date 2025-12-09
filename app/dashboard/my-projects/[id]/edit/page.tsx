@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, use } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslation } from "react-i18next"
 import { Header } from "@/components/header"
@@ -17,7 +17,19 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Upload, Link as LinkIcon, FileText, DollarSign, Loader2, LogIn } from "lucide-react"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Badge } from "@/components/ui/badge"
+import { Upload, Link as LinkIcon, FileText, DollarSign, Loader2, ArrowLeft, Trash2, AlertTriangle } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import type { User } from "@supabase/supabase-js"
 
@@ -33,12 +45,30 @@ const categories = [
   "Other",
 ]
 
-export default function SellPage() {
-  const { t } = useTranslation()
+interface Project {
+  id: string
+  title: string
+  description: string
+  long_description: string | null
+  price: number
+  category: string
+  download_url: string
+  docs_url: string | null
+  demo_url: string | null
+  status: 'pending' | 'approved' | 'rejected'
+  user_id: string
+}
+
+export default function EditProjectPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
+  const { t, i18n } = useTranslation()
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
+  const [project, setProject] = useState<Project | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -50,29 +80,67 @@ export default function SellPage() {
     demoUrl: "",
   })
 
+  const isZh = i18n.language?.startsWith('zh')
+
   useEffect(() => {
-    const checkAuth = async () => {
+    const loadData = async () => {
       const supabase = createClient()
       if (!supabase) {
+        setError("Supabase not configured")
         setIsLoading(false)
         return
       }
 
+      // Check auth
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
-      setIsLoading(false)
+
+      if (!user) {
+        setError(isZh ? "請先登入" : "Please sign in first")
+        setIsLoading(false)
+        return
+      }
+
+      // Fetch project
+      try {
+        const response = await fetch(`/api/projects/${id}`)
+        const data = await response.json()
+
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to load project")
+        }
+
+        const proj = data.project
+        setProject(proj)
+
+        // Populate form
+        setFormData({
+          title: proj.title || "",
+          description: proj.description || "",
+          longDescription: proj.long_description || "",
+          price: proj.price?.toString() || "",
+          category: proj.category || "",
+          downloadUrl: proj.download_url || "",
+          docsUrl: proj.docs_url || "",
+          demoUrl: proj.demo_url || "",
+        })
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred")
+      } finally {
+        setIsLoading(false)
+      }
     }
 
-    checkAuth()
-  }, [])
+    loadData()
+  }, [id, isZh])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
 
     try {
-      const response = await fetch("/api/projects", {
-        method: "POST",
+      const response = await fetch(`/api/projects/${id}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
@@ -80,17 +148,40 @@ export default function SellPage() {
         }),
       })
 
+      const data = await response.json()
+
       if (response.ok) {
-        router.push("/dashboard?submitted=true")
+        router.push("/dashboard/my-projects")
       } else {
-        const error = await response.json()
-        alert(error.message || t('sell.error', 'Failed to submit project'))
+        alert(data.message || t('edit.error', 'Failed to update project'))
       }
     } catch (error) {
-      console.error("Submit error:", error)
-      alert(t('sell.error', 'Failed to submit project'))
+      console.error("Update error:", error)
+      alert(t('edit.error', 'Failed to update project'))
     } finally {
       setIsSubmitting(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    setIsDeleting(true)
+
+    try {
+      const response = await fetch(`/api/projects/${id}`, {
+        method: "DELETE",
+      })
+
+      if (response.ok) {
+        router.push("/dashboard/my-projects")
+      } else {
+        const data = await response.json()
+        alert(data.message || t('edit.deleteError', 'Failed to delete project'))
+      }
+    } catch (error) {
+      console.error("Delete error:", error)
+      alert(t('edit.deleteError', 'Failed to delete project'))
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -113,8 +204,8 @@ export default function SellPage() {
     )
   }
 
-  // Not authenticated - show sign in prompt
-  if (!user) {
+  // Error state
+  if (error || !project) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -122,24 +213,16 @@ export default function SellPage() {
           <div className="container px-4 md:px-6 max-w-md">
             <Card>
               <CardHeader className="text-center">
-                <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                  <LogIn className="h-6 w-6 text-primary" />
+                <div className="mx-auto w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mb-4">
+                  <AlertTriangle className="h-6 w-6 text-destructive" />
                 </div>
-                <CardTitle>{t('sell.signInRequired', '需要登入')}</CardTitle>
-                <CardDescription>
-                  {t('sell.signInRequiredDesc', '請先登入以上架您的 AI 項目')}
-                </CardDescription>
+                <CardTitle>{isZh ? "無法載入項目" : "Cannot Load Project"}</CardTitle>
+                <CardDescription>{error}</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <Button className="w-full" asChild>
-                  <a href="/auth/signin">
-                    {t('common.signInWithGitHub', '使用 GitHub 登入')}
-                  </a>
-                </Button>
-                <Button variant="outline" className="w-full" asChild>
-                  <a href="/auth/signin/google">
-                    {t('common.signInWithGoogle', '使用 Google 登入')}
-                  </a>
+              <CardContent>
+                <Button className="w-full" onClick={() => router.push("/dashboard/my-projects")}>
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  {isZh ? "返回我的項目" : "Back to My Projects"}
                 </Button>
               </CardContent>
             </Card>
@@ -150,18 +233,44 @@ export default function SellPage() {
     )
   }
 
+  const statusLabels = {
+    pending: { zh: "審核中", en: "Pending Review" },
+    approved: { zh: "已上架", en: "Approved" },
+    rejected: { zh: "未通過", en: "Rejected" },
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 py-8 md:py-12">
         <div className="container px-4 md:px-6 max-w-3xl">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight">
-              {t('sell.title', 'Submit Your AI Project')}
-            </h1>
-            <p className="text-muted-foreground mt-2">
-              {t('sell.subtitle', 'Share your AI project with our community of developers')}
-            </p>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="mb-4"
+              onClick={() => router.push("/dashboard/my-projects")}
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              {isZh ? "返回我的項目" : "Back to My Projects"}
+            </Button>
+
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-3xl font-bold tracking-tight">
+                {isZh ? "編輯項目" : "Edit Project"}
+              </h1>
+              <Badge variant={project.status === 'approved' ? 'default' : project.status === 'rejected' ? 'destructive' : 'secondary'}>
+                {isZh ? statusLabels[project.status].zh : statusLabels[project.status].en}
+              </Badge>
+            </div>
+
+            {project.status === 'approved' && (
+              <p className="text-amber-600 dark:text-amber-400 text-sm mt-2">
+                {isZh
+                  ? "修改後項目將重新進入審核狀態"
+                  : "Editing will reset the project to pending review"}
+              </p>
+            )}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -313,25 +422,64 @@ export default function SellPage() {
               </CardContent>
             </Card>
 
-            {/* Submit */}
-            <div className="flex justify-end gap-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.back()}
-              >
-                {t('common.cancel', 'Cancel')}
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting
-                  ? t('sell.submitting', 'Submitting...')
-                  : t('sell.submit', 'Submit for Review')}
-              </Button>
-            </div>
+            {/* Actions */}
+            <div className="flex flex-col-reverse sm:flex-row justify-between gap-4">
+              {/* Delete Button */}
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button type="button" variant="destructive" disabled={isDeleting}>
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    {isZh ? "刪除項目" : "Delete Project"}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      {isZh ? "確定要刪除此項目？" : "Are you sure you want to delete this project?"}
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {isZh
+                        ? "此操作無法撤銷。項目將被永久刪除。"
+                        : "This action cannot be undone. The project will be permanently deleted."}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>{isZh ? "取消" : "Cancel"}</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDelete}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      {isDeleting ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        isZh ? "確定刪除" : "Delete"
+                      )}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
 
-            <p className="text-sm text-muted-foreground text-center">
-              {t('sell.reviewNote', 'Your project will be reviewed within 24-48 hours before being published.')}
-            </p>
+              {/* Save Buttons */}
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.push("/dashboard/my-projects")}
+                >
+                  {t('common.cancel', 'Cancel')}
+                </Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      {isZh ? "儲存中..." : "Saving..."}
+                    </>
+                  ) : (
+                    isZh ? "儲存變更" : "Save Changes"
+                  )}
+                </Button>
+              </div>
+            </div>
           </form>
         </div>
       </main>
