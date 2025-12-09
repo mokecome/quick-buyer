@@ -102,62 +102,93 @@ export async function POST(request: Request) {
   }
 }
 
-// GET - Fetch projects (with optional filtering for user's own projects)
+// GET - Fetch projects (with optional filtering, pagination, and search)
 export async function GET(request: Request) {
   try {
     const supabase = await createClient()
     const { searchParams } = new URL(request.url)
 
+    // Query parameters
     const myProjects = searchParams.get('my') === 'true'
     const allProjects = searchParams.get('all') === 'true' // Admin only: view all projects
     const status = searchParams.get('status')
-    const limit = searchParams.get('limit')
     const category = searchParams.get('category')
+    const search = searchParams.get('search') || searchParams.get('q') // Search query
+    const sortBy = searchParams.get('sort') || 'popular' // popular, newest, price_low, price_high
+
+    // Pagination parameters
+    const page = parseInt(searchParams.get('page') || '1', 10)
+    const limit = parseInt(searchParams.get('limit') || '12', 10)
+    const offset = (page - 1) * limit
 
     // Get current user for permission checks
     const { data: { user } } = await supabase.auth.getUser()
     const userIsAdmin = user ? await isAdmin(supabase, user.id, user.email ?? undefined) : false
 
-    let query = supabase.from('projects').select('*')
+    // Build base query with count
+    let query = supabase.from('projects').select('*', { count: 'exact' })
 
+    // Apply access control filters
     if (allProjects && userIsAdmin) {
       // Admin can view all projects (no status filter by default)
-      // Status can still be filtered via query param
     } else if (myProjects) {
-      // Get current user's projects
       if (!user) {
         return NextResponse.json(
           { error: "Unauthorized", message: "Please sign in to view your projects" },
           { status: 401 }
         )
       }
-
       query = query.eq('user_id', user.id)
     } else {
       // Public listing - only show approved projects
       query = query.eq('status', 'approved')
     }
 
+    // Apply status filter
     if (status) {
       query = query.eq('status', status)
     }
 
+    // Apply category filter
     if (category && category !== 'All') {
       query = query.eq('category', category)
     }
 
-    // Order by download count (popularity) then by created date
-    query = query.order('download_count', { ascending: false }).order('created_at', { ascending: false })
-
-    // Apply limit if specified
-    if (limit) {
-      const limitNum = parseInt(limit, 10)
-      if (!isNaN(limitNum) && limitNum > 0) {
-        query = query.limit(limitNum)
-      }
+    // Apply search filter (searches title, description, author_name, category)
+    if (search && search.trim()) {
+      const searchTerm = search.trim()
+      query = query.or(
+        `title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,author_name.ilike.%${searchTerm}%,category.ilike.%${searchTerm}%`
+      )
     }
 
-    const { data: projects, error } = await query
+    // Apply sorting
+    switch (sortBy) {
+      case 'newest':
+        query = query.order('created_at', { ascending: false })
+        break
+      case 'oldest':
+        query = query.order('created_at', { ascending: true })
+        break
+      case 'price_low':
+        query = query.order('price', { ascending: true })
+        break
+      case 'price_high':
+        query = query.order('price', { ascending: false })
+        break
+      case 'rating':
+        query = query.order('rating', { ascending: false }).order('review_count', { ascending: false })
+        break
+      case 'popular':
+      default:
+        query = query.order('download_count', { ascending: false }).order('created_at', { ascending: false })
+        break
+    }
+
+    // Apply pagination
+    query = query.range(offset, offset + limit - 1)
+
+    const { data: projects, error, count } = await query
 
     if (error) {
       console.error('Projects fetch error:', error)
@@ -167,7 +198,24 @@ export async function GET(request: Request) {
       )
     }
 
-    return NextResponse.json({ projects, isAdmin: userIsAdmin })
+    // Calculate pagination metadata
+    const totalCount = count || 0
+    const totalPages = Math.ceil(totalCount / limit)
+    const hasNextPage = page < totalPages
+    const hasPrevPage = page > 1
+
+    return NextResponse.json({
+      projects,
+      pagination: {
+        page,
+        limit,
+        totalCount,
+        totalPages,
+        hasNextPage,
+        hasPrevPage,
+      },
+      isAdmin: userIsAdmin,
+    })
   } catch (error) {
     console.error('GET /api/projects error:', error)
     return NextResponse.json(

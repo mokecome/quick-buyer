@@ -1,13 +1,46 @@
+"use client"
+
+import { useEffect, useState, useCallback } from "react"
+import { useSearchParams, useRouter } from "next/navigation"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { ProjectCard } from "@/components/project-card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Search } from "lucide-react"
-import { createClient } from "@/lib/supabase/server"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Search, Loader2, ChevronLeft, ChevronRight } from "lucide-react"
+import { useTranslation } from "react-i18next"
+
+interface Project {
+  id: string
+  slug: string
+  title: string
+  description: string
+  price: number
+  category: string
+  rating: number
+  review_count: number
+  author_name: string
+  thumbnail_url?: string
+}
+
+interface Pagination {
+  page: number
+  limit: number
+  totalCount: number
+  totalPages: number
+  hasNextPage: boolean
+  hasPrevPage: boolean
+}
 
 // Fallback data in case database is not available
-const fallbackProjects = [
+const fallbackProjects: Project[] = [
   {
     id: "1",
     slug: "agent-ppt-nano-banana",
@@ -100,30 +133,110 @@ const fallbackProjects = [
 
 const categories = ["All", "AI Agent", "RAG", "LLM", "Video AI", "Image AI", "Voice AI"]
 
-async function getProjects() {
-  try {
-    const supabase = await createClient()
+const sortOptions = [
+  { value: "popular", label: "Most Popular" },
+  { value: "newest", label: "Newest" },
+  { value: "price_low", label: "Price: Low to High" },
+  { value: "price_high", label: "Price: High to Low" },
+  { value: "rating", label: "Highest Rated" },
+]
 
-    const { data: projects, error } = await supabase
-      .from('projects')
-      .select('id, slug, title, description, price, category, rating, review_count, author_name, thumbnail_url')
-      .eq('status', 'approved')
-      .order('download_count', { ascending: false })
+export default function ProjectsPage() {
+  const { t } = useTranslation()
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
-    if (error) {
-      console.error('Error fetching projects:', error)
-      return fallbackProjects
+  // State
+  const [projects, setProjects] = useState<Project[]>([])
+  const [pagination, setPagination] = useState<Pagination | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [searchInput, setSearchInput] = useState("")
+
+  // Get current filter values from URL
+  const currentPage = parseInt(searchParams.get("page") || "1", 10)
+  const currentCategory = searchParams.get("category") || "All"
+  const currentSort = searchParams.get("sort") || "popular"
+  const currentSearch = searchParams.get("q") || ""
+
+  // Fetch projects
+  const fetchProjects = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      const params = new URLSearchParams()
+      params.set("page", currentPage.toString())
+      params.set("limit", "12")
+      if (currentCategory !== "All") params.set("category", currentCategory)
+      if (currentSort) params.set("sort", currentSort)
+      if (currentSearch) params.set("search", currentSearch)
+
+      const response = await fetch(`/api/projects?${params.toString()}`)
+      const data = await response.json()
+
+      if (data.projects && data.projects.length > 0) {
+        setProjects(data.projects)
+        setPagination(data.pagination)
+      } else {
+        setProjects(fallbackProjects)
+        setPagination(null)
+      }
+    } catch (error) {
+      console.error("Error fetching projects:", error)
+      setProjects(fallbackProjects)
+      setPagination(null)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [currentPage, currentCategory, currentSort, currentSearch])
+
+  useEffect(() => {
+    fetchProjects()
+  }, [fetchProjects])
+
+  // Initialize search input from URL
+  useEffect(() => {
+    setSearchInput(currentSearch)
+  }, [currentSearch])
+
+  // Update URL with new params
+  const updateParams = (updates: Record<string, string | null>) => {
+    const params = new URLSearchParams(searchParams.toString())
+
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === null || value === "" || value === "All") {
+        params.delete(key)
+      } else {
+        params.set(key, value)
+      }
+    })
+
+    // Reset to page 1 when filters change (except when changing page)
+    if (!("page" in updates)) {
+      params.delete("page")
     }
 
-    return projects && projects.length > 0 ? projects : fallbackProjects
-  } catch (error) {
-    console.error('Error in getProjects:', error)
-    return fallbackProjects
+    router.push(`/projects?${params.toString()}`)
   }
-}
 
-export default async function ProjectsPage() {
-  const projects = await getProjects()
+  // Handle search submit
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    updateParams({ q: searchInput })
+  }
+
+  // Handle category change
+  const handleCategoryChange = (category: string) => {
+    updateParams({ category })
+  }
+
+  // Handle sort change
+  const handleSortChange = (sort: string) => {
+    updateParams({ sort })
+  }
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    updateParams({ page: page.toString() })
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -134,60 +247,173 @@ export default async function ProjectsPage() {
             {/* Page Header */}
             <div className="text-center space-y-4 mb-12">
               <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-                Browse Projects
+                {t("projects.title", "Browse Projects")}
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Discover production-ready code projects from talented developers worldwide
+                {t("projects.subtitle", "Discover production-ready code projects from talented developers worldwide")}
               </p>
             </div>
 
             {/* Search and Filters */}
-            <div className="flex flex-col md:flex-row gap-4 mb-8">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search projects..."
-                  className="pl-10"
-                />
-              </div>
-              <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0">
-                {categories.map((category) => (
-                  <Button
-                    key={category}
-                    variant={category === "All" ? "default" : "outline"}
-                    size="sm"
-                    className="whitespace-nowrap"
-                  >
-                    {category}
-                  </Button>
-                ))}
+            <div className="flex flex-col gap-4 mb-8">
+              {/* Search Bar */}
+              <form onSubmit={handleSearch} className="flex gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder={t("projects.searchPlaceholder", "Search projects...")}
+                    className="pl-10"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                  />
+                </div>
+                <Button type="submit">
+                  {t("projects.search", "Search")}
+                </Button>
+              </form>
+
+              {/* Filters Row */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-between">
+                {/* Category Filters */}
+                <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">
+                  {categories.map((category) => (
+                    <Button
+                      key={category}
+                      variant={currentCategory === category ? "default" : "outline"}
+                      size="sm"
+                      className="whitespace-nowrap"
+                      onClick={() => handleCategoryChange(category)}
+                    >
+                      {category}
+                    </Button>
+                  ))}
+                </div>
+
+                {/* Sort Dropdown */}
+                <Select value={currentSort} onValueChange={handleSortChange}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder={t("projects.sortBy", "Sort by")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sortOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {t(`projects.sort.${option.value}`, option.label)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
-            {/* Projects Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {projects.map((project) => (
-                <ProjectCard
-                  key={project.id}
-                  id={project.id}
-                  slug={project.slug}
-                  title={project.title}
-                  description={project.description}
-                  price={project.price}
-                  category={project.category}
-                  rating={project.rating || 0}
-                  reviewCount={project.review_count || 0}
-                  author={{ name: project.author_name }}
-                />
-              ))}
-            </div>
+            {/* Results Count */}
+            {pagination && (
+              <div className="text-sm text-muted-foreground mb-6">
+                {t("projects.showing", "Showing")} {projects.length} {t("projects.of", "of")} {pagination.totalCount} {t("projects.results", "results")}
+                {currentSearch && (
+                  <span> {t("projects.for", "for")} &quot;{currentSearch}&quot;</span>
+                )}
+              </div>
+            )}
 
-            {/* Load More */}
-            <div className="flex justify-center mt-12">
-              <Button variant="outline" size="lg">
-                Load More Projects
-              </Button>
-            </div>
+            {/* Loading State */}
+            {isLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              </div>
+            ) : projects.length === 0 ? (
+              /* Empty State */
+              <div className="text-center py-20">
+                <p className="text-lg text-muted-foreground">
+                  {t("projects.noResults", "No projects found matching your criteria.")}
+                </p>
+                <Button
+                  variant="outline"
+                  className="mt-4"
+                  onClick={() => {
+                    setSearchInput("")
+                    router.push("/projects")
+                  }}
+                >
+                  {t("projects.clearFilters", "Clear Filters")}
+                </Button>
+              </div>
+            ) : (
+              <>
+                {/* Projects Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {projects.map((project) => (
+                    <ProjectCard
+                      key={project.id}
+                      id={project.id}
+                      slug={project.slug}
+                      title={project.title}
+                      description={project.description}
+                      price={project.price}
+                      category={project.category}
+                      rating={project.rating || 0}
+                      reviewCount={project.review_count || 0}
+                      author={{ name: project.author_name }}
+                    />
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                {pagination && pagination.totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-2 mt-12">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      disabled={!pagination.hasPrevPage}
+                      onClick={() => handlePageChange(currentPage - 1)}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+
+                    {/* Page Numbers */}
+                    <div className="flex gap-1">
+                      {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
+                        .filter((page) => {
+                          // Show first, last, current, and adjacent pages
+                          return (
+                            page === 1 ||
+                            page === pagination.totalPages ||
+                            Math.abs(page - currentPage) <= 1
+                          )
+                        })
+                        .map((page, index, array) => {
+                          // Add ellipsis
+                          const prevPage = array[index - 1]
+                          const showEllipsis = prevPage && page - prevPage > 1
+
+                          return (
+                            <div key={page} className="flex items-center gap-1">
+                              {showEllipsis && (
+                                <span className="px-2 text-muted-foreground">...</span>
+                              )}
+                              <Button
+                                variant={page === currentPage ? "default" : "outline"}
+                                size="icon"
+                                onClick={() => handlePageChange(page)}
+                              >
+                                {page}
+                              </Button>
+                            </div>
+                          )
+                        })}
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      disabled={!pagination.hasNextPage}
+                      onClick={() => handlePageChange(currentPage + 1)}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </section>
       </main>
