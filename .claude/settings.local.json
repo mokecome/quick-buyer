@@ -29,7 +29,8 @@
       "Bash(cat:*)",
       "Bash(netstat:*)",
       "Bash(findstr:*)",
-      "Bash(taskkill //F //PID 38020)"
+      "Bash(taskkill //F //PID 38020)",
+      "Bash(dir /s /b *.log)"
     ],
     "deny": [],
     "ask": []

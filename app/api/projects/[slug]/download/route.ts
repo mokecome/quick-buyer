@@ -46,7 +46,7 @@ export async function GET(
     if (!isSubscriber) {
       const { data: purchase } = await supabase
         .from('purchases')
-        .select('id')
+        .select('id, download_count')
         .eq('project_id', project.id)
         .eq('user_id', user.id)
         .eq('status', 'completed')
@@ -63,11 +63,13 @@ export async function GET(
       await supabase
         .from('purchases')
         .update({
-          download_count: supabase.rpc('increment_download_count'),
+          download_count: (purchase.download_count || 0) + 1,
           last_downloaded_at: new Date().toISOString(),
         })
-        .eq('project_id', project.id)
-        .eq('user_id', user.id)
+        .eq('id', purchase.id)
+
+      // Also increment project download count
+      await supabase.rpc('increment_project_download_count', { project_slug: slug })
     }
 
     // Return download URLs
