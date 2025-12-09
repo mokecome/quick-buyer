@@ -10,7 +10,7 @@ const projects = [
   {
     id: "1",
     slug: "agent-ptt-nano-banana",
-    title: "Agent-PTT (Nano Banana)",
+    title: "Agent-PPT (Nano Banana)",
     description: "智能 PTT 爬蟲與分析 Agent，自動追蹤熱門話題、情緒分析、關鍵字監控。支援即時通知與數據視覺化儀表板。",
     price: 199,
     category: "AI Agent",
