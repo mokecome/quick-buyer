@@ -34,14 +34,16 @@ import { createClient } from "@/lib/supabase/client"
 import type { User } from "@supabase/supabase-js"
 
 const categories = [
+  "AI Agent",
   "LLM",
-  "Image AI",
-  "Voice AI",
   "RAG",
   "Chatbot",
-  "Automation",
+  "Image AI",
+  "Video AI",
+  "Voice AI",
   "NLP",
   "Computer Vision",
+  "Automation",
   "Other",
 ]
 
