@@ -29,7 +29,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
-import { Upload, Link as LinkIcon, FileText, DollarSign, Loader2, ArrowLeft, Trash2, AlertTriangle, ImageIcon, Camera } from "lucide-react"
+import { Upload, Link as LinkIcon, FileText, DollarSign, Loader2, ArrowLeft, Trash2, AlertTriangle, ImageIcon } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import type { User } from "@supabase/supabase-js"
 
@@ -69,7 +69,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
-  const [isGeneratingScreenshot, setIsGeneratingScreenshot] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     title: "",
@@ -193,32 +193,48 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
-  const generateScreenshot = async () => {
-    if (!formData.demoUrl) {
-      alert(isZh ? '請先輸入 Demo URL' : 'Please enter a Demo URL first')
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    if (!allowedTypes.includes(file.type)) {
+      alert(isZh ? '檔案類型無效。允許：JPEG、PNG、WebP、GIF' : 'Invalid file type. Allowed: JPEG, PNG, WebP, GIF')
       return
     }
 
-    setIsGeneratingScreenshot(true)
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      alert(isZh ? '檔案太大。最大 5MB' : 'File too large. Maximum size is 5MB')
+      return
+    }
+
+    setIsUploading(true)
     try {
-      const response = await fetch('/api/screenshot', {
+      const formDataUpload = new FormData()
+      formDataUpload.append('file', file)
+
+      const response = await fetch('/api/upload', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: formData.demoUrl }),
+        body: formDataUpload,
       })
 
       const data = await response.json()
 
-      if (data.success && data.screenshotUrl) {
-        handleChange('thumbnailUrl', data.screenshotUrl)
+      if (data.success && data.url) {
+        handleChange('thumbnailUrl', data.url)
       } else {
-        alert(data.message || (isZh ? '截圖生成失敗' : 'Failed to generate screenshot'))
+        alert(data.message || (isZh ? '上傳失敗' : 'Failed to upload image'))
       }
     } catch (error) {
-      console.error('Screenshot error:', error)
-      alert(isZh ? '截圖生成失敗' : 'Failed to generate screenshot')
+      console.error('Upload error:', error)
+      alert(isZh ? '上傳失敗' : 'Failed to upload image')
     } finally {
-      setIsGeneratingScreenshot(false)
+      setIsUploading(false)
+      // Reset input so same file can be selected again
+      e.target.value = ''
     }
   }
 
@@ -407,7 +423,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                 <div className="space-y-2">
                   <Label htmlFor="thumbnailUrl">
                     <ImageIcon className="inline h-4 w-4 mr-2" />
-                    {t('sell.form.thumbnailUrl', 'Thumbnail Image URL')}
+                    {isZh ? '縮略圖' : 'Thumbnail Image'}
                   </Label>
                   <div className="flex gap-2">
                     <Input
@@ -418,25 +434,31 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                       placeholder="https://example.com/image.png"
                       className="flex-1"
                     />
+                    <input
+                      type="file"
+                      id="thumbnailFile"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={generateScreenshot}
-                      disabled={isGeneratingScreenshot || !formData.demoUrl}
-                      title={!formData.demoUrl ? (isZh ? '請先輸入 Demo URL' : 'Please enter a Demo URL first') : ''}
+                      onClick={() => document.getElementById('thumbnailFile')?.click()}
+                      disabled={isUploading}
                     >
-                      {isGeneratingScreenshot ? (
+                      {isUploading ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
                         <>
-                          <Camera className="h-4 w-4 mr-1" />
-                          {isZh ? '自動' : 'Auto'}
+                          <Upload className="h-4 w-4 mr-1" />
+                          {isZh ? '上傳' : 'Upload'}
                         </>
                       )}
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {isZh ? '手動輸入 URL 或點擊「自動」從 Demo URL 擷取截圖' : 'Enter URL manually or click "Auto" to capture from Demo URL'}
+                    {isZh ? '上傳圖片或輸入 URL。留空則從 Demo URL 自動產生。' : 'Upload an image or enter URL. Auto-generated from Demo URL if left empty.'}
                   </p>
                   {formData.thumbnailUrl && (
                     <div className="mt-2 relative aspect-video w-full max-w-sm bg-muted rounded-lg overflow-hidden">

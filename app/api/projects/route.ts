@@ -12,6 +12,26 @@ function generateSlug(title: string): string {
     .trim()
 }
 
+// Generate screenshot from URL using Microlink API
+async function generateScreenshot(url: string): Promise<string | null> {
+  try {
+    const screenshotUrl = `https://api.microlink.io/?url=${encodeURIComponent(url)}&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1280&viewport.height=720&viewport.deviceScaleFactor=1`
+
+    const response = await fetch(screenshotUrl)
+    const data = await response.json()
+
+    if (data.status === 'success' && data.data?.screenshot?.url) {
+      return data.data.screenshot.url
+    }
+
+    // Return fallback URL that generates screenshot on access
+    return `https://api.microlink.io/?url=${encodeURIComponent(url)}&screenshot=true&meta=false&embed=screenshot.url`
+  } catch (error) {
+    console.error('Screenshot generation error:', error)
+    return null
+  }
+}
+
 // POST - Create a new project
 export async function POST(request: Request) {
   try {
@@ -57,6 +77,12 @@ export async function POST(request: Request) {
       counter++
     }
 
+    // Auto-generate thumbnail from demo URL if not provided
+    let thumbnailUrl = body.thumbnailUrl || null
+    if (!thumbnailUrl && body.demoUrl) {
+      thumbnailUrl = await generateScreenshot(body.demoUrl)
+    }
+
     // Insert the project
     const { data: project, error: insertError } = await supabase
       .from('projects')
@@ -67,7 +93,7 @@ export async function POST(request: Request) {
         long_description: body.longDescription || null,
         price: parseFloat(price) || 0,
         category,
-        thumbnail_url: body.thumbnailUrl || null,
+        thumbnail_url: thumbnailUrl,
         download_url: downloadUrl,
         docs_url: body.docsUrl || null,
         demo_url: body.demoUrl || null,

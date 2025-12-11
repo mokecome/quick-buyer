@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Upload, Link as LinkIcon, FileText, DollarSign, Loader2, LogIn, ImageIcon, Camera } from "lucide-react"
+import { Upload, Link as LinkIcon, FileText, DollarSign, Loader2, LogIn, ImageIcon } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import type { User } from "@supabase/supabase-js"
 
@@ -39,7 +39,7 @@ export default function SellPage() {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isGeneratingScreenshot, setIsGeneratingScreenshot] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -100,32 +100,48 @@ export default function SellPage() {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
-  const generateScreenshot = async () => {
-    if (!formData.demoUrl) {
-      alert(t('sell.form.demoUrlRequired', 'Please enter a Demo URL first'))
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    if (!allowedTypes.includes(file.type)) {
+      alert(t('sell.form.invalidFileType', 'Invalid file type. Allowed: JPEG, PNG, WebP, GIF'))
       return
     }
 
-    setIsGeneratingScreenshot(true)
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      alert(t('sell.form.fileTooLarge', 'File too large. Maximum size is 5MB'))
+      return
+    }
+
+    setIsUploading(true)
     try {
-      const response = await fetch('/api/screenshot', {
+      const formDataUpload = new FormData()
+      formDataUpload.append('file', file)
+
+      const response = await fetch('/api/upload', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: formData.demoUrl }),
+        body: formDataUpload,
       })
 
       const data = await response.json()
 
-      if (data.success && data.screenshotUrl) {
-        handleChange('thumbnailUrl', data.screenshotUrl)
+      if (data.success && data.url) {
+        handleChange('thumbnailUrl', data.url)
       } else {
-        alert(data.message || t('sell.form.screenshotError', 'Failed to generate screenshot'))
+        alert(data.message || t('sell.form.uploadError', 'Failed to upload image'))
       }
     } catch (error) {
-      console.error('Screenshot error:', error)
-      alert(t('sell.form.screenshotError', 'Failed to generate screenshot'))
+      console.error('Upload error:', error)
+      alert(t('sell.form.uploadError', 'Failed to upload image'))
     } finally {
-      setIsGeneratingScreenshot(false)
+      setIsUploading(false)
+      // Reset input so same file can be selected again
+      e.target.value = ''
     }
   }
 
@@ -296,7 +312,7 @@ export default function SellPage() {
                 <div className="space-y-2">
                   <Label htmlFor="thumbnailUrl">
                     <ImageIcon className="inline h-4 w-4 mr-2" />
-                    {t('sell.form.thumbnailUrl', 'Thumbnail Image URL')}
+                    {t('sell.form.thumbnail', 'Thumbnail Image')}
                   </Label>
                   <div className="flex gap-2">
                     <Input
@@ -307,25 +323,31 @@ export default function SellPage() {
                       placeholder="https://example.com/image.png"
                       className="flex-1"
                     />
+                    <input
+                      type="file"
+                      id="thumbnailFile"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={generateScreenshot}
-                      disabled={isGeneratingScreenshot || !formData.demoUrl}
-                      title={!formData.demoUrl ? t('sell.form.demoUrlRequired', 'Please enter a Demo URL first') : ''}
+                      onClick={() => document.getElementById('thumbnailFile')?.click()}
+                      disabled={isUploading}
                     >
-                      {isGeneratingScreenshot ? (
+                      {isUploading ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
                         <>
-                          <Camera className="h-4 w-4 mr-1" />
-                          {t('sell.form.autoScreenshot', 'Auto')}
+                          <Upload className="h-4 w-4 mr-1" />
+                          {t('sell.form.upload', 'Upload')}
                         </>
                       )}
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {t('sell.form.thumbnailUrlHint', 'Enter URL manually or click "Auto" to capture from Demo URL')}
+                    {t('sell.form.thumbnailHint', 'Upload an image or enter URL. Auto-generated from Demo URL if left empty.')}
                   </p>
                   {formData.thumbnailUrl && (
                     <div className="mt-2 relative aspect-video w-full max-w-sm bg-muted rounded-lg overflow-hidden">
