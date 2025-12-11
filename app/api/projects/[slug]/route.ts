@@ -162,6 +162,7 @@ export async function PUT(
       long_description: body.longDescription || null,
       price: parseFloat(price) || 0,
       category,
+      thumbnail_url: body.thumbnailUrl || null,
       download_url: downloadUrl,
       docs_url: body.docsUrl || null,
       demo_url: body.demoUrl || null,

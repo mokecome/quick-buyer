@@ -252,6 +252,7 @@ function ProjectsContent() {
                       title={project.title}
                       description={project.description}
                       price={project.price}
+                      thumbnail={project.thumbnail_url}
                       category={project.category}
                       rating={project.rating || 0}
                       reviewCount={project.review_count || 0}

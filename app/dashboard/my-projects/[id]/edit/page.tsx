@@ -29,7 +29,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
-import { Upload, Link as LinkIcon, FileText, DollarSign, Loader2, ArrowLeft, Trash2, AlertTriangle } from "lucide-react"
+import { Upload, Link as LinkIcon, FileText, DollarSign, Loader2, ArrowLeft, Trash2, AlertTriangle, ImageIcon } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import type { User } from "@supabase/supabase-js"
 
@@ -52,6 +52,7 @@ interface Project {
   long_description: string | null
   price: number
   category: string
+  thumbnail_url: string | null
   download_url: string
   docs_url: string | null
   demo_url: string | null
@@ -75,6 +76,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
     longDescription: "",
     price: "",
     category: "",
+    thumbnailUrl: "",
     downloadUrl: "",
     docsUrl: "",
     demoUrl: "",
@@ -120,6 +122,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
           longDescription: proj.long_description || "",
           price: proj.price?.toString() || "",
           category: proj.category || "",
+          thumbnailUrl: proj.thumbnail_url || "",
           downloadUrl: proj.download_url || "",
           docsUrl: proj.docs_url || "",
           demoUrl: proj.demo_url || "",
@@ -371,6 +374,35 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="thumbnailUrl">
+                    <ImageIcon className="inline h-4 w-4 mr-2" />
+                    {t('sell.form.thumbnailUrl', 'Thumbnail Image URL')}
+                  </Label>
+                  <Input
+                    id="thumbnailUrl"
+                    type="url"
+                    value={formData.thumbnailUrl}
+                    onChange={(e) => handleChange("thumbnailUrl", e.target.value)}
+                    placeholder="https://example.com/image.png"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {t('sell.form.thumbnailUrlHint', 'Preview image for your project (recommended: 16:9 ratio, e.g., 1280x720)')}
+                  </p>
+                  {formData.thumbnailUrl && (
+                    <div className="mt-2 relative aspect-video w-full max-w-sm bg-muted rounded-lg overflow-hidden">
+                      <img
+                        src={formData.thumbnailUrl}
+                        alt="Thumbnail preview"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none'
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="downloadUrl">
                     <Upload className="inline h-4 w-4 mr-2" />
