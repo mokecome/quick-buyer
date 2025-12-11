@@ -40,7 +40,6 @@ const categories = [
   "Chatbot",
   "Image AI",
   "Video AI",
-  "Voice AI",
   "Automation",
   "Other",
 ]
