@@ -159,6 +159,11 @@ async function getProject(slug: string): Promise<Project | null> {
       return fallbackProjects[slug] || null
     }
 
+    // Generate thumbnail URL if missing but has demo URL
+    if (!project.thumbnail_url && project.demo_url) {
+      project.thumbnail_url = `https://api.microlink.io/?url=${encodeURIComponent(project.demo_url)}&screenshot=true&meta=false&embed=screenshot.url`
+    }
+
     return project
   } catch (error) {
     console.error('Error fetching project:', error)

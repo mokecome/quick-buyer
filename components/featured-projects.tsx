@@ -17,6 +17,7 @@ interface Project {
   rating: number
   review_count: number
   author_name: string
+  thumbnail_url?: string
 }
 
 // Fallback data for featured AI projects
@@ -126,6 +127,7 @@ export function FeaturedProjects() {
                 title={project.title}
                 description={project.description}
                 price={project.price}
+                thumbnail={project.thumbnail_url}
                 category={project.category}
                 rating={project.rating || 0}
                 reviewCount={project.review_count || 0}
