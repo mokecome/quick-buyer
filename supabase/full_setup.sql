@@ -101,6 +101,16 @@ CREATE TABLE IF NOT EXISTS users (
 -- Enable RLS on users table
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 
+-- Helper function to check if user is admin (SECURITY DEFINER bypasses RLS)
+CREATE OR REPLACE FUNCTION is_admin()
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin'
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
+
 -- RLS Policies for users
 DROP POLICY IF EXISTS "Users can view own profile" ON users;
 CREATE POLICY "Users can view own profile"
@@ -112,9 +122,7 @@ DROP POLICY IF EXISTS "Admins can view all users" ON users;
 CREATE POLICY "Admins can view all users"
   ON users FOR SELECT
   TO authenticated
-  USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
-  );
+  USING (is_admin());
 
 -- Auto-create user record on signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -250,48 +258,36 @@ DROP POLICY IF EXISTS "Admins can view all projects" ON projects;
 CREATE POLICY "Admins can view all projects"
   ON projects FOR SELECT
   TO authenticated
-  USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
-  );
+  USING (is_admin());
 
 -- Admin can update all projects
 DROP POLICY IF EXISTS "Admins can update all projects" ON projects;
 CREATE POLICY "Admins can update all projects"
   ON projects FOR UPDATE
   TO authenticated
-  USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
-  )
-  WITH CHECK (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
-  );
+  USING (is_admin())
+  WITH CHECK (is_admin());
 
 -- Admin can delete all projects
 DROP POLICY IF EXISTS "Admins can delete all projects" ON projects;
 CREATE POLICY "Admins can delete all projects"
   ON projects FOR DELETE
   TO authenticated
-  USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
-  );
+  USING (is_admin());
 
 -- Admin can view all purchases
 DROP POLICY IF EXISTS "Admins can view all purchases" ON purchases;
 CREATE POLICY "Admins can view all purchases"
   ON purchases FOR SELECT
   TO authenticated
-  USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
-  );
+  USING (is_admin());
 
 -- Admin can view all subscriptions
 DROP POLICY IF EXISTS "Admins can view all subscriptions" ON subscriptions;
 CREATE POLICY "Admins can view all subscriptions"
   ON subscriptions FOR SELECT
   TO authenticated
-  USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
-  );
+  USING (is_admin());
 
 -- ============================================
 -- PART 6: Helper Functions
