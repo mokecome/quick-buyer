@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { Suspense, useEffect, useState, useCallback } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
@@ -141,7 +141,7 @@ const sortOptions = [
   { value: "rating", label: "Highest Rated" },
 ]
 
-export default function ProjectsPage() {
+function ProjectsContent() {
   const { t } = useTranslation()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -419,5 +419,31 @@ export default function ProjectsPage() {
       </main>
       <Footer />
     </div>
+  )
+}
+
+function ProjectsLoading() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1">
+        <section className="py-12 md:py-20">
+          <div className="container px-4 md:px-6">
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </div>
+  )
+}
+
+export default function ProjectsPage() {
+  return (
+    <Suspense fallback={<ProjectsLoading />}>
+      <ProjectsContent />
+    </Suspense>
   )
 }
