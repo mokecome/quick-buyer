@@ -7,6 +7,22 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 import {
   Package,
@@ -18,6 +34,7 @@ import {
   Download,
   Edit,
   Loader2,
+  ChevronDown,
 } from "lucide-react"
 
 interface Project {
@@ -31,7 +48,10 @@ interface Project {
   download_count: number
   created_at: string
   demo_url?: string
+  author_name?: string
 }
+
+type ProjectStatus = 'pending' | 'approved' | 'rejected'
 
 const statusConfig = {
   pending: {
@@ -59,6 +79,13 @@ export default function MyProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
+
+  // Status change dialog state
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+  const [newStatus, setNewStatus] = useState<ProjectStatus | null>(null)
+  const [isUpdating, setIsUpdating] = useState(false)
 
   useEffect(() => {
     fetchProjects()
@@ -66,14 +93,27 @@ export default function MyProjectsPage() {
 
   const fetchProjects = async () => {
     try {
-      const response = await fetch('/api/projects?my=true')
+      // Admin sees all projects, regular users see their own
+      const response = await fetch('/api/projects?all=true')
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to fetch projects')
+        // If not admin, fallback to my projects
+        if (response.status === 401) {
+          const myResponse = await fetch('/api/projects?my=true')
+          const myData = await myResponse.json()
+          if (!myResponse.ok) {
+            throw new Error(myData.message || 'Failed to fetch projects')
+          }
+          setProjects(myData.projects || [])
+          setIsAdmin(false)
+        } else {
+          throw new Error(data.message || 'Failed to fetch projects')
+        }
+      } else {
+        setProjects(data.projects || [])
+        setIsAdmin(data.isAdmin || false)
       }
-
-      setProjects(data.projects || [])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
@@ -81,7 +121,53 @@ export default function MyProjectsPage() {
     }
   }
 
+  const handleStatusClick = (project: Project, status: ProjectStatus) => {
+    setSelectedProject(project)
+    setNewStatus(status)
+    setDialogOpen(true)
+  }
+
+  const confirmStatusChange = async () => {
+    if (!selectedProject || !newStatus) return
+
+    setIsUpdating(true)
+    try {
+      const response = await fetch(`/api/projects/${selectedProject.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: newStatus,
+        }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.message || 'Failed to update status')
+      }
+
+      // Update local state
+      setProjects(projects.map(p =>
+        p.id === selectedProject.id ? { ...p, status: newStatus } : p
+      ))
+    } catch (err) {
+      console.error('Status update error:', err)
+      alert(err instanceof Error ? err.message : 'Failed to update status')
+    } finally {
+      setIsUpdating(false)
+      setDialogOpen(false)
+      setSelectedProject(null)
+      setNewStatus(null)
+    }
+  }
+
   const isZh = i18n.language?.startsWith('zh')
+
+  const getStatusLabel = (status: ProjectStatus) => {
+    const config = statusConfig[status]
+    return isZh ? config.label : config.labelEn
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -93,10 +179,16 @@ export default function MyProjectsPage() {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
                 <h1 className="text-3xl font-bold">
-                  {t('myProjects.title', '我的項目')}
+                  {isAdmin
+                    ? (isZh ? '項目管理' : 'Project Management')
+                    : t('myProjects.title', '我的項目')
+                  }
                 </h1>
                 <p className="text-muted-foreground mt-1">
-                  {t('myProjects.subtitle', '管理您上架的項目')}
+                  {isAdmin
+                    ? (isZh ? '審核和管理所有項目' : 'Review and manage all projects')
+                    : t('myProjects.subtitle', '管理您上架的項目')
+                  }
                 </p>
               </div>
               <Button asChild>
@@ -163,10 +255,55 @@ export default function MyProjectsPage() {
                               <CardTitle className="text-lg">
                                 {project.title}
                               </CardTitle>
-                              <Badge variant={status.variant} className="shrink-0">
-                                <StatusIcon className="h-3 w-3 mr-1" />
-                                {isZh ? status.label : status.labelEn}
-                              </Badge>
+                              {/* Admin: Clickable status dropdown */}
+                              {isAdmin ? (
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-auto p-0 hover:bg-transparent"
+                                    >
+                                      <Badge
+                                        variant={status.variant}
+                                        className="shrink-0 cursor-pointer hover:opacity-80"
+                                      >
+                                        <StatusIcon className="h-3 w-3 mr-1" />
+                                        {isZh ? status.label : status.labelEn}
+                                        <ChevronDown className="h-3 w-3 ml-1" />
+                                      </Badge>
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="start">
+                                    <DropdownMenuItem
+                                      onClick={() => handleStatusClick(project, 'approved')}
+                                      disabled={project.status === 'approved'}
+                                    >
+                                      <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
+                                      {isZh ? '審核通過' : 'Approve'}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      onClick={() => handleStatusClick(project, 'pending')}
+                                      disabled={project.status === 'pending'}
+                                    >
+                                      <Clock className="h-4 w-4 mr-2 text-yellow-600" />
+                                      {isZh ? '設為審核中' : 'Set Pending'}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      onClick={() => handleStatusClick(project, 'rejected')}
+                                      disabled={project.status === 'rejected'}
+                                    >
+                                      <XCircle className="h-4 w-4 mr-2 text-red-600" />
+                                      {isZh ? '拒絕' : 'Reject'}
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              ) : (
+                                <Badge variant={status.variant} className="shrink-0">
+                                  <StatusIcon className="h-3 w-3 mr-1" />
+                                  {isZh ? status.label : status.labelEn}
+                                </Badge>
+                              )}
                             </div>
                             <CardDescription className="line-clamp-2">
                               {project.description}
@@ -188,6 +325,11 @@ export default function MyProjectsPage() {
                             <span className="flex items-center gap-1">
                               <Badge variant="outline">{project.category}</Badge>
                             </span>
+                            {isAdmin && project.author_name && (
+                              <span className="text-xs">
+                                by {project.author_name}
+                              </span>
+                            )}
                             {project.status === 'approved' && (
                               <span className="flex items-center gap-1">
                                 <Download className="h-4 w-4" />
@@ -232,6 +374,38 @@ export default function MyProjectsPage() {
         </div>
       </main>
       <Footer />
+
+      {/* Status Change Confirmation Dialog */}
+      <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {isZh ? '確認更改狀態' : 'Confirm Status Change'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {isZh
+                ? `確定要將「${selectedProject?.title}」的狀態從「${selectedProject ? getStatusLabel(selectedProject.status) : ''}」更改為「${newStatus ? getStatusLabel(newStatus) : ''}」嗎？`
+                : `Are you sure you want to change "${selectedProject?.title}" status from "${selectedProject ? getStatusLabel(selectedProject.status) : ''}" to "${newStatus ? getStatusLabel(newStatus) : ''}"?`
+              }
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isUpdating}>
+              {isZh ? '取消' : 'Cancel'}
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmStatusChange} disabled={isUpdating}>
+              {isUpdating ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  {isZh ? '處理中...' : 'Processing...'}
+                </>
+              ) : (
+                isZh ? '確認' : 'Confirm'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

@@ -106,7 +106,42 @@ export async function PUT(
 
     const body = await request.json()
 
-    // Validate required fields
+    // Admin can update status only without other fields
+    if (userIsAdmin && body.status && !body.title) {
+      const validStatuses = ['pending', 'approved', 'rejected']
+      if (!validStatuses.includes(body.status)) {
+        return NextResponse.json(
+          { error: "Bad Request", message: "Invalid status value" },
+          { status: 400 }
+        )
+      }
+
+      const { data: project, error: updateError } = await supabase
+        .from('projects')
+        .update({
+          status: body.status,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', existingProject.id)
+        .select()
+        .single()
+
+      if (updateError) {
+        console.error('Status update error:', updateError)
+        return NextResponse.json(
+          { error: "Database Error", message: updateError.message },
+          { status: 500 }
+        )
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: "Project status updated successfully",
+        project,
+      })
+    }
+
+    // Validate required fields for full update
     const { title, description, price, category, downloadUrl } = body
 
     if (!title || !description || price === undefined || !category || !downloadUrl) {
