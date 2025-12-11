@@ -41,8 +41,6 @@ const categories = [
   "Image AI",
   "Video AI",
   "Voice AI",
-  "NLP",
-  "Computer Vision",
   "Automation",
   "Other",
 ]

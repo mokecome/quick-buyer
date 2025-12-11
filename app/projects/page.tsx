@@ -39,7 +39,7 @@ interface Pagination {
   hasPrevPage: boolean
 }
 
-const categories = ["All", "AI Agent", "LLM", "RAG", "Chatbot", "Image AI", "Video AI", "Voice AI", "NLP", "Computer Vision", "Automation", "Other"]
+const categories = ["All", "AI Agent", "LLM", "RAG", "Chatbot", "Image AI", "Video AI", "Voice AI", "Automation", "Other"]
 
 const sortOptions = [
   { value: "popular", label: "Most Popular" },
