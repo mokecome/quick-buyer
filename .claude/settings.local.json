@@ -30,7 +30,9 @@
       "Bash(netstat:*)",
       "Bash(findstr:*)",
       "Bash(taskkill //F //PID 38020)",
-      "Bash(dir /s /b *.log)"
+      "Bash(dir /s /b *.log)",
+      "mcp__chrome-devtools__take_screenshot",
+      "mcp__chrome-devtools__get_network_request"
     ],
     "deny": [],
     "ask": []

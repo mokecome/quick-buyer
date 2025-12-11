@@ -225,6 +225,17 @@ export async function GET(request: Request) {
       )
     }
 
+    // Generate thumbnail URLs for projects without thumbnails but with demo URLs
+    const projectsWithThumbnails = projects?.map(project => {
+      if (!project.thumbnail_url && project.demo_url) {
+        return {
+          ...project,
+          thumbnail_url: `https://api.microlink.io/?url=${encodeURIComponent(project.demo_url)}&screenshot=true&meta=false&embed=screenshot.url`
+        }
+      }
+      return project
+    }) || []
+
     // Calculate pagination metadata
     const totalCount = count || 0
     const totalPages = Math.ceil(totalCount / limit)
@@ -232,7 +243,7 @@ export async function GET(request: Request) {
     const hasPrevPage = page > 1
 
     return NextResponse.json({
-      projects,
+      projects: projectsWithThumbnails,
       pagination: {
         page,
         limit,

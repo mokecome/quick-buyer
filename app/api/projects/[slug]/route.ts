@@ -45,7 +45,15 @@ export async function GET(
       }
     }
 
-    return NextResponse.json({ project, isAdmin: userIsAdmin })
+    // Generate thumbnail URL if missing but has demo URL
+    const projectWithThumbnail = !project.thumbnail_url && project.demo_url
+      ? {
+          ...project,
+          thumbnail_url: `https://api.microlink.io/?url=${encodeURIComponent(project.demo_url)}&screenshot=true&meta=false&embed=screenshot.url`
+        }
+      : project
+
+    return NextResponse.json({ project: projectWithThumbnail, isAdmin: userIsAdmin })
   } catch (error) {
     console.error('GET /api/projects/[slug] error:', error)
     return NextResponse.json(
