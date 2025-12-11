@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Upload, Link as LinkIcon, FileText, DollarSign, Loader2, LogIn, ImageIcon } from "lucide-react"
+import { Upload, Link as LinkIcon, FileText, DollarSign, Loader2, LogIn, ImageIcon, Camera } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import type { User } from "@supabase/supabase-js"
 
@@ -39,6 +39,7 @@ export default function SellPage() {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isGeneratingScreenshot, setIsGeneratingScreenshot] = useState(false)
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -97,6 +98,35 @@ export default function SellPage() {
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
+  }
+
+  const generateScreenshot = async () => {
+    if (!formData.demoUrl) {
+      alert(t('sell.form.demoUrlRequired', 'Please enter a Demo URL first'))
+      return
+    }
+
+    setIsGeneratingScreenshot(true)
+    try {
+      const response = await fetch('/api/screenshot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: formData.demoUrl }),
+      })
+
+      const data = await response.json()
+
+      if (data.success && data.screenshotUrl) {
+        handleChange('thumbnailUrl', data.screenshotUrl)
+      } else {
+        alert(data.message || t('sell.form.screenshotError', 'Failed to generate screenshot'))
+      }
+    } catch (error) {
+      console.error('Screenshot error:', error)
+      alert(t('sell.form.screenshotError', 'Failed to generate screenshot'))
+    } finally {
+      setIsGeneratingScreenshot(false)
+    }
   }
 
   // Loading state
@@ -268,15 +298,34 @@ export default function SellPage() {
                     <ImageIcon className="inline h-4 w-4 mr-2" />
                     {t('sell.form.thumbnailUrl', 'Thumbnail Image URL')}
                   </Label>
-                  <Input
-                    id="thumbnailUrl"
-                    type="url"
-                    value={formData.thumbnailUrl}
-                    onChange={(e) => handleChange("thumbnailUrl", e.target.value)}
-                    placeholder="https://example.com/image.png"
-                  />
+                  <div className="flex gap-2">
+                    <Input
+                      id="thumbnailUrl"
+                      type="url"
+                      value={formData.thumbnailUrl}
+                      onChange={(e) => handleChange("thumbnailUrl", e.target.value)}
+                      placeholder="https://example.com/image.png"
+                      className="flex-1"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={generateScreenshot}
+                      disabled={isGeneratingScreenshot || !formData.demoUrl}
+                      title={!formData.demoUrl ? t('sell.form.demoUrlRequired', 'Please enter a Demo URL first') : ''}
+                    >
+                      {isGeneratingScreenshot ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <>
+                          <Camera className="h-4 w-4 mr-1" />
+                          {t('sell.form.autoScreenshot', 'Auto')}
+                        </>
+                      )}
+                    </Button>
+                  </div>
                   <p className="text-xs text-muted-foreground">
-                    {t('sell.form.thumbnailUrlHint', 'Preview image for your project (recommended: 16:9 ratio, e.g., 1280x720)')}
+                    {t('sell.form.thumbnailUrlHint', 'Enter URL manually or click "Auto" to capture from Demo URL')}
                   </p>
                   {formData.thumbnailUrl && (
                     <div className="mt-2 relative aspect-video w-full max-w-sm bg-muted rounded-lg overflow-hidden">
