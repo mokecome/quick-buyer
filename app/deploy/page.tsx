@@ -1,551 +1,347 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Github, Upload, FileCode, FolderOpen, ArrowLeft, ExternalLink, Copy, Check } from "lucide-react"
-import { useState, useEffect, useRef, useCallback } from "react"
-import { useRouter } from "next/navigation"
-import { useTranslation } from "react-i18next"
-import { createClient, isSupabaseConfigured } from "@/lib/supabase/client"
-import type { User as SupabaseUser, AuthChangeEvent, Session } from "@supabase/supabase-js"
+import { Suspense, useEffect, useState, useCallback } from "react"
+import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
+import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "@/components/ui/card"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Search, Loader2, ChevronLeft, ChevronRight, Upload, Globe, ExternalLink, Eye } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
-// Google Icon Component
-function GoogleIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-    </svg>
-  )
-}
-
-// Code file icon
-function CodeFileIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none">
-      <rect x="4" y="2" width="16" height="20" rx="2" fill="#818CF8" fillOpacity="0.2" stroke="#818CF8" strokeWidth="1.5"/>
-      <path d="M9 12l-2 2 2 2" stroke="#818CF8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M15 12l2 2-2 2" stroke="#818CF8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      <rect x="8" y="2" width="8" height="4" rx="1" fill="#818CF8" fillOpacity="0.3"/>
-    </svg>
-  )
-}
-
-interface UploadRecord {
+interface StaticSite {
+  id: string
   cid: string
-  url: string
   filename: string
+  url: string
   size: number
   created_at: string
+  user_id: string
+  preview_image?: string
+  title?: string
+  description?: string
 }
 
-export default function DeployPage() {
-  const [loginMenuOpen, setLoginMenuOpen] = useState(false)
-  const [isSigningIn, setIsSigningIn] = useState<'github' | 'google' | null>(null)
-  const [user, setUser] = useState<SupabaseUser | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'file' | 'folder'>('file')
-  const [isDragging, setIsDragging] = useState(false)
-  const [isUploading, setIsUploading] = useState(false)
-  const [uploadResult, setUploadResult] = useState<{ cid: string; url: string } | null>(null)
-  const [uploadHistory, setUploadHistory] = useState<UploadRecord[]>([])
-  const [copiedUrl, setCopiedUrl] = useState<string | null>(null)
-  const router = useRouter()
-  const loginMenuRef = useRef<HTMLDivElement>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const folderInputRef = useRef<HTMLInputElement>(null)
-  const { t } = useTranslation()
+// Fallback demo sites
+const demoSites: StaticSite[] = [
+  {
+    id: "demo-1",
+    cid: "QmDemo1...",
+    filename: "portfolio-site",
+    url: "https://ipfs.glitterprotocol.dev/ipfs/QmDemo1",
+    size: 1024000,
+    created_at: new Date().toISOString(),
+    user_id: "demo",
+    title: "個人作品集網站",
+    description: "使用 HTML、CSS、JavaScript 製作的現代化個人作品集網站模板",
+  },
+  {
+    id: "demo-2",
+    cid: "QmDemo2...",
+    filename: "landing-page",
+    url: "https://ipfs.glitterprotocol.dev/ipfs/QmDemo2",
+    size: 512000,
+    created_at: new Date().toISOString(),
+    user_id: "demo",
+    title: "產品著陸頁",
+    description: "響應式產品著陸頁模板，包含動畫效果和表單整合",
+  },
+  {
+    id: "demo-3",
+    cid: "QmDemo3...",
+    filename: "blog-template",
+    url: "https://ipfs.glitterprotocol.dev/ipfs/QmDemo3",
+    size: 768000,
+    created_at: new Date().toISOString(),
+    user_id: "demo",
+    title: "極簡部落格模板",
+    description: "乾淨簡潔的部落格設計，支援 Markdown 和程式碼高亮",
+  },
+  {
+    id: "demo-4",
+    cid: "QmDemo4...",
+    filename: "dashboard-ui",
+    url: "https://ipfs.glitterprotocol.dev/ipfs/QmDemo4",
+    size: 2048000,
+    created_at: new Date().toISOString(),
+    user_id: "demo",
+    title: "管理後台 UI 套件",
+    description: "完整的管理後台介面元件庫，包含圖表、表格、表單等",
+  },
+]
 
-  // Close login menu when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (loginMenuRef.current && !loginMenuRef.current.contains(event.target as Node)) {
-        setLoginMenuOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+const categories = ["All", "Portfolio", "Landing Page", "Blog", "Dashboard", "E-commerce", "Documentation"]
 
-  useEffect(() => {
-    if (!isSupabaseConfigured()) {
-      setIsLoading(false)
-      return
-    }
+const sortOptions = [
+  { value: "newest", label: "Newest" },
+  { value: "popular", label: "Most Popular" },
+  { value: "size_small", label: "Size: Small to Large" },
+  { value: "size_large", label: "Size: Large to Small" },
+]
 
-    const supabase = createClient()
-    if (!supabase) {
-      setIsLoading(false)
-      return
-    }
-
-    const getUser = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser()
-        setUser(user)
-        if (user) {
-          // Fetch upload history
-          const { data: history } = await supabase
-            .from('ipfs_uploads')
-            .select('*')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(10)
-          if (history) {
-            setUploadHistory(history)
-          }
-        }
-      } catch (error) {
-        console.error('Error getting user:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    getUser()
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event: AuthChangeEvent, session: Session | null) => {
-        setUser(session?.user ?? null)
-        if (event === 'SIGNED_IN') {
-          router.refresh()
-        }
-      }
-    )
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [router])
-
-  const handleGitHubSignIn = async () => {
-    setIsSigningIn('github')
-    setLoginMenuOpen(false)
-    try {
-      const response = await fetch('/auth/signin', {
-        method: 'POST',
-      })
-      const data = await response.json()
-
-      if (data.url) {
-        window.location.href = data.url
-      } else if (data.error) {
-        alert(`${t('auth.authError.title')}: ${data.error}`)
-      }
-    } catch (error) {
-      console.error('Sign in error:', error)
-      alert(t('auth.authError.description'))
-    } finally {
-      setIsSigningIn(null)
-    }
-  }
-
-  const handleGoogleSignIn = async () => {
-    setIsSigningIn('google')
-    setLoginMenuOpen(false)
-    try {
-      const response = await fetch('/auth/signin/google', {
-        method: 'POST',
-      })
-      const data = await response.json()
-
-      if (data.url) {
-        window.location.href = data.url
-      } else if (data.error) {
-        alert(`${t('auth.authError.title')}: ${data.error}`)
-      }
-    } catch (error) {
-      console.error('Sign in error:', error)
-      alert(t('auth.authError.description'))
-    } finally {
-      setIsSigningIn(null)
-    }
-  }
-
-  // Handle file upload to IPFS
-  const handleFileUpload = async (files: FileList | null) => {
-    if (!files || files.length === 0 || !user) return
-
-    setIsUploading(true)
-    setUploadResult(null)
-
-    try {
-      const formData = new FormData()
-
-      // Add all files to form data
-      for (let i = 0; i < files.length; i++) {
-        formData.append('files', files[i])
-      }
-
-      const response = await fetch('/api/ipfs/upload', {
-        method: 'POST',
-        body: formData,
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        setUploadResult({
-          cid: data.cid,
-          url: data.url,
-        })
-        // Refresh history
-        const supabase = createClient()
-        if (supabase) {
-          const { data: history } = await supabase
-            .from('ipfs_uploads')
-            .select('*')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(10)
-          if (history) {
-            setUploadHistory(history)
-          }
-        }
-      } else {
-        alert(data.error || 'Upload failed')
-      }
-    } catch (error) {
-      console.error('Upload error:', error)
-      alert('Upload failed')
-    } finally {
-      setIsUploading(false)
-    }
-  }
-
-  // Drag and drop handlers
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    if (user) {
-      setIsDragging(true)
-    }
-  }, [user])
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-  }, [])
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-    if (user) {
-      handleFileUpload(e.dataTransfer.files)
-    }
-  }, [user])
-
-  const handleDropzoneClick = () => {
-    if (!user) {
-      setLoginMenuOpen(true)
-      return
-    }
-    if (activeTab === 'file') {
-      fileInputRef.current?.click()
-    } else {
-      folderInputRef.current?.click()
-    }
-  }
-
-  const handleCopyUrl = async (url: string) => {
-    try {
-      await navigator.clipboard.writeText(url)
-      setCopiedUrl(url)
-      setTimeout(() => setCopiedUrl(null), 2000)
-    } catch (error) {
-      console.error('Failed to copy:', error)
-    }
-  }
-
-  const formatFileSize = (bytes: number) => {
+function StaticSiteCard({ site }: { site: StaticSite }) {
+  const formatSize = (bytes: number) => {
     if (bytes < 1024) return `${bytes} B`
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  }
-
-  const isDisabled = !user || isLoading
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background">
-      <div className="container px-4 md:px-6 py-8 md:py-12">
-        {/* Back Link */}
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          {t('common.back')}
-        </Link>
-
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-600 text-sm font-medium mb-4">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            {t('browserDeploy.badge')}
+    <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+      {/* Preview Image */}
+      <div className="aspect-video bg-gradient-to-br from-primary/5 to-primary/10 relative overflow-hidden">
+        {site.preview_image ? (
+          <img
+            src={site.preview_image}
+            alt={site.title || site.filename}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <Globe className="h-12 w-12 text-primary/30" />
           </div>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
-            {t('deploy.title')}
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {t('deploy.subtitle')}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Upload Card - Main */}
-          <div className="lg:col-span-2">
-            <Card className={`overflow-hidden shadow-xl ${isDisabled ? 'opacity-60' : ''}`}>
-              {/* Header */}
-              <div className="p-4 border-b">
-                <h3 className="text-lg font-semibold">
-                  {t('browserDeploy.upload.title')}
-                </h3>
-              </div>
-
-              {/* Tabs */}
-              <div className="flex border-b">
-                <button
-                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
-                    activeTab === 'file'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'hover:bg-muted'
-                  }`}
-                  onClick={() => setActiveTab('file')}
-                  disabled={isDisabled}
-                >
-                  <FileCode className="h-4 w-4" />
-                  {t('browserDeploy.upload.tabs.file')}
-                </button>
-                <button
-                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
-                    activeTab === 'folder'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'hover:bg-muted'
-                  }`}
-                  onClick={() => setActiveTab('folder')}
-                  disabled={isDisabled}
-                >
-                  <FolderOpen className="h-4 w-4" />
-                  {t('browserDeploy.upload.tabs.folder')}
-                </button>
-              </div>
-
-              {/* Dropzone */}
-              <div className="p-6">
-                <div
-                  className={`border-2 border-dashed rounded-lg p-12 text-center transition-colors ${
-                    isDisabled
-                      ? 'border-muted cursor-not-allowed bg-muted/30'
-                      : isDragging
-                      ? 'border-primary bg-primary/5'
-                      : 'border-muted-foreground/25 hover:border-primary/50 cursor-pointer'
-                  }`}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
-                  onClick={handleDropzoneClick}
-                >
-                  {isUploading ? (
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-                      <p className="text-sm text-muted-foreground">{t('browserDeploy.upload.uploading')}</p>
-                    </div>
-                  ) : uploadResult ? (
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                        <svg className="w-8 h-8 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <p className="text-lg font-medium text-emerald-600">{t('browserDeploy.upload.success')}</p>
-                      <div className="flex items-center gap-2 max-w-full">
-                        <a
-                          href={uploadResult.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-primary hover:underline break-all flex items-center gap-1"
-                        >
-                          {uploadResult.url}
-                          <ExternalLink className="h-3 w-3 flex-shrink-0" />
-                        </a>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleCopyUrl(uploadResult.url)
-                          }}
-                        >
-                          {copiedUrl === uploadResult.url ? (
-                            <Check className="h-4 w-4 text-emerald-500" />
-                          ) : (
-                            <Copy className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setUploadResult(null)
-                        }}
-                      >
-                        {t('deploy.uploadAnother')}
-                      </Button>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="flex justify-center mb-4">
-                        <CodeFileIcon className="w-20 h-20" />
-                      </div>
-                      <p className="text-muted-foreground">
-                        {t('browserDeploy.upload.dropzone.text')}
-                        <span className="text-primary font-medium cursor-pointer hover:underline">
-                          {t('browserDeploy.upload.dropzone.click')}
-                        </span>
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-4">
-                        {t('deploy.maxSize')}
-                      </p>
-                    </>
-                  )}
-                </div>
-
-                {/* Note */}
-                <p className="mt-4 text-xs text-muted-foreground text-center">
-                  {t('browserDeploy.upload.note')}
-                </p>
-              </div>
-
-              {/* Hidden file inputs */}
-              <input
-                ref={fileInputRef}
-                type="file"
-                className="hidden"
-                multiple
-                accept=".html,.css,.js,.json,.txt,.md,.png,.jpg,.jpeg,.gif,.svg,.ico,.woff,.woff2,.ttf,.eot"
-                onChange={(e) => handleFileUpload(e.target.files)}
-                disabled={isDisabled}
-              />
-              <input
-                ref={folderInputRef}
-                type="file"
-                className="hidden"
-                {...{ webkitdirectory: "", directory: "" } as any}
-                onChange={(e) => handleFileUpload(e.target.files)}
-                disabled={isDisabled}
-              />
-
-              {/* Disabled Overlay */}
-              {isDisabled && (
-                <div className="absolute inset-0 bg-background/50 backdrop-blur-[1px] flex items-center justify-center">
-                  <div className="text-center p-4" ref={loginMenuRef}>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      {t('browserDeploy.upload.loginRequired')}
-                    </p>
-                    <div className="flex flex-col gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleGitHubSignIn}
-                        disabled={isSigningIn !== null}
-                        className="gap-2"
-                      >
-                        <Github className="h-4 w-4" />
-                        {isSigningIn === 'github' ? t('common.signingIn') : t('auth.signInWithGithub')}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleGoogleSignIn}
-                        disabled={isSigningIn !== null}
-                        className="gap-2"
-                      >
-                        <GoogleIcon className="h-4 w-4" />
-                        {isSigningIn === 'google' ? t('common.signingIn') : t('auth.signInWithGoogle')}
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </Card>
-          </div>
-
-          {/* Sidebar - Upload History */}
-          <div className="lg:col-span-1">
-            <Card className="overflow-hidden">
-              <div className="p-4 border-b">
-                <h3 className="text-lg font-semibold">{t('deploy.history')}</h3>
-              </div>
-              <div className="p-4">
-                {!user ? (
-                  <p className="text-sm text-muted-foreground text-center py-8">
-                    {t('deploy.loginForHistory')}
-                  </p>
-                ) : uploadHistory.length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center py-8">
-                    {t('deploy.noHistory')}
-                  </p>
-                ) : (
-                  <div className="space-y-3">
-                    {uploadHistory.map((record) => (
-                      <div
-                        key={record.cid}
-                        className="p-3 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors"
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0 flex-1">
-                            <p className="text-sm font-medium truncate">{record.filename}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {formatFileSize(record.size)} • {formatDate(record.created_at)}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <a
-                              href={record.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="p-1.5 rounded hover:bg-muted transition-colors"
-                            >
-                              <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                            </a>
-                            <button
-                              onClick={() => handleCopyUrl(record.url)}
-                              className="p-1.5 rounded hover:bg-muted transition-colors"
-                            >
-                              {copiedUrl === record.url ? (
-                                <Check className="h-4 w-4 text-emerald-500" />
-                              ) : (
-                                <Copy className="h-4 w-4 text-muted-foreground" />
-                              )}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </Card>
-          </div>
+        )}
+        {/* Overlay on hover */}
+        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+          <a
+            href={site.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-3 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+          >
+            <Eye className="h-5 w-5 text-white" />
+          </a>
+          <a
+            href={site.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-3 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+          >
+            <ExternalLink className="h-5 w-5 text-white" />
+          </a>
         </div>
       </div>
+
+      <CardContent className="p-4">
+        <h3 className="font-semibold text-lg mb-1 line-clamp-1">
+          {site.title || site.filename}
+        </h3>
+        <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+          {site.description || "靜態網站"}
+        </p>
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <span>{formatSize(site.size)}</span>
+          <span className="flex items-center gap-1">
+            <Globe className="h-3 w-3" />
+            IPFS
+          </span>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function DeployContent() {
+  const { t } = useTranslation()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // State
+  const [sites, setSites] = useState<StaticSite[]>(demoSites)
+  const [isLoading, setIsLoading] = useState(false)
+  const [searchInput, setSearchInput] = useState("")
+
+  // Get current filter values from URL
+  const currentCategory = searchParams.get("category") || "All"
+  const currentSort = searchParams.get("sort") || "newest"
+  const currentSearch = searchParams.get("q") || ""
+
+  // Initialize search input from URL
+  useEffect(() => {
+    setSearchInput(currentSearch)
+  }, [currentSearch])
+
+  // Update URL with new params
+  const updateParams = (updates: Record<string, string | null>) => {
+    const params = new URLSearchParams(searchParams.toString())
+
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === null || value === "" || value === "All") {
+        params.delete(key)
+      } else {
+        params.set(key, value)
+      }
+    })
+
+    router.push(`/deploy?${params.toString()}`)
+  }
+
+  // Handle search submit
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    updateParams({ q: searchInput })
+  }
+
+  // Handle category change
+  const handleCategoryChange = (category: string) => {
+    updateParams({ category })
+  }
+
+  // Handle sort change
+  const handleSortChange = (sort: string) => {
+    updateParams({ sort })
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1">
+        <section className="py-12 md:py-20">
+          <div className="container px-4 md:px-6">
+            {/* Page Header */}
+            <div className="text-center space-y-4 mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-600 text-sm font-medium mb-4">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                {t("deploy.badge", "免費永久託管")}
+              </div>
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+                {t("deploy.pageTitle", "靜態網站展示")}
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                {t("deploy.pageSubtitle", "瀏覽社群分享的靜態網站，或上傳您自己的作品")}
+              </p>
+
+              {/* Upload CTA */}
+              <div className="pt-4">
+                <Button size="lg" asChild>
+                  <Link href="/deploy/upload">
+                    <Upload className="mr-2 h-5 w-5" />
+                    {t("deploy.uploadYours", "上傳您的網站")}
+                  </Link>
+                </Button>
+              </div>
+            </div>
+
+            {/* Search and Filters */}
+            <div className="flex flex-col gap-4 mb-8">
+              {/* Search Bar */}
+              <form onSubmit={handleSearch} className="flex gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder={t("deploy.searchPlaceholder", "搜尋靜態網站...")}
+                    className="pl-10"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                  />
+                </div>
+                <Button type="submit">
+                  {t("common.search", "搜尋")}
+                </Button>
+              </form>
+
+              {/* Filters Row */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-between">
+                {/* Category Filters */}
+                <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">
+                  {categories.map((category) => (
+                    <Button
+                      key={category}
+                      variant={currentCategory === category ? "default" : "outline"}
+                      size="sm"
+                      className="whitespace-nowrap"
+                      onClick={() => handleCategoryChange(category)}
+                    >
+                      {t(`deploy.categories.${category.toLowerCase().replace(' ', '')}`, category)}
+                    </Button>
+                  ))}
+                </div>
+
+                {/* Sort Dropdown */}
+                <Select value={currentSort} onValueChange={handleSortChange}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder={t("common.sortBy", "排序")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sortOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {t(`deploy.sort.${option.value}`, option.label)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Results */}
+            {isLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              </div>
+            ) : sites.length === 0 ? (
+              /* Empty State */
+              <div className="text-center py-20">
+                <Globe className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
+                <p className="text-lg text-muted-foreground mb-4">
+                  {t("deploy.noResults", "尚無靜態網站")}
+                </p>
+                <Button asChild>
+                  <Link href="/deploy/upload">
+                    <Upload className="mr-2 h-4 w-4" />
+                    {t("deploy.beFirst", "成為第一個上傳者")}
+                  </Link>
+                </Button>
+              </div>
+            ) : (
+              /* Sites Grid */
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {sites.map((site) => (
+                  <StaticSiteCard key={site.id} site={site} />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      </main>
+      <Footer />
     </div>
+  )
+}
+
+function DeployLoading() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1">
+        <section className="py-12 md:py-20">
+          <div className="container px-4 md:px-6">
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </div>
+  )
+}
+
+export default function DeployPage() {
+  return (
+    <Suspense fallback={<DeployLoading />}>
+      <DeployContent />
+    </Suspense>
   )
 }

@@ -16,7 +16,9 @@
     "next": "Next",
     "viewAll": "View All",
     "learnMore": "Learn More",
-    "contactUs": "Contact Us"
+    "contactUs": "Contact Us",
+    "search": "Search",
+    "sortBy": "Sort by"
   },
   "nav": {
     "projects": "AI Projects",
@@ -296,6 +298,18 @@
     "subtitle": "Don't let technical barriers block your creativity. Sign in to deploy your static website for free!",
     "howToUse": "How to Use",
     "cta": "Upload Now",
+    "browseSites": "Browse Sites",
+    "features": {
+      "instant": "Instant Deploy",
+      "permanent": "Permanent Hosting",
+      "free": "Completely Free"
+    },
+    "preview": {
+      "title": "Your site will be displayed here",
+      "siteName": "my-portfolio.html",
+      "hosted": "Hosted on IPFS",
+      "live": "Live"
+    },
     "upload": {
       "title": "Deploy via Browser",
       "tabs": {
@@ -319,6 +333,31 @@
     "maxSize": "Max 20MB per file, 500MB per directory",
     "history": "Upload History",
     "loginForHistory": "Sign in to view upload history",
-    "noHistory": "No upload history yet"
+    "noHistory": "No upload history yet",
+    "badge": "Free Permanent Hosting",
+    "pageTitle": "Static Site Showcase",
+    "pageSubtitle": "Browse community-shared static sites or upload your own",
+    "uploadYours": "Upload Your Site",
+    "searchPlaceholder": "Search static sites...",
+    "noResults": "No static sites yet",
+    "beFirst": "Be the first to upload",
+    "backToList": "Back to Site List",
+    "uploadTitle": "Upload Your Website",
+    "uploadSubtitle": "Upload your static site to IPFS and get a permanent hosted link",
+    "categories": {
+      "all": "All",
+      "portfolio": "Portfolio",
+      "landingpage": "Landing Page",
+      "blog": "Blog",
+      "dashboard": "Dashboard",
+      "e-commerce": "E-commerce",
+      "documentation": "Documentation"
+    },
+    "sort": {
+      "newest": "Newest",
+      "popular": "Most Popular",
+      "size_small": "Size: Small to Large",
+      "size_large": "Size: Large to Small"
+    }
   }
 }

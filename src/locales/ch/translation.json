@@ -16,7 +16,9 @@
     "next": "下一步",
     "viewAll": "查看全部",
     "learnMore": "了解更多",
-    "contactUs": "联系我们"
+    "contactUs": "联系我们",
+    "search": "搜索",
+    "sortBy": "排序"
   },
   "nav": {
     "projects": "AI 项目",
@@ -296,6 +298,18 @@
     "subtitle": "让您的创意不再被技术门槛阻挡，登录即可免费部署您的静态网站！",
     "howToUse": "如何使用",
     "cta": "立即上传",
+    "browseSites": "浏览网站",
+    "features": {
+      "instant": "即时部署",
+      "permanent": "永久托管",
+      "free": "完全免费"
+    },
+    "preview": {
+      "title": "您的网站将在这里展示",
+      "siteName": "my-portfolio.html",
+      "hosted": "托管于 IPFS",
+      "live": "已上线"
+    },
     "upload": {
       "title": "通过浏览器部署",
       "tabs": {
@@ -319,6 +333,31 @@
     "maxSize": "单一文件最大 20MB，目录最大 500MB",
     "history": "上传记录",
     "loginForHistory": "登录以查看上传记录",
-    "noHistory": "尚无上传记录"
+    "noHistory": "尚无上传记录",
+    "badge": "免费永久托管",
+    "pageTitle": "静态网站展示",
+    "pageSubtitle": "浏览社区分享的静态网站，或上传您自己的作品",
+    "uploadYours": "上传您的网站",
+    "searchPlaceholder": "搜索静态网站...",
+    "noResults": "尚无静态网站",
+    "beFirst": "成为第一个上传者",
+    "backToList": "返回网站列表",
+    "uploadTitle": "上传您的网站",
+    "uploadSubtitle": "将您的静态网站上传到 IPFS，获得永久托管的链接",
+    "categories": {
+      "all": "全部",
+      "portfolio": "作品集",
+      "landingpage": "着陆页",
+      "blog": "博客",
+      "dashboard": "后台",
+      "e-commerce": "电商",
+      "documentation": "文档"
+    },
+    "sort": {
+      "newest": "最新",
+      "popular": "最热门",
+      "size_small": "大小：小到大",
+      "size_large": "大小：大到小"
+    }
   }
 }
