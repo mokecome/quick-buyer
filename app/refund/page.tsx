@@ -68,8 +68,8 @@ export default function RefundPage() {
               <ol className="list-decimal pl-6 space-y-2">
                 <li>
                   {isZh
-                    ? "發送電子郵件至 support@quickbuyer.ai"
-                    : "Send an email to support@quickbuyer.ai"}
+                    ? "發送電子郵件至 supports@quick-buyer.com"
+                    : "Send an email to supports@quick-buyer.com"}
                 </li>
                 <li>
                   {isZh
@@ -128,8 +128,8 @@ export default function RefundPage() {
               </h2>
               <p>
                 {isZh
-                  ? "退款相關問題請聯繫：support@quickbuyer.ai"
-                  : "For refund-related questions, please contact: support@quickbuyer.ai"}
+                  ? "退款相關問題請聯繫：supports@quick-buyer.com"
+                  : "For refund-related questions, please contact: supports@quick-buyer.com"}
               </p>
             </section>
           </div>

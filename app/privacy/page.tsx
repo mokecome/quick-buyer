@@ -107,8 +107,8 @@ export default function PrivacyPage() {
               </h2>
               <p>
                 {isZh
-                  ? "如有任何隱私相關問題，請聯繫：support@quickbuyer.ai"
-                  : "For any privacy-related questions, please contact: support@quickbuyer.ai"}
+                  ? "如有任何隱私相關問題，請聯繫：supports@quick-buyer.com"
+                  : "For any privacy-related questions, please contact: supports@quick-buyer.com"}
               </p>
             </section>
           </div>

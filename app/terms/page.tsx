@@ -139,8 +139,8 @@ export default function TermsPage() {
               </h2>
               <p>
                 {isZh
-                  ? "如有任何問題，請聯繫：support@quickbuyer.ai"
-                  : "For any questions, please contact: support@quickbuyer.ai"}
+                  ? "如有任何問題，請聯繫：supports@quick-buyer.com"
+                  : "For any questions, please contact: supports@quick-buyer.com"}
               </p>
             </section>
           </div>

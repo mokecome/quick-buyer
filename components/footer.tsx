@@ -104,7 +104,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="mailto:support@quickbuyer.ai" className="text-muted-foreground hover:text-foreground transition-colors">
+                <a href="mailto:supports@quick-buyer.com" className="text-muted-foreground hover:text-foreground transition-colors">
                   {t('footer.emailSupport')}
                 </a>
               </li>

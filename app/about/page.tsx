@@ -136,10 +136,10 @@ export default function AboutPage() {
                 : "Have questions or suggestions? We'd love to hear from you."}
             </p>
             <a
-              href="mailto:support@quickbuyer.ai"
+              href="mailto:supports@quick-buyer.com"
               className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
             >
-              support@quickbuyer.ai
+              supports@quick-buyer.com
             </a>
           </div>
         </section>

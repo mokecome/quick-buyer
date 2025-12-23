@@ -3,7 +3,7 @@ import { NextResponse } from "next/server"
 // Use Microlink API to generate screenshots (free tier: 100/day)
 export async function POST(request: Request) {
   try {
-    const { url } = await request.json()
+    const { url, force } = await request.json()
 
     if (!url) {
       return NextResponse.json(
@@ -24,7 +24,9 @@ export async function POST(request: Request) {
 
     // Microlink screenshot API (free tier)
     // Options: https://microlink.io/docs/api/parameters/screenshot
-    const screenshotUrl = `https://api.microlink.io/?url=${encodeURIComponent(url)}&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1280&viewport.height=720&viewport.deviceScaleFactor=1`
+    // Add force=true to bypass cache when explicitly requested
+    const forceParam = force ? '&force=true' : ''
+    const screenshotUrl = `https://api.microlink.io/?url=${encodeURIComponent(url)}&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1280&viewport.height=720&viewport.deviceScaleFactor=1${forceParam}`
 
     const response = await fetch(screenshotUrl)
     const data = await response.json()
@@ -36,8 +38,8 @@ export async function POST(request: Request) {
       })
     }
 
-    // Fallback: return the Microlink CDN URL directly
-    const fallbackUrl = `https://api.microlink.io/?url=${encodeURIComponent(url)}&screenshot=true&meta=false&embed=screenshot.url`
+    // Fallback: return the Microlink CDN URL directly (with force param if needed)
+    const fallbackUrl = `https://api.microlink.io/?url=${encodeURIComponent(url)}&screenshot=true&meta=false&embed=screenshot.url${forceParam}`
 
     return NextResponse.json({
       success: true,
