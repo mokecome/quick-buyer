@@ -216,9 +216,6 @@ function DeployContent() {
                 </span>
                 {t("deploy.badge", "免費永久託管")}
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-                {t("deploy.pageTitle", "靜態網站展示")}
-              </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 {t("deploy.pageSubtitle", "瀏覽社群分享的靜態網站，或上傳您自己的作品")}
               </p>
