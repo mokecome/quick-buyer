@@ -291,14 +291,14 @@
   },
   "browserDeploy": {
     "badge": "Ready to Use, One-Click Deploy",
-    "title": "Deploy via Browser",
+    "title": "Let Code Create Value",
     "subtitle": "We believe that no matter where you are or your background, tedious tasks shouldn't hinder your creativity. Let AI power your creative freedom!",
     "howToUse": "How to Use",
     "cta": "Upload Now",
     "config": {
       "header": "deploy.config",
       "headline": "Launch Your App in 3 Minutes",
-      "tagline": "Fast Deploy · Zero Config · Go Live Instantly",
+      "tagline": "Sign In · Free Deploy · Go Live Instantly",
       "noNeed": "No Need to Handle",
       "noNeedItems": ["System Setup", "Complex Filing", "Server Purchase", "Customer Acquisition", "Payment Channels"],
       "support": "Supported Tech Stack",

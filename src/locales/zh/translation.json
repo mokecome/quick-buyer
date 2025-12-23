@@ -291,14 +291,14 @@
   },
   "browserDeploy": {
     "badge": "開箱即用，一鍵部署",
-    "title": "透過瀏覽器部署",
+    "title": "讓代碼創造價值",
     "subtitle": "我們堅信，無論你身處何方、背景如何，冗餘事務不應成為您創造力的困擾，借 AI 之力讓創造力自由綻放！",
     "howToUse": "如何使用",
     "cta": "立即上傳",
     "config": {
       "header": "deploy.config",
       "headline": "3分鐘上線您的應用",
-      "tagline": "快速部署・零配置・即刻上線",
+      "tagline": "登入・免費部署・即刻上線",
       "noNeed": "無需處理",
       "noNeedItems": ["系統部署", "複雜備案流程", "購置服務器", "獲客渠道", "支付通道"],
       "support": "支持技術棧",
