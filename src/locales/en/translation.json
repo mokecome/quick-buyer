@@ -20,6 +20,7 @@
   },
   "nav": {
     "projects": "AI Projects",
+    "deploy": "Free Deploy",
     "features": "Features",
     "pricing": "Pricing",
     "faq": "FAQ",
@@ -290,20 +291,34 @@
     }
   },
   "browserDeploy": {
-    "badge": "Ready to Use, One-Click Deploy",
+    "badge": "Static Site Free Hosting",
     "title": "Let Code Create Value",
-    "subtitle": "We believe that no matter where you are or your background, tedious tasks shouldn't hinder your creativity. Let AI power your creative freedom!",
+    "subtitle": "Don't let technical barriers block your creativity. Sign in to deploy your static website for free!",
     "howToUse": "How to Use",
     "cta": "Upload Now",
-    "config": {
-      "header": "deploy.config",
-      "headline": "Launch Your App in 3 Minutes",
-      "tagline": "Sign In · Free Deploy · Go Live Instantly",
-      "noNeed": "No Need to Handle",
-      "noNeedItems": ["System Setup", "Complex Filing", "Server Purchase", "Customer Acquisition", "Payment Channels"],
-      "support": "Supported Tech Stack",
-      "supportItems": ["HTML+JS+CSS", "Python", "SQLite", "AI Agents", "Multi-platform"],
-      "free": "Free for Personal Use"
+    "upload": {
+      "title": "Deploy via Browser",
+      "tabs": {
+        "file": "File",
+        "folder": "Folder"
+      },
+      "dropzone": {
+        "text": "Drag and drop files here or ",
+        "click": "click to upload"
+      },
+      "note": "History will not be saved unless you are logged in.",
+      "loginRequired": "Please sign in to use the upload feature",
+      "uploading": "Uploading...",
+      "success": "Upload successful!"
     }
+  },
+  "deploy": {
+    "title": "Deploy Static Sites for Free",
+    "subtitle": "Upload your HTML, CSS, JavaScript files and get a permanent hosted link instantly. No server required, no configuration needed.",
+    "uploadAnother": "Upload Another File",
+    "maxSize": "Max 20MB per file, 500MB per directory",
+    "history": "Upload History",
+    "loginForHistory": "Sign in to view upload history",
+    "noHistory": "No upload history yet"
   }
 }

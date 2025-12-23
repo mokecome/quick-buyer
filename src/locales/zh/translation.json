@@ -20,6 +20,7 @@
   },
   "nav": {
     "projects": "AI 項目",
+    "deploy": "免費部署",
     "features": "特色",
     "pricing": "定價",
     "faq": "常見問題",
@@ -290,20 +291,34 @@
     }
   },
   "browserDeploy": {
-    "badge": "開箱即用，一鍵部署",
+    "badge": "靜態網站 免費部署",
     "title": "讓代碼創造價值",
-    "subtitle": "我們堅信，無論你身處何方、背景如何，冗餘事務不應成為您創造力的困擾，借 AI 之力讓創造力自由綻放！",
+    "subtitle": "讓您的創意不再被技術門檻阻擋，登入即可免費部署您的靜態網站！",
     "howToUse": "如何使用",
     "cta": "立即上傳",
-    "config": {
-      "header": "deploy.config",
-      "headline": "3分鐘上線您的應用",
-      "tagline": "登入・免費部署・即刻上線",
-      "noNeed": "無需處理",
-      "noNeedItems": ["系統部署", "複雜備案流程", "購置服務器", "獲客渠道", "支付通道"],
-      "support": "支持技術棧",
-      "supportItems": ["HTML+JS+CSS", "Python", "SQLite", "AI智能體", "多端適配"],
-      "free": "個人免費"
+    "upload": {
+      "title": "透過瀏覽器部署",
+      "tabs": {
+        "file": "文件",
+        "folder": "資料夾"
+      },
+      "dropzone": {
+        "text": "將檔案拖放到這裡或",
+        "click": "點擊上傳"
+      },
+      "note": "除非登錄，否則歷史記錄不會被儲存。",
+      "loginRequired": "請先登入以使用上傳功能",
+      "uploading": "上傳中...",
+      "success": "上傳成功！"
     }
+  },
+  "deploy": {
+    "title": "免費部署靜態網站",
+    "subtitle": "上傳您的 HTML、CSS、JavaScript 檔案，即刻獲得永久託管的網站連結。無需伺服器，無需配置。",
+    "uploadAnother": "上傳另一個檔案",
+    "maxSize": "單一檔案最大 20MB，目錄最大 500MB",
+    "history": "上傳記錄",
+    "loginForHistory": "登入以查看上傳記錄",
+    "noHistory": "尚無上傳記錄"
   }
 }

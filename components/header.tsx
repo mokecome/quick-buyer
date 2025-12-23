@@ -155,6 +155,22 @@ export function Header() {
     }
   }
 
+  // Handle anchor link navigation with proper scrolling
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, anchor: string) => {
+    if (isHomePage) {
+      // On home page, just scroll to the element
+      e.preventDefault()
+      const element = document.getElementById(anchor)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
+    } else {
+      // On other pages, use native navigation to ensure proper hash handling
+      e.preventDefault()
+      window.location.href = `/#${anchor}`
+    }
+  }
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
       <div className="container flex h-16 md:h-20 items-center justify-between px-4 md:px-6">
@@ -171,23 +187,31 @@ export function Header() {
             {t('nav.projects')}
           </Link>
           <Link
-            href={isHomePage ? "#features" : "/#features"}
+            href="/deploy"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all hover:after:w-full"
           >
-            {t('nav.features')}
+            {t('nav.deploy')}
           </Link>
+          <a
+            href={isHomePage ? "#features" : "/#features"}
+            onClick={(e) => handleAnchorClick(e, 'features')}
+            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all hover:after:w-full cursor-pointer"
+          >
+            {t('nav.features')}
+          </a>
           <Link
             href="/pricing"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all hover:after:w-full"
           >
             {t('nav.pricing')}
           </Link>
-          <Link
+          <a
             href={isHomePage ? "#faq" : "/#faq"}
-            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all hover:after:w-full"
+            onClick={(e) => handleAnchorClick(e, 'faq')}
+            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all hover:after:w-full cursor-pointer"
           >
             {t('nav.faq')}
-          </Link>
+          </a>
         </nav>
 
         <div className="hidden md:flex items-center gap-3">
@@ -291,12 +315,22 @@ export function Header() {
               {t('nav.projects')}
             </Link>
             <Link
-              href={isHomePage ? "#features" : "/#features"}
+              href="/deploy"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
-              {t('nav.features')}
+              {t('nav.deploy')}
             </Link>
+            <a
+              href={isHomePage ? "#features" : "/#features"}
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2 cursor-pointer"
+              onClick={(e) => {
+                handleAnchorClick(e, 'features')
+                setMobileMenuOpen(false)
+              }}
+            >
+              {t('nav.features')}
+            </a>
             <Link
               href="/pricing"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2"
@@ -304,13 +338,16 @@ export function Header() {
             >
               {t('nav.pricing')}
             </Link>
-            <Link
+            <a
               href={isHomePage ? "#faq" : "/#faq"}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2"
-              onClick={() => setMobileMenuOpen(false)}
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2 cursor-pointer"
+              onClick={(e) => {
+                handleAnchorClick(e, 'faq')
+                setMobileMenuOpen(false)
+              }}
             >
               {t('nav.faq')}
-            </Link>
+            </a>
             <div className="flex flex-col gap-2 pt-4 border-t border-border/40">
               <div className="flex justify-center py-2">
                 <LanguageSwitcher />

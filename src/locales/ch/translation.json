@@ -20,6 +20,7 @@
   },
   "nav": {
     "projects": "AI 项目",
+    "deploy": "免费部署",
     "features": "特色",
     "pricing": "定价",
     "faq": "常见问题",
@@ -290,20 +291,34 @@
     }
   },
   "browserDeploy": {
-    "badge": "开箱即用，一键部署",
+    "badge": "静态网站 免费部署",
     "title": "让代码创造价值",
-    "subtitle": "我们坚信，无论你身处何方、背景如何，冗余事务不应成为您创造力的困扰，借 AI 之力让创造力自由绽放！",
+    "subtitle": "让您的创意不再被技术门槛阻挡，登录即可免费部署您的静态网站！",
     "howToUse": "如何使用",
     "cta": "立即上传",
-    "config": {
-      "header": "deploy.config",
-      "headline": "3分钟上线您的应用",
-      "tagline": "登录・免费部署・即刻上线",
-      "noNeed": "无需处理",
-      "noNeedItems": ["系统部署", "复杂备案流程", "购置服务器", "获客渠道", "支付通道"],
-      "support": "支持技术栈",
-      "supportItems": ["HTML+JS+CSS", "Python", "SQLite", "AI智能体", "多端适配"],
-      "free": "个人免费"
+    "upload": {
+      "title": "通过浏览器部署",
+      "tabs": {
+        "file": "文件",
+        "folder": "文件夹"
+      },
+      "dropzone": {
+        "text": "将文件拖放到这里或",
+        "click": "点击上传"
+      },
+      "note": "除非登录，否则历史记录不会被储存。",
+      "loginRequired": "请先登录以使用上传功能",
+      "uploading": "上传中...",
+      "success": "上传成功！"
     }
+  },
+  "deploy": {
+    "title": "免费部署静态网站",
+    "subtitle": "上传您的 HTML、CSS、JavaScript 文件，即刻获得永久托管的网站链接。无需服务器，无需配置。",
+    "uploadAnother": "上传另一个文件",
+    "maxSize": "单一文件最大 20MB，目录最大 500MB",
+    "history": "上传记录",
+    "loginForHistory": "登录以查看上传记录",
+    "noHistory": "尚无上传记录"
   }
 }

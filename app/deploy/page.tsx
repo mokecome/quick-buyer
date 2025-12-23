@@ -2,12 +2,13 @@
 
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { ArrowRight, Github, HelpCircle, Upload, FileCode, FolderOpen } from "lucide-react"
+import { Github, Upload, FileCode, FolderOpen, ArrowLeft, ExternalLink, Copy, Check } from "lucide-react"
 import { useState, useEffect, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslation } from "react-i18next"
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client"
 import type { User as SupabaseUser, AuthChangeEvent, Session } from "@supabase/supabase-js"
+import Link from "next/link"
 
 // Google Icon Component
 function GoogleIcon({ className }: { className?: string }) {
@@ -33,7 +34,15 @@ function CodeFileIcon({ className }: { className?: string }) {
   )
 }
 
-export function BrowserDeploy() {
+interface UploadRecord {
+  cid: string
+  url: string
+  filename: string
+  size: number
+  created_at: string
+}
+
+export default function DeployPage() {
   const [loginMenuOpen, setLoginMenuOpen] = useState(false)
   const [isSigningIn, setIsSigningIn] = useState<'github' | 'google' | null>(null)
   const [user, setUser] = useState<SupabaseUser | null>(null)
@@ -42,6 +51,8 @@ export function BrowserDeploy() {
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadResult, setUploadResult] = useState<{ cid: string; url: string } | null>(null)
+  const [uploadHistory, setUploadHistory] = useState<UploadRecord[]>([])
+  const [copiedUrl, setCopiedUrl] = useState<string | null>(null)
   const router = useRouter()
   const loginMenuRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -75,6 +86,18 @@ export function BrowserDeploy() {
       try {
         const { data: { user } } = await supabase.auth.getUser()
         setUser(user)
+        if (user) {
+          // Fetch upload history
+          const { data: history } = await supabase
+            .from('ipfs_uploads')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(10)
+          if (history) {
+            setUploadHistory(history)
+          }
+        }
       } catch (error) {
         console.error('Error getting user:', error)
       } finally {
@@ -142,10 +165,6 @@ export function BrowserDeploy() {
     }
   }
 
-  const handleUploadClick = () => {
-    router.push('/deploy')
-  }
-
   // Handle file upload to IPFS
   const handleFileUpload = async (files: FileList | null) => {
     if (!files || files.length === 0 || !user) return
@@ -173,6 +192,19 @@ export function BrowserDeploy() {
           cid: data.cid,
           url: data.url,
         })
+        // Refresh history
+        const supabase = createClient()
+        if (supabase) {
+          const { data: history } = await supabase
+            .from('ipfs_uploads')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(10)
+          if (history) {
+            setUploadHistory(history)
+          }
+        }
       } else {
         alert(data.error || 'Upload failed')
       }
@@ -206,7 +238,10 @@ export function BrowserDeploy() {
   }, [user])
 
   const handleDropzoneClick = () => {
-    if (!user) return
+    if (!user) {
+      setLoginMenuOpen(true)
+      return
+    }
     if (activeTab === 'file') {
       fileInputRef.current?.click()
     } else {
@@ -214,81 +249,66 @@ export function BrowserDeploy() {
     }
   }
 
+  const handleCopyUrl = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url)
+      setCopiedUrl(url)
+      setTimeout(() => setCopiedUrl(null), 2000)
+    } catch (error) {
+      console.error('Failed to copy:', error)
+    }
+  }
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }
+
   const isDisabled = !user || isLoading
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-b from-muted/20 to-background">
-      <div className="container px-4 md:px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          {/* Left Side - Text Content */}
-          <div className="space-y-6">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-600 text-sm font-medium">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-              {t('browserDeploy.badge')}
-            </div>
+    <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background">
+      <div className="container px-4 md:px-6 py-8 md:py-12">
+        {/* Back Link */}
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          {t('common.back')}
+        </Link>
 
-            {/* Title */}
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
-              {t('browserDeploy.title')}
-            </h2>
-
-            {/* Subtitle */}
-            <p className="text-lg text-muted-foreground leading-relaxed max-w-xl">
-              {t('browserDeploy.subtitle')}
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="flex items-center gap-4 pt-2">
-              <a
-                href="#"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
-              >
-                <HelpCircle className="h-4 w-4" />
-                {t('browserDeploy.howToUse')}
-              </a>
-
-              <div className="relative" ref={loginMenuRef}>
-                <Button
-                  size="lg"
-                  className="bg-zinc-900 hover:bg-zinc-800 text-white px-6"
-                  onClick={handleUploadClick}
-                  disabled={isSigningIn !== null || isLoading}
-                >
-                  {isSigningIn ? t('common.signingIn') : t('browserDeploy.cta')}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-
-                {/* Login Dropdown Menu */}
-                {loginMenuOpen && (
-                  <div className="absolute left-0 mt-2 w-56 rounded-md border bg-background shadow-lg z-50">
-                    <div className="py-1">
-                      <button
-                        onClick={handleGitHubSignIn}
-                        className="flex w-full items-center gap-3 px-4 py-3 text-sm hover:bg-accent transition-colors"
-                      >
-                        <Github className="h-5 w-5" />
-                        {t('auth.signInWithGithub')}
-                      </button>
-                      <button
-                        onClick={handleGoogleSignIn}
-                        className="flex w-full items-center gap-3 px-4 py-3 text-sm hover:bg-accent transition-colors"
-                      >
-                        <GoogleIcon className="h-5 w-5" />
-                        {t('auth.signInWithGoogle')}
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-600 text-sm font-medium mb-4">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            {t('browserDeploy.badge')}
           </div>
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
+            {t('deploy.title')}
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            {t('deploy.subtitle')}
+          </p>
+        </div>
 
-          {/* Right Side - Upload Interface */}
-          <div className="relative">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Upload Card - Main */}
+          <div className="lg:col-span-2">
             <Card className={`overflow-hidden shadow-xl ${isDisabled ? 'opacity-60' : ''}`}>
               {/* Header */}
               <div className="p-4 border-b">
@@ -328,7 +348,7 @@ export function BrowserDeploy() {
               {/* Dropzone */}
               <div className="p-6">
                 <div
-                  className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                  className={`border-2 border-dashed rounded-lg p-12 text-center transition-colors ${
                     isDisabled
                       ? 'border-muted cursor-not-allowed bg-muted/30'
                       : isDragging
@@ -342,36 +362,66 @@ export function BrowserDeploy() {
                 >
                   {isUploading ? (
                     <div className="flex flex-col items-center gap-3">
-                      <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
                       <p className="text-sm text-muted-foreground">{t('browserDeploy.upload.uploading')}</p>
                     </div>
                   ) : uploadResult ? (
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                        <svg className="w-6 h-6 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                        <svg className="w-8 h-8 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
-                      <p className="text-sm font-medium text-emerald-600">{t('browserDeploy.upload.success')}</p>
-                      <a
-                        href={uploadResult.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-primary hover:underline break-all"
+                      <p className="text-lg font-medium text-emerald-600">{t('browserDeploy.upload.success')}</p>
+                      <div className="flex items-center gap-2 max-w-full">
+                        <a
+                          href={uploadResult.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-primary hover:underline break-all flex items-center gap-1"
+                        >
+                          {uploadResult.url}
+                          <ExternalLink className="h-3 w-3 flex-shrink-0" />
+                        </a>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleCopyUrl(uploadResult.url)
+                          }}
+                        >
+                          {copiedUrl === uploadResult.url ? (
+                            <Check className="h-4 w-4 text-emerald-500" />
+                          ) : (
+                            <Copy className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setUploadResult(null)
+                        }}
                       >
-                        {uploadResult.url}
-                      </a>
+                        {t('deploy.uploadAnother')}
+                      </Button>
                     </div>
                   ) : (
                     <>
                       <div className="flex justify-center mb-4">
-                        <CodeFileIcon className="w-16 h-16" />
+                        <CodeFileIcon className="w-20 h-20" />
                       </div>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground">
                         {t('browserDeploy.upload.dropzone.text')}
                         <span className="text-primary font-medium cursor-pointer hover:underline">
                           {t('browserDeploy.upload.dropzone.click')}
                         </span>
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-4">
+                        {t('deploy.maxSize')}
                       </p>
                     </>
                   )}
@@ -389,7 +439,7 @@ export function BrowserDeploy() {
                 type="file"
                 className="hidden"
                 multiple
-                accept=".html,.css,.js,.json,.txt,.md,.png,.jpg,.jpeg,.gif,.svg,.ico"
+                accept=".html,.css,.js,.json,.txt,.md,.png,.jpg,.jpeg,.gif,.svg,.ico,.woff,.woff2,.ttf,.eot"
                 onChange={(e) => handleFileUpload(e.target.files)}
                 disabled={isDisabled}
               />
@@ -405,20 +455,97 @@ export function BrowserDeploy() {
               {/* Disabled Overlay */}
               {isDisabled && (
                 <div className="absolute inset-0 bg-background/50 backdrop-blur-[1px] flex items-center justify-center">
-                  <div className="text-center p-4">
-                    <p className="text-sm text-muted-foreground mb-2">
+                  <div className="text-center p-4" ref={loginMenuRef}>
+                    <p className="text-sm text-muted-foreground mb-4">
                       {t('browserDeploy.upload.loginRequired')}
                     </p>
+                    <div className="flex flex-col gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleGitHubSignIn}
+                        disabled={isSigningIn !== null}
+                        className="gap-2"
+                      >
+                        <Github className="h-4 w-4" />
+                        {isSigningIn === 'github' ? t('common.signingIn') : t('auth.signInWithGithub')}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleGoogleSignIn}
+                        disabled={isSigningIn !== null}
+                        className="gap-2"
+                      >
+                        <GoogleIcon className="h-4 w-4" />
+                        {isSigningIn === 'google' ? t('common.signingIn') : t('auth.signInWithGoogle')}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               )}
             </Card>
+          </div>
 
-            {/* Decorative blur */}
-            <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/5 rounded-full blur-3xl"></div>
+          {/* Sidebar - Upload History */}
+          <div className="lg:col-span-1">
+            <Card className="overflow-hidden">
+              <div className="p-4 border-b">
+                <h3 className="text-lg font-semibold">{t('deploy.history')}</h3>
+              </div>
+              <div className="p-4">
+                {!user ? (
+                  <p className="text-sm text-muted-foreground text-center py-8">
+                    {t('deploy.loginForHistory')}
+                  </p>
+                ) : uploadHistory.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-8">
+                    {t('deploy.noHistory')}
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {uploadHistory.map((record) => (
+                      <div
+                        key={record.cid}
+                        className="p-3 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium truncate">{record.filename}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {formatFileSize(record.size)} • {formatDate(record.created_at)}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <a
+                              href={record.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-1.5 rounded hover:bg-muted transition-colors"
+                            >
+                              <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                            </a>
+                            <button
+                              onClick={() => handleCopyUrl(record.url)}
+                              className="p-1.5 rounded hover:bg-muted transition-colors"
+                            >
+                              {copiedUrl === record.url ? (
+                                <Check className="h-4 w-4 text-emerald-500" />
+                              ) : (
+                                <Copy className="h-4 w-4 text-muted-foreground" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </Card>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   )
 }
