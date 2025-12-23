@@ -150,9 +150,9 @@ export async function PUT(
     }
 
     // Validate required fields for full update
-    const { title, description, price, category, downloadUrl } = body
+    const { title, price, category } = body
 
-    if (!title || !description || price === undefined || !category || !downloadUrl) {
+    if (!title || price === undefined || !category) {
       return NextResponse.json(
         { error: "Bad Request", message: "Missing required fields" },
         { status: 400 }
@@ -166,12 +166,12 @@ export async function PUT(
     // Build update object
     const updateData: Record<string, unknown> = {
       title,
-      description,
+      description: body.description || null,
       long_description: body.longDescription || null,
       price: parseFloat(price) || 0,
       category,
       thumbnail_url: body.thumbnailUrl || null,
-      download_url: downloadUrl,
+      download_url: body.downloadUrl || null,
       docs_url: body.docsUrl || null,
       demo_url: body.demoUrl || null,
       updated_at: new Date().toISOString(),

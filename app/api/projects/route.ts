@@ -4,12 +4,21 @@ import { isAdmin } from "@/lib/admin/check-admin"
 
 // Generate URL-friendly slug from title
 function generateSlug(title: string): string {
-  return title
+  // First try to generate slug from alphanumeric characters
+  let slug = title
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .trim()
+
+  // If slug is empty (e.g., pure Chinese title), generate a random slug
+  if (!slug) {
+    const randomPart = Math.random().toString(36).substring(2, 10)
+    slug = `project-${randomPart}`
+  }
+
+  return slug
 }
 
 // Generate screenshot from URL using Microlink API
@@ -50,9 +59,9 @@ export async function POST(request: Request) {
     const body = await request.json()
 
     // Validate required fields
-    const { title, description, price, category, downloadUrl } = body
+    const { title, price, category } = body
 
-    if (!title || !description || price === undefined || !category || !downloadUrl) {
+    if (!title || price === undefined || !category) {
       return NextResponse.json(
         { error: "Bad Request", message: "Missing required fields" },
         { status: 400 }
@@ -89,12 +98,12 @@ export async function POST(request: Request) {
       .insert({
         title,
         slug,
-        description,
+        description: body.description || null,
         long_description: body.longDescription || null,
         price: parseFloat(price) || 0,
         category,
         thumbnail_url: thumbnailUrl,
-        download_url: downloadUrl,
+        download_url: body.downloadUrl || null,
         docs_url: body.docsUrl || null,
         demo_url: body.demoUrl || null,
         user_id: user.id,

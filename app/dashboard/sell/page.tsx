@@ -232,29 +232,17 @@ export default function SellPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">{t('sell.form.description', 'Short Description')} *</Label>
+                  <Label htmlFor="description">{t('sell.form.description', 'Short Description')}</Label>
                   <Textarea
                     id="description"
                     value={formData.description}
                     onChange={(e) => handleChange("description", e.target.value)}
                     placeholder={t('sell.form.descriptionPlaceholder', 'A brief description of your project (max 200 characters)')}
                     maxLength={200}
-                    required
                   />
                   <p className="text-xs text-muted-foreground">
                     {formData.description.length}/200
                   </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="longDescription">{t('sell.form.longDescription', 'Detailed Description')}</Label>
-                  <Textarea
-                    id="longDescription"
-                    value={formData.longDescription}
-                    onChange={(e) => handleChange("longDescription", e.target.value)}
-                    placeholder={t('sell.form.longDescriptionPlaceholder', 'Provide a detailed description of features, tech stack, and use cases...')}
-                    rows={6}
-                  />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -365,7 +353,7 @@ export default function SellPage() {
                 <div className="space-y-2">
                   <Label htmlFor="downloadUrl">
                     <Upload className="inline h-4 w-4 mr-2" />
-                    {t('sell.form.downloadUrl', 'Download URL')} *
+                    {t('sell.form.downloadUrl', 'Download URL')}
                   </Label>
                   <Input
                     id="downloadUrl"
@@ -373,27 +361,9 @@ export default function SellPage() {
                     value={formData.downloadUrl}
                     onChange={(e) => handleChange("downloadUrl", e.target.value)}
                     placeholder="https://github.com/... or https://drive.google.com/..."
-                    required
                   />
                   <p className="text-xs text-muted-foreground">
                     {t('sell.form.downloadUrlHint', 'Link to download the source code (GitHub, Google Drive, etc.)')}
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="docsUrl">
-                    <FileText className="inline h-4 w-4 mr-2" />
-                    {t('sell.form.docsUrl', 'Documentation URL')}
-                  </Label>
-                  <Input
-                    id="docsUrl"
-                    type="url"
-                    value={formData.docsUrl}
-                    onChange={(e) => handleChange("docsUrl", e.target.value)}
-                    placeholder="https://docs.example.com or https://notion.so/..."
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    {t('sell.form.docsUrlHint', 'Link to project documentation or tutorial (Notion, GitBook, etc.)')}
                   </p>
                 </div>
 

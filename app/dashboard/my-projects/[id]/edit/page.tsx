@@ -29,7 +29,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
-import { Upload, Link as LinkIcon, FileText, DollarSign, Loader2, ArrowLeft, Trash2, AlertTriangle, ImageIcon } from "lucide-react"
+import { Upload, Link as LinkIcon, FileText, DollarSign, Loader2, ArrowLeft, Trash2, AlertTriangle, ImageIcon, RefreshCw } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import type { User } from "@supabase/supabase-js"
 
@@ -69,6 +69,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
+  const [isRefreshingThumbnail, setIsRefreshingThumbnail] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     title: "",
@@ -190,6 +191,55 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
+  }
+
+  // Refresh thumbnail from demo URL with force cache bypass
+  const handleRefreshThumbnail = async () => {
+    if (!formData.demoUrl) {
+      alert(isZh ? '請先填寫 Demo URL' : 'Please enter a Demo URL first')
+      return
+    }
+
+    setIsRefreshingThumbnail(true)
+    try {
+      // Generate new screenshot with force=true to bypass cache
+      const response = await fetch('/api/screenshot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: formData.demoUrl, force: true }),
+      })
+
+      const data = await response.json()
+
+      if (data.success && data.screenshotUrl) {
+        // Update form data
+        handleChange('thumbnailUrl', data.screenshotUrl)
+
+        // Also save to database immediately so it persists
+        const saveResponse = await fetch(`/api/projects/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...formData,
+            thumbnailUrl: data.screenshotUrl,
+            price: parseFloat(formData.price) || 0,
+          }),
+        })
+
+        if (saveResponse.ok) {
+          alert(isZh ? '縮圖已刷新並保存！' : 'Thumbnail refreshed and saved!')
+        } else {
+          alert(isZh ? '縮圖已刷新，請手動保存' : 'Thumbnail refreshed, please save manually')
+        }
+      } else {
+        alert(data.message || (isZh ? '刷新縮圖失敗' : 'Failed to refresh thumbnail'))
+      }
+    } catch (error) {
+      console.error('Refresh thumbnail error:', error)
+      alert(isZh ? '刷新縮圖失敗' : 'Failed to refresh thumbnail')
+    } finally {
+      setIsRefreshingThumbnail(false)
+    }
   }
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -343,29 +393,17 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">{t('sell.form.description', 'Short Description')} *</Label>
+                  <Label htmlFor="description">{t('sell.form.description', 'Short Description')}</Label>
                   <Textarea
                     id="description"
                     value={formData.description}
                     onChange={(e) => handleChange("description", e.target.value)}
                     placeholder={t('sell.form.descriptionPlaceholder', 'A brief description of your project (max 200 characters)')}
                     maxLength={200}
-                    required
                   />
                   <p className="text-xs text-muted-foreground">
                     {formData.description.length}/200
                   </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="longDescription">{t('sell.form.longDescription', 'Detailed Description')}</Label>
-                  <Textarea
-                    id="longDescription"
-                    value={formData.longDescription}
-                    onChange={(e) => handleChange("longDescription", e.target.value)}
-                    placeholder={t('sell.form.longDescriptionPlaceholder', 'Provide a detailed description of features, tech stack, and use cases...')}
-                    rows={6}
-                  />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -456,8 +494,24 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                       )}
                     </Button>
                   </div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleRefreshThumbnail}
+                      disabled={isRefreshingThumbnail || !formData.demoUrl}
+                    >
+                      {isRefreshingThumbnail ? (
+                        <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                      ) : (
+                        <RefreshCw className="h-4 w-4 mr-1" />
+                      )}
+                      {isZh ? '從 Demo URL 刷新縮圖' : 'Refresh from Demo URL'}
+                    </Button>
+                  </div>
                   <p className="text-xs text-muted-foreground">
-                    {isZh ? '上傳圖片或輸入 URL。留空則從 Demo URL 自動產生。' : 'Upload an image or enter URL. Auto-generated from Demo URL if left empty.'}
+                    {isZh ? '上傳圖片、輸入 URL 或從 Demo URL 刷新。' : 'Upload an image, enter URL, or refresh from Demo URL.'}
                   </p>
                   {formData.thumbnailUrl && (
                     <div className="mt-2 relative aspect-video w-full max-w-sm bg-muted rounded-lg overflow-hidden">
@@ -476,7 +530,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                 <div className="space-y-2">
                   <Label htmlFor="downloadUrl">
                     <Upload className="inline h-4 w-4 mr-2" />
-                    {t('sell.form.downloadUrl', 'Download URL')} *
+                    {t('sell.form.downloadUrl', 'Download URL')}
                   </Label>
                   <Input
                     id="downloadUrl"
@@ -484,27 +538,9 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                     value={formData.downloadUrl}
                     onChange={(e) => handleChange("downloadUrl", e.target.value)}
                     placeholder="https://github.com/... or https://drive.google.com/..."
-                    required
                   />
                   <p className="text-xs text-muted-foreground">
                     {t('sell.form.downloadUrlHint', 'Link to download the source code (GitHub, Google Drive, etc.)')}
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="docsUrl">
-                    <FileText className="inline h-4 w-4 mr-2" />
-                    {t('sell.form.docsUrl', 'Documentation URL')}
-                  </Label>
-                  <Input
-                    id="docsUrl"
-                    type="url"
-                    value={formData.docsUrl}
-                    onChange={(e) => handleChange("docsUrl", e.target.value)}
-                    placeholder="https://docs.example.com or https://notion.so/..."
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    {t('sell.form.docsUrlHint', 'Link to project documentation or tutorial (Notion, GitBook, etc.)')}
                   </p>
                 </div>
 
