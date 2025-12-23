@@ -202,10 +202,15 @@
     "imageAI": "圖像生成 AI",
     "voiceAI": "語音 AI",
     "aboutUs": "關於我們",
+    "about": "關於",
+    "blog": "部落格",
     "pricingPlans": "定價方案",
     "sellYourProject": "上架您的項目",
-    "support": "支援",
-    "emailSupport": "郵件支援",
+    "legal": "法律條款",
+    "privacy": "隱私政策",
+    "terms": "服務條款",
+    "refund": "退款政策",
+    "emailSupport": "聯繫我們",
     "copyright": "© {{year}} Quick Buyer. 保留所有權利。"
   },
   "auth": {
