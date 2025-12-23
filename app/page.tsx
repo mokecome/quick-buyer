@@ -1,5 +1,6 @@
 import { Header } from "@/components/header"
 import { Hero } from "@/components/hero"
+import { BrowserDeploy } from "@/components/browser-deploy"
 import { Features } from "@/components/features"
 import { FeaturedProjects } from "@/components/featured-projects"
 import { FAQ } from "@/components/faq"
@@ -11,6 +12,7 @@ export default function HomePage() {
       <Header />
       <main className="flex-1">
         <Hero />
+        <BrowserDeploy />
         <FeaturedProjects />
         <Features />
         <FAQ />

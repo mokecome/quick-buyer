@@ -288,5 +288,22 @@
         "cta": "浏览模板"
       }
     }
+  },
+  "browserDeploy": {
+    "badge": "开箱即用，一键部署",
+    "title": "通过浏览器部署",
+    "subtitle": "我们坚信，无论你身处何方、背景如何，冗余事务不应成为您创造力的困扰，借 AI 之力让创造力自由绽放！",
+    "howToUse": "如何使用",
+    "cta": "立即上传",
+    "config": {
+      "header": "deploy.config",
+      "headline": "3分钟上线您的应用",
+      "tagline": "快速部署・零配置・即刻上线",
+      "noNeed": "无需处理",
+      "noNeedItems": ["系统部署", "复杂备案流程", "购置服务器", "获客渠道", "支付通道"],
+      "support": "支持技术栈",
+      "supportItems": ["HTML+JS+CSS", "Python", "SQLite", "AI智能体", "多端适配"],
+      "free": "个人免费"
+    }
   }
 }

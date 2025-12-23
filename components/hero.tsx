@@ -77,21 +77,6 @@ export function Hero() {
             </Button>
           </div>
 
-          {/* Stats */}
-          <div className="flex flex-wrap justify-center gap-x-12 gap-y-4">
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl md:text-4xl font-bold text-primary">200+</span>
-              <span className="text-sm text-muted-foreground">{t('hero.stats.projects')}</span>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl md:text-4xl font-bold text-primary">5K+</span>
-              <span className="text-sm text-muted-foreground">{t('hero.stats.developers')}</span>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl md:text-4xl font-bold text-primary">50+</span>
-              <span className="text-sm text-muted-foreground">{t('hero.stats.categories')}</span>
-            </div>
-          </div>
         </div>
       </div>
     </section>
