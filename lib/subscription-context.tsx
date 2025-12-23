@@ -39,12 +39,19 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
         return
       }
 
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('subscriptions')
         .select('*')
         .eq('user_id', user.id)
         .eq('status', 'active')
-        .single()
+        .maybeSingle()
+
+      // Ignore errors (table might not exist or no subscription found)
+      if (error) {
+        console.log('Subscription check:', error.message)
+        setSubscription(null)
+        return
+      }
 
       setSubscription(data)
     } catch (error) {

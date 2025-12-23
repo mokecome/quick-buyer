@@ -62,46 +62,26 @@ export function Footer() {
             <h3 className="font-semibold">{t('footer.aboutUs')}</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/about" className="text-muted-foreground hover:text-foreground transition-colors">
-                  {t('footer.about')}
-                </Link>
-              </li>
-              <li>
                 <Link href="/pricing" className="text-muted-foreground hover:text-foreground transition-colors">
                   {t('footer.pricingPlans')}
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="text-muted-foreground hover:text-foreground transition-colors">
-                  {t('footer.blog')}
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">
-                  {t('footer.contact')}
+                <Link href="/dashboard/sell" className="text-muted-foreground hover:text-foreground transition-colors">
+                  {t('footer.sellYourProject')}
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Legal */}
+          {/* Support */}
           <div className="space-y-4">
-            <h3 className="font-semibold">{t('footer.legal')}</h3>
+            <h3 className="font-semibold">{t('footer.support')}</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">
-                  {t('footer.privacy')}
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">
-                  {t('footer.terms')}
-                </Link>
-              </li>
-              <li>
-                <Link href="/refund" className="text-muted-foreground hover:text-foreground transition-colors">
-                  {t('footer.refund')}
-                </Link>
+                <a href="mailto:support@quickbuyer.ai" className="text-muted-foreground hover:text-foreground transition-colors">
+                  {t('footer.emailSupport')}
+                </a>
               </li>
             </ul>
           </div>

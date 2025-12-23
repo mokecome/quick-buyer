@@ -202,14 +202,10 @@
     "imageAI": "Image Generation AI",
     "voiceAI": "Voice AI",
     "aboutUs": "About Us",
-    "about": "About",
     "pricingPlans": "Pricing Plans",
-    "blog": "Blog",
-    "contact": "Contact",
-    "legal": "Legal",
-    "privacy": "Privacy Policy",
-    "terms": "Terms of Service",
-    "refund": "Refund Policy",
+    "sellYourProject": "Sell Your Project",
+    "support": "Support",
+    "emailSupport": "Email Support",
     "copyright": "© {{year}} Quick Buyer. All rights reserved."
   },
   "auth": {
