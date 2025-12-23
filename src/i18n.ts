@@ -1,6 +1,5 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
-import LanguageDetector from 'i18next-browser-languagedetector'
 
 import enTranslation from '@/src/locales/en/translation.json'
 import zhTranslation from '@/src/locales/zh/translation.json'
@@ -22,33 +21,23 @@ const resources = {
   ch: { translation: chTranslation },
 }
 
+// Default language - ALWAYS use 'zh' for initial render to avoid hydration mismatch
+const DEFAULT_LANGUAGE = 'zh'
+
 i18n
-  // Detect user language automatically
-  .use(LanguageDetector)
-  // Pass the i18n instance to react-i18next
   .use(initReactI18next)
-  // Initialize i18next
   .init({
     resources,
-    fallbackLng: 'zh', // Default fallback to Chinese
+    lng: DEFAULT_LANGUAGE, // Always start with default language
+    fallbackLng: DEFAULT_LANGUAGE,
     supportedLngs: ['en', 'zh', 'ch'],
 
-    // Language detection options
-    detection: {
-      // Order of language detection methods
-      order: ['localStorage', 'navigator', 'htmlTag'],
-      // Cache language selection in localStorage
-      caches: ['localStorage'],
-      // localStorage key for storing language preference
-      lookupLocalStorage: 'language',
-    },
-
     interpolation: {
-      escapeValue: false, // React already escapes values
+      escapeValue: false,
     },
 
     react: {
-      useSuspense: false, // Disable suspense to avoid SSR issues
+      useSuspense: false,
     },
   })
 
