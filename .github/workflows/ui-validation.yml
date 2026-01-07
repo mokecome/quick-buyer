@@ -1,0 +1,18 @@
+# .github/workflows/ui-validation.yml
+name: UI Visual Validation
+on: [pull_request]
+jobs:
+  visual-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: npm install
+      - name: Build and screenshot
+        run: npm run build && npm run screenshot
+      - name: Visual validation
+        run: claude-code --agent ui-visual-validator verify screenshots/
