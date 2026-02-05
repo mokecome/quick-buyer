@@ -39,8 +39,11 @@ export async function POST(request: NextRequest) {
     const isTestMode = apiKey.includes('_test_')
     const baseUrl = isTestMode ? 'https://test-api.creem.io' : 'https://api.creem.io'
 
-    console.log('Creating checkout session:', { productId, planName, billingCycle, price })
-    console.log('Using API URL:', baseUrl, '(Test mode:', isTestMode, ')')
+    // Only log detailed info in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Creating checkout session:', { productId, planName, billingCycle, price })
+      console.log('Using API URL:', baseUrl, '(Test mode:', isTestMode, ')')
+    }
 
     // Determine success and cancel URLs based on checkout type
     const isSubscription = !!planName // If planName exists, it's a subscription checkout
