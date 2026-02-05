@@ -1,20 +1,60 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import crypto from 'crypto'
+
+/**
+ * Verify Creem webhook signature using HMAC-SHA256
+ */
+function verifyWebhookSignature(
+  payload: string,
+  signature: string,
+  secret: string
+): boolean {
+  try {
+    const expectedSignature = crypto
+      .createHmac('sha256', secret)
+      .update(payload)
+      .digest('hex')
+
+    // Use timing-safe comparison to prevent timing attacks
+    return crypto.timingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(expectedSignature)
+    )
+  } catch {
+    return false
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.text()
     const signature = request.headers.get('x-creem-signature')
 
-    // Verify webhook signature if secret is configured
+    // Verify webhook signature
     const webhookSecret = process.env.CREEM_WEBHOOK_SECRET
-    if (webhookSecret && signature) {
-      // TODO: Implement signature verification
-      console.log('Received webhook with signature:', signature)
+    if (webhookSecret) {
+      if (!signature) {
+        console.error('Missing webhook signature')
+        return NextResponse.json({ error: 'Missing signature' }, { status: 401 })
+      }
+
+      if (!verifyWebhookSignature(body, signature, webhookSecret)) {
+        console.error('Invalid webhook signature')
+        return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
+      }
+    } else if (process.env.NODE_ENV === 'production') {
+      console.error('CREEM_WEBHOOK_SECRET not configured in production')
+      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
     }
 
     const event = JSON.parse(body)
-    console.log('Webhook event:', event.type, event)
+    // Only log event type in production, full event in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Webhook event:', event.type, event)
+    } else {
+      console.log('Webhook event received:', event.type)
+    }
 
     // Handle different event types
     switch (event.type) {
