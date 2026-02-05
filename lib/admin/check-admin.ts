@@ -1,10 +1,7 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 
-// Admin emails from environment variable (comma-separated) with fallback
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || 'mokecome@gmail.com')
-  .split(',')
-  .map(email => email.trim().toLowerCase())
-  .filter(Boolean)
+// Admin email - can be extended to multiple admins in the future
+const ADMIN_EMAILS = ['mokecome@gmail.com']
 
 /**
  * Check if a user is an admin by their email
