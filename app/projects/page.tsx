@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Search, Loader2, ChevronLeft, ChevronRight } from "lucide-react"
-import { useTranslation } from "react-i18next"
+import { useTranslations } from "next-intl"
 
 interface Project {
   id: string
@@ -50,7 +50,7 @@ const sortOptions = [
 ]
 
 function ProjectsContent() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -150,10 +150,10 @@ function ProjectsContent() {
             {/* Page Header */}
             <div className="text-center space-y-4 mb-12">
               <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-                {t("projects.title", "Browse Projects")}
+                {t("projects.title")}
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                {t("projects.subtitle", "Discover production-ready code projects from talented developers worldwide")}
+                {t("projects.subtitle")}
               </p>
             </div>
 
@@ -164,14 +164,14 @@ function ProjectsContent() {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder={t("projects.searchPlaceholder", "Search projects...")}
+                    placeholder={t("projects.searchPlaceholder")}
                     className="pl-10"
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                   />
                 </div>
                 <Button type="submit">
-                  {t("projects.search", "Search")}
+                  {t("projects.search")}
                 </Button>
               </form>
 
@@ -195,12 +195,12 @@ function ProjectsContent() {
                 {/* Sort Dropdown */}
                 <Select value={currentSort} onValueChange={handleSortChange}>
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder={t("projects.sortBy", "Sort by")} />
+                    <SelectValue placeholder={t("projects.sortBy")} />
                   </SelectTrigger>
                   <SelectContent>
                     {sortOptions.map((option) => (
                       <SelectItem key={option.value} value={option.value}>
-                        {t(`projects.sort.${option.value}`, option.label)}
+                        {option.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -211,9 +211,9 @@ function ProjectsContent() {
             {/* Results Count */}
             {pagination && (
               <div className="text-sm text-muted-foreground mb-6">
-                {t("projects.showing", "Showing")} {projects.length} {t("projects.of", "of")} {pagination.totalCount} {t("projects.results", "results")}
+                {t("projects.showing")} {projects.length} {t("projects.of")} {pagination.totalCount} {t("projects.results")}
                 {currentSearch && (
-                  <span> {t("projects.for", "for")} &quot;{currentSearch}&quot;</span>
+                  <span> {t("projects.for")} &quot;{currentSearch}&quot;</span>
                 )}
               </div>
             )}
@@ -227,7 +227,7 @@ function ProjectsContent() {
               /* Empty State */
               <div className="text-center py-20">
                 <p className="text-lg text-muted-foreground">
-                  {t("projects.noResults", "No projects found matching your criteria.")}
+                  {t("projects.noResults")}
                 </p>
                 <Button
                   variant="outline"
@@ -237,7 +237,7 @@ function ProjectsContent() {
                     router.push("/projects")
                   }}
                 >
-                  {t("projects.clearFilters", "Clear Filters")}
+                  {t("projects.clearFilters")}
                 </Button>
               </div>
             ) : (

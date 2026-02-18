@@ -6,13 +6,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { useTranslation } from "react-i18next"
+import { useTranslations } from "next-intl"
 import { HelpCircle } from "lucide-react"
 
 const faqKeys = ['whatGet', 'updates', 'refund', 'payment', 'sell', 'types']
 
 export function FAQ() {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <section id="faq" className="py-20 md:py-28 bg-gradient-to-b from-background to-muted/30 relative overflow-hidden">

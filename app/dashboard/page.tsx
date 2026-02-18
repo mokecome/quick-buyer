@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useTranslation } from "react-i18next"
+import { useTranslations, useLocale } from "next-intl"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -62,7 +62,8 @@ interface AdminStats {
 }
 
 export default function DashboardPage() {
-  const { t, i18n } = useTranslation()
+  const t = useTranslations()
+  const locale = useLocale()
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [recentPurchases, setRecentPurchases] = useState<RecentPurchase[]>([])
   const [isAdmin, setIsAdmin] = useState(false)
@@ -70,7 +71,7 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const isZh = i18n.language?.startsWith('zh')
+  const isZh = locale.startsWith('zh') || locale === 'ch'
 
   useEffect(() => {
     const fetchStats = async () => {

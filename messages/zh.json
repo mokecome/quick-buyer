@@ -1,0 +1,441 @@
+{
+  "common": {
+    "signIn": "登入",
+    "signOut": "登出",
+    "signingIn": "登入中...",
+    "loading": "載入中...",
+    "processing": "處理中...",
+    "error": "錯誤",
+    "success": "成功",
+    "cancel": "取消",
+    "confirm": "確認",
+    "save": "儲存",
+    "delete": "刪除",
+    "edit": "編輯",
+    "back": "返回",
+    "next": "下一步",
+    "viewAll": "查看全部",
+    "learnMore": "了解更多",
+    "contactUs": "聯繫我們",
+    "search": "搜尋",
+    "sortBy": "排序",
+    "signInWithGitHub": "使用 GitHub 登入",
+    "signInWithGoogle": "使用 Google 登入"
+  },
+  "nav": {
+    "projects": "AI 項目",
+    "deploy": "免費部署",
+    "features": "特色",
+    "pricing": "定價",
+    "faq": "常見問題",
+    "dashboard": "控制台",
+    "sellProject": "上架 AI 項目"
+  },
+  "hero": {
+    "title": "發現優質",
+    "titleHighlight": "AI 項目",
+    "titleEnd": "加速創新",
+    "subtitle": "專注於優質 AI 項目。發現生產就緒的 AI 模板、機器學習和 LLM 應用。",
+    "browseProjects": "瀏覽 AI 項目",
+    "sellYourProject": "上架您的 AI 項目",
+    "stats": {
+      "projects": "AI 項目",
+      "developers": "AI 開發者",
+      "categories": "AI 分類"
+    },
+    "orSell": "想要銷售？",
+    "scenarios": {
+      "learner": {
+        "title": "學習成長",
+        "desc": "從完整項目學習 AI 開發最佳實踐，掌握代碼架構與設計模式",
+        "cta": "開始學習"
+      },
+      "freelancer": {
+        "title": "接案利器",
+        "desc": "使用模板快速客製化交付，大幅提升接案效率與利潤",
+        "cta": "提升效率"
+      },
+      "enterprise": {
+        "title": "企業開發",
+        "desc": "基於模板二次開發，節省 70% 開發時間與人力成本",
+        "cta": "瀏覽模板"
+      }
+    }
+  },
+  "features": {
+    "title": "為什麼選擇 Quick Buyer？",
+    "subtitle": "AI 項目的優質交易市集。由 AI 開發者打造，為 AI 開發者服務。",
+    "items": {
+      "aiModels": {
+        "title": "優質 AI 模型與工具",
+        "description": "所有項目均經過審核和驗證。獲取生產就緒的 AI 解決方案，包括 LLM、計算機視覺、NLP 等。"
+      },
+      "instantDeploy": {
+        "title": "即時部署",
+        "description": "購買後立即下載。包含完整文檔和部署指南，快速整合到您的項目中。"
+      },
+      "secure": {
+        "title": "安全可靠",
+        "description": "所有交易均經過安全處理。您的數據和 AI 模型受到完全保護。"
+      },
+      "categories": {
+        "title": "多元 AI 分類",
+        "description": "涵蓋 ChatGPT 應用、圖像生成、語音識別、自動化機器人等熱門 AI 領域。"
+      },
+      "developerFriendly": {
+        "title": "AI 開發者友善",
+        "description": "低費用，快速提款。專注於打造優秀的 AI 產品，其餘的交給我們處理。"
+      },
+      "updates": {
+        "title": "持續更新",
+        "description": "一次購買，終身使用。AI 發展迅速，您將獲得所有未來更新。"
+      }
+    }
+  },
+  "featuredProjects": {
+    "title": "精選 AI 項目",
+    "subtitle": "精心挑選的優質 AI 解決方案",
+    "viewAll": "查看所有項目",
+    "projects": {
+      "chatgpt": {
+        "title": "ChatGPT SaaS 完整套件",
+        "description": "基於 GPT-4 的完整 SaaS 解決方案，包含用戶認證、對話管理、Token 計費和管理後台。Next.js 14 + OpenAI API。"
+      },
+      "imageGen": {
+        "title": "AI 圖像生成平台",
+        "description": "整合 DALL-E 3 和 Stable Diffusion 的圖像生成平台。支援文字生成圖像、圖像轉圖像、風格轉換。"
+      },
+      "rag": {
+        "title": "LangChain RAG 模板",
+        "description": "企業級 RAG 知識庫解決方案。支援多種文檔格式、向量數據庫整合、智能問答。Python + LangChain。"
+      },
+      "voice": {
+        "title": "AI 語音助手套件",
+        "description": "結合 Whisper 語音識別和 TTS 的完整語音助手解決方案。支援多語言、即時轉錄、語音合成。"
+      }
+    }
+  },
+  "faq": {
+    "title": "常見問題",
+    "subtitle": "關於 Quick Buyer AI 市集的所有問題",
+    "items": {
+      "whatGet": {
+        "question": "購買 AI 項目後我會得到什麼？",
+        "answer": "您將獲得完整的源代碼、詳細文檔、模型文件（如適用）以及所有相關資源。所有項目都包含商業授權，允許無限的個人和商業使用。"
+      },
+      "updates": {
+        "question": "購買後是否包含更新？",
+        "answer": "是的！所有購買都包含終身更新。當賣家發布新版本時，您可以從控制台免費下載。這在快速發展的 AI 領域尤其重要。"
+      },
+      "refund": {
+        "question": "我可以申請退款嗎？",
+        "answer": "我們提供 14 天退款保證。如果您對購買不滿意，請聯繫我們的支援團隊，我們將處理您的退款。"
+      },
+      "payment": {
+        "question": "有哪些付款方式？",
+        "answer": "所有付款均通過我們的付款合作夥伴 Creem 安全處理。我們支援所有主要信用卡、PayPal 以及各種本地付款方式。"
+      },
+      "sell": {
+        "question": "我可以在 Quick Buyer 上銷售我的 AI 項目嗎？",
+        "answer": "當然可以！註冊賣家帳戶並提交您的 AI 項目進行審核。一旦獲得批准，您就可以開始向我們的 AI 開發者社群銷售。"
+      },
+      "types": {
+        "question": "這裡有哪些類型的 AI 項目？",
+        "answer": "我們提供豐富的 AI 項目類型，包括：LLM 應用（ChatGPT 克隆、RAG 系統）、圖像生成、語音識別、NLP 工具、機器學習模板、AI Agent 框架等。"
+      }
+    }
+  },
+  "pricing": {
+    "title": "簡單透明的定價",
+    "subtitle": "選擇適合您需求的方案。無預付費用，立即開始銷售您的 AI 項目。",
+    "monthly": "月繳",
+    "yearly": "年繳",
+    "save": "省 20%",
+    "perMonth": "/月",
+    "perYear": "/年",
+    "mostPopular": "最受歡迎",
+    "getStartedFree": "免費開始",
+    "subscribe": "立即訂閱",
+    "trialInfo": "所有付費方案包含 14 天免費試用。隨時可取消。",
+    "customPlan": "需要更多功能？",
+    "customPlanLink": "聯繫我們定制方案。",
+    "plans": {
+      "starter": {
+        "name": "入門版",
+        "description": "適合個人賣家",
+        "features": [
+          "最多上架 5 個 AI 項目",
+          "15% 平台費用",
+          "基礎數據分析",
+          "電子郵件支援",
+          "標準提款（7 天）"
+        ]
+      },
+      "pro": {
+        "name": "專業版",
+        "description": "適合成長中的賣家",
+        "features": [
+          "無限 AI 項目",
+          "10% 平台費用",
+          "進階數據分析",
+          "優先支援",
+          "快速提款（3 天）",
+          "自訂賣家頁面",
+          "精選展示位置"
+        ]
+      },
+      "enterprise": {
+        "name": "企業版",
+        "description": "適合成熟企業",
+        "features": [
+          "專業版所有功能",
+          "5% 平台費用",
+          "白標選項",
+          "專屬客戶經理",
+          "即時提款",
+          "API 存取",
+          "自訂合約"
+        ]
+      }
+    }
+  },
+  "footer": {
+    "description": "AI 項目的優質交易市集，為 AI 開發者提供一站式解決方案。",
+    "aiCategories": "AI 分類",
+    "browseAll": "瀏覽所有項目",
+    "llmApps": "LLM 應用",
+    "imageAI": "圖像生成 AI",
+    "voiceAI": "語音 AI",
+    "aboutUs": "關於我們",
+    "about": "關於",
+    "blog": "部落格",
+    "pricingPlans": "定價方案",
+    "sellYourProject": "上架您的項目",
+    "legal": "法律條款",
+    "privacy": "隱私政策",
+    "terms": "服務條款",
+    "refund": "退款政策",
+    "emailSupport": "聯繫我們",
+    "copyright": "© {year} Quick Buyer. 保留所有權利。"
+  },
+  "auth": {
+    "signInWithGithub": "使用 GitHub 登入",
+    "signInWithGoogle": "使用 Google 登入",
+    "authError": {
+      "title": "認證失敗",
+      "description": "登入時發生錯誤，請重試。",
+      "reasons": "可能原因：",
+      "expiredCode": "授權碼過期或無效",
+      "cancelled": "GitHub 授權已取消",
+      "network": "網路連線問題",
+      "retry": "重試",
+      "backHome": "返回首頁"
+    }
+  },
+  "success": {
+    "subscription": {
+      "title": "訂閱成功！",
+      "description": "感謝您訂閱 {plan} 方案！您的帳戶已升級。",
+      "planActivated": "{plan} 方案已啟用",
+      "yearlyPlan": "年繳方案",
+      "monthlyPlan": "月繳方案",
+      "emailConfirm": "您將收到一封包含訂閱詳情和發票的確認郵件。",
+      "startUsing": "您現在可以開始使用所有進階功能！",
+      "goToDashboard": "前往控制台",
+      "startSelling": "開始銷售 AI 項目"
+    },
+    "purchase": {
+      "title": "付款成功！",
+      "description": "感謝您的購買。您的訂單已確認。",
+      "emailInstructions": "您將很快收到包含下載說明的電子郵件。",
+      "dashboardAccess": "您也可以從控制台存取您的購買項目。",
+      "goToDownloads": "前往下載",
+      "browseMore": "瀏覽更多 AI 項目"
+    }
+  },
+  "language": {
+    "en": "English",
+    "zh": "繁體中文",
+    "ch": "简体中文"
+  },
+  "useCases": {
+    "title": "誰適合使用？",
+    "subtitle": "無論你是學習者還是企業，都能找到適合的解決方案",
+    "painPointLabel": "痛點：",
+    "solutionLabel": "解決：",
+    "items": {
+      "learner": {
+        "title": "學習成長",
+        "audience": "小白工程師 / AI 初學者",
+        "painPoint": "想學習 AI 但缺乏實際項目經驗",
+        "solution": "購買完整項目學習最佳實踐與代碼架構",
+        "cta": "開始學習"
+      },
+      "pm": {
+        "title": "快速驗證",
+        "audience": "產品經理 / 創業者",
+        "painPoint": "需要 AI Demo 但沒有技術資源",
+        "solution": "現成應用作為 POC 展示給客戶",
+        "cta": "查看 Demo"
+      },
+      "freelancer": {
+        "title": "接案利器",
+        "audience": "自由開發者 / 接案工程師",
+        "painPoint": "接案需快速交付，沒時間從零開發",
+        "solution": "模板快速客製化，提高接案效率",
+        "cta": "提升效率"
+      },
+      "enterprise": {
+        "title": "企業開發",
+        "audience": "開發團隊 / 技術公司",
+        "painPoint": "從零開發 AI 應用成本高週期長",
+        "solution": "模板二次開發，節省 70% 時間",
+        "cta": "瀏覽模板"
+      }
+    }
+  },
+  "browserDeploy": {
+    "badge": "靜態網站 免費部署",
+    "title": "讓代碼創造價值",
+    "subtitle": "讓您的創意不再被技術門檻阻擋，登入即可免費部署您的靜態網站！",
+    "howToUse": "如何使用",
+    "cta": "立即上傳",
+    "browseSites": "瀏覽網站",
+    "features": {
+      "instant": "即時部署",
+      "permanent": "永久託管",
+      "free": "完全免費"
+    },
+    "preview": {
+      "title": "您的網站將在這裡展示",
+      "siteName": "my-portfolio.html",
+      "hosted": "託管於 IPFS",
+      "live": "已上線"
+    },
+    "upload": {
+      "title": "透過瀏覽器部署",
+      "tabs": {
+        "file": "文件",
+        "folder": "資料夾"
+      },
+      "dropzone": {
+        "text": "將檔案拖放到這裡或",
+        "click": "點擊上傳"
+      },
+      "note": "除非登錄，否則歷史記錄不會被儲存。",
+      "loginRequired": "請先登入以使用上傳功能",
+      "uploading": "上傳中...",
+      "success": "上傳成功！"
+    }
+  },
+  "cart": {
+    "inCart": "已加入購物車",
+    "addToCart": "加入購物車",
+    "title": "購物車",
+    "empty": "您的購物車是空的",
+    "total": "合計",
+    "processing": "處理中...",
+    "checkout": "結帳",
+    "clear": "清空購物車"
+  },
+  "deploy": {
+    "title": "免費部署靜態網站",
+    "subtitle": "上傳您的 HTML、CSS、JavaScript 檔案，即刻獲得永久託管的網站連結。無需伺服器，無需配置。",
+    "uploadAnother": "上傳另一個檔案",
+    "maxSize": "單一檔案最大 20MB，目錄最大 500MB",
+    "history": "上傳記錄",
+    "loginForHistory": "登入以查看上傳記錄",
+    "noHistory": "尚無上傳記錄",
+    "badge": "免費永久託管",
+    "pageSubtitle": "瀏覽社群分享的靜態網站，或上傳您自己的作品",
+    "uploadYours": "上傳您的網站",
+    "searchPlaceholder": "搜尋靜態網站...",
+    "noResults": "尚無靜態網站",
+    "beFirst": "成為第一個上傳者",
+    "backToList": "返回網站列表",
+    "uploadTitle": "上傳您的網站",
+    "uploadSubtitle": "將您的靜態網站上傳到 IPFS，獲得永久託管的連結",
+    "categories": {
+      "all": "全部",
+      "portfolio": "作品集",
+      "landingpage": "著陸頁",
+      "blog": "部落格",
+      "dashboard": "後台",
+      "e-commerce": "電商",
+      "documentation": "文件"
+    },
+    "sort": {
+      "newest": "最新",
+      "popular": "最熱門",
+      "size_small": "大小：小到大",
+      "size_large": "大小：大到小"
+    }
+  },
+  "projects": {
+    "title": "瀏覽項目",
+    "subtitle": "探索來自全球優秀開發者的即用型代碼項目",
+    "searchPlaceholder": "搜尋項目...",
+    "search": "搜尋",
+    "sortBy": "排序方式",
+    "showing": "顯示",
+    "of": "共",
+    "results": "個結果",
+    "for": "搜尋",
+    "noResults": "未找到符合條件的項目。",
+    "clearFilters": "清除篩選",
+    "sort": {
+      "popular": "最熱門",
+      "newest": "最新",
+      "price_low": "價格：低至高",
+      "price_high": "價格：高至低",
+      "rating": "評分最高"
+    }
+  },
+  "sell": {
+    "title": "提交您的 AI 項目",
+    "subtitle": "與我們的開發者社群分享您的 AI 項目",
+    "basicInfo": "基本資訊",
+    "basicInfoDesc": "告訴我們您的項目",
+    "filesLinks": "檔案與連結",
+    "filesLinksDesc": "提供下載和文件連結",
+    "submit": "提交審核",
+    "submitting": "提交中...",
+    "reviewNote": "您的項目將在 24-48 小時內審核後發布。",
+    "error": "提交項目失敗",
+    "signInRequired": "需要登入",
+    "signInRequiredDesc": "請先登入以上架您的 AI 項目",
+    "form": {
+      "title": "項目標題",
+      "titlePlaceholder": "例如：ChatGPT Clone with Next.js",
+      "description": "簡短描述",
+      "descriptionPlaceholder": "項目的簡短描述（最多 200 字）",
+      "category": "分類",
+      "categoryPlaceholder": "選擇分類",
+      "price": "價格（USD）",
+      "thumbnail": "縮略圖",
+      "upload": "上傳",
+      "thumbnailHint": "上傳圖片或輸入 URL。若留空，將從 Demo URL 自動生成。",
+      "downloadUrl": "下載連結",
+      "downloadUrlHint": "原始碼下載連結（GitHub、Google Drive 等）",
+      "demoUrl": "線上 Demo 連結",
+      "invalidFileType": "檔案類型無效。允許：JPEG、PNG、WebP、GIF",
+      "fileTooLarge": "檔案太大。最大 5MB",
+      "uploadError": "上傳圖片失敗"
+    }
+  },
+  "myProjects": {
+    "title": "我的項目",
+    "subtitle": "管理您上架的項目",
+    "addNew": "上架新項目",
+    "empty": "您還沒有上架任何項目",
+    "emptyHint": "開始上架您的第一個 AI 項目吧！",
+    "submitFirst": "提交第一個項目",
+    "downloads": "下載",
+    "view": "查看",
+    "edit": "編輯"
+  },
+  "edit": {
+    "error": "更新項目失敗",
+    "deleteError": "刪除項目失敗"
+  }
+}

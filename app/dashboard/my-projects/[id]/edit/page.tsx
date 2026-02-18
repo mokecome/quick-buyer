@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use } from "react"
 import { useRouter } from "next/navigation"
-import { useTranslation } from "react-i18next"
+import { useTranslations, useLocale } from "next-intl"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -61,7 +61,8 @@ interface Project {
 
 export default function EditProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
-  const { t, i18n } = useTranslation()
+  const t = useTranslations()
+  const locale = useLocale()
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [project, setProject] = useState<Project | null>(null)
@@ -83,7 +84,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
     demoUrl: "",
   })
 
-  const isZh = i18n.language?.startsWith('zh')
+  const isZh = locale.startsWith('zh') || locale === 'ch'
 
   useEffect(() => {
     const loadData = async () => {
@@ -157,11 +158,11 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
       if (response.ok) {
         router.push("/dashboard/my-projects")
       } else {
-        alert(data.message || t('edit.error', 'Failed to update project'))
+        alert(data.message || t('edit.error'))
       }
     } catch (error) {
       console.error("Update error:", error)
-      alert(t('edit.error', 'Failed to update project'))
+      alert(t('edit.error'))
     } finally {
       setIsSubmitting(false)
     }
@@ -179,11 +180,11 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
         router.push("/dashboard/my-projects")
       } else {
         const data = await response.json()
-        alert(data.message || t('edit.deleteError', 'Failed to delete project'))
+        alert(data.message || t('edit.deleteError'))
       }
     } catch (error) {
       console.error("Delete error:", error)
-      alert(t('edit.deleteError', 'Failed to delete project'))
+      alert(t('edit.deleteError'))
     } finally {
       setIsDeleting(false)
     }
@@ -375,30 +376,30 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
             {/* Basic Info */}
             <Card>
               <CardHeader>
-                <CardTitle>{t('sell.basicInfo', 'Basic Information')}</CardTitle>
+                <CardTitle>{t('sell.basicInfo')}</CardTitle>
                 <CardDescription>
-                  {t('sell.basicInfoDesc', 'Tell us about your project')}
+                  {t('sell.basicInfoDesc')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="title">{t('sell.form.title', 'Project Title')} *</Label>
+                  <Label htmlFor="title">{t('sell.form.title')} *</Label>
                   <Input
                     id="title"
                     value={formData.title}
                     onChange={(e) => handleChange("title", e.target.value)}
-                    placeholder={t('sell.form.titlePlaceholder', 'e.g., ChatGPT Clone with Next.js')}
+                    placeholder={t('sell.form.titlePlaceholder')}
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">{t('sell.form.description', 'Short Description')}</Label>
+                  <Label htmlFor="description">{t('sell.form.description')}</Label>
                   <Textarea
                     id="description"
                     value={formData.description}
                     onChange={(e) => handleChange("description", e.target.value)}
-                    placeholder={t('sell.form.descriptionPlaceholder', 'A brief description of your project (max 200 characters)')}
+                    placeholder={t('sell.form.descriptionPlaceholder')}
                     maxLength={200}
                   />
                   <p className="text-xs text-muted-foreground">
@@ -408,14 +409,14 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="category">{t('sell.form.category', 'Category')} *</Label>
+                    <Label htmlFor="category">{t('sell.form.category')} *</Label>
                     <Select
                       value={formData.category}
                       onValueChange={(value) => handleChange("category", value)}
                       required
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder={t('sell.form.categoryPlaceholder', 'Select a category')} />
+                        <SelectValue placeholder={t('sell.form.categoryPlaceholder')} />
                       </SelectTrigger>
                       <SelectContent>
                         {categories.map((cat) => (
@@ -428,7 +429,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="price">{t('sell.form.price', 'Price (USD)')} *</Label>
+                    <Label htmlFor="price">{t('sell.form.price')} *</Label>
                     <div className="relative">
                       <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
@@ -451,9 +452,9 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
             {/* Files & Links */}
             <Card>
               <CardHeader>
-                <CardTitle>{t('sell.filesLinks', 'Files & Links')}</CardTitle>
+                <CardTitle>{t('sell.filesLinks')}</CardTitle>
                 <CardDescription>
-                  {t('sell.filesLinksDesc', 'Provide download and documentation links')}
+                  {t('sell.filesLinksDesc')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -530,7 +531,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                 <div className="space-y-2">
                   <Label htmlFor="downloadUrl">
                     <Upload className="inline h-4 w-4 mr-2" />
-                    {t('sell.form.downloadUrl', 'Download URL')}
+                    {t('sell.form.downloadUrl')}
                   </Label>
                   <Input
                     id="downloadUrl"
@@ -540,14 +541,14 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                     placeholder="https://github.com/... or https://drive.google.com/..."
                   />
                   <p className="text-xs text-muted-foreground">
-                    {t('sell.form.downloadUrlHint', 'Link to download the source code (GitHub, Google Drive, etc.)')}
+                    {t('sell.form.downloadUrlHint')}
                   </p>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="demoUrl">
                     <LinkIcon className="inline h-4 w-4 mr-2" />
-                    {t('sell.form.demoUrl', 'Live Demo URL')}
+                    {t('sell.form.demoUrl')}
                   </Label>
                   <Input
                     id="demoUrl"
@@ -604,7 +605,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                   variant="outline"
                   onClick={() => router.push("/dashboard/my-projects")}
                 >
-                  {t('common.cancel', 'Cancel')}
+                  {t('common.cancel')}
                 </Button>
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? (

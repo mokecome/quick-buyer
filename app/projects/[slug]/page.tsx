@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -171,6 +172,29 @@ async function getProject(slug: string): Promise<Project | null> {
   }
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const project = await getProject(slug)
+
+  if (!project) {
+    return { title: 'Project Not Found' }
+  }
+
+  return {
+    title: `${project.title} | Quick Buyer`,
+    description: project.description,
+    openGraph: {
+      title: project.title,
+      description: project.description,
+      type: 'website',
+    },
+  }
+}
+
 export default async function ProjectDetailPage({
   params,
 }: {
@@ -183,8 +207,45 @@ export default async function ProjectDetailPage({
     notFound()
   }
 
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": project.title,
+    "description": project.description,
+    "category": project.category,
+    "url": `https://quick-buyer.com/projects/${project.slug}`,
+    ...(project.thumbnail_url ? { "image": project.thumbnail_url } : {}),
+    "brand": {
+      "@type": "Brand",
+      "name": project.author_name
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": project.price,
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock",
+      "seller": {
+        "@type": "Organization",
+        "@id": "https://quick-buyer.com/#organization"
+      }
+    },
+    ...(project.rating != null ? {
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": project.rating,
+        "reviewCount": project.review_count || 0,
+        "bestRating": 5,
+        "worstRating": 1
+      }
+    } : {})
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
       <Header />
       <main className="flex-1">
         <section className="py-12 md:py-20">

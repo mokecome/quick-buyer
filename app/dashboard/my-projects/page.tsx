@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useTranslation } from "react-i18next"
+import { useTranslations, useLocale } from "next-intl"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -75,7 +75,8 @@ const statusConfig = {
 }
 
 export default function MyProjectsPage() {
-  const { t, i18n } = useTranslation()
+  const t = useTranslations()
+  const locale = useLocale()
   const [projects, setProjects] = useState<Project[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -162,7 +163,7 @@ export default function MyProjectsPage() {
     }
   }
 
-  const isZh = i18n.language?.startsWith('zh')
+  const isZh = locale.startsWith('zh') || locale === 'ch'
 
   const getStatusLabel = (status: ProjectStatus) => {
     const config = statusConfig[status]
@@ -181,20 +182,20 @@ export default function MyProjectsPage() {
                 <h1 className="text-3xl font-bold">
                   {isAdmin
                     ? (isZh ? '項目管理' : 'Project Management')
-                    : t('myProjects.title', '我的項目')
+                    : t('myProjects.title')
                   }
                 </h1>
                 <p className="text-muted-foreground mt-1">
                   {isAdmin
                     ? (isZh ? '審核和管理所有項目' : 'Review and manage all projects')
-                    : t('myProjects.subtitle', '管理您上架的項目')
+                    : t('myProjects.subtitle')
                   }
                 </p>
               </div>
               <Button asChild>
                 <Link href="/dashboard/sell">
                   <Plus className="h-4 w-4 mr-2" />
-                  {t('myProjects.addNew', '上架新項目')}
+                  {t('myProjects.addNew')}
                 </Link>
               </Button>
             </div>
@@ -215,7 +216,7 @@ export default function MyProjectsPage() {
                       className="mt-4"
                       onClick={() => window.location.href = '/auth/signin'}
                     >
-                      {t('common.signIn', '登入')}
+                      {t('common.signIn')}
                     </Button>
                   </div>
                 </CardContent>
@@ -226,15 +227,15 @@ export default function MyProjectsPage() {
                   <div className="text-center text-muted-foreground">
                     <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
                     <p className="font-medium">
-                      {t('myProjects.empty', '您還沒有上架任何項目')}
+                      {t('myProjects.empty')}
                     </p>
                     <p className="text-sm mt-1">
-                      {t('myProjects.emptyHint', '開始上架您的第一個 AI 項目吧！')}
+                      {t('myProjects.emptyHint')}
                     </p>
                     <Button className="mt-4" asChild>
                       <Link href="/dashboard/sell">
                         <Plus className="h-4 w-4 mr-2" />
-                        {t('myProjects.submitFirst', '提交第一個項目')}
+                        {t('myProjects.submitFirst')}
                       </Link>
                     </Button>
                   </div>
@@ -333,7 +334,7 @@ export default function MyProjectsPage() {
                             {project.status === 'approved' && (
                               <span className="flex items-center gap-1">
                                 <Download className="h-4 w-4" />
-                                {project.download_count} {t('myProjects.downloads', '下載')}
+                                {project.download_count} {t('myProjects.downloads')}
                               </span>
                             )}
                             <span>
@@ -352,14 +353,14 @@ export default function MyProjectsPage() {
                             {project.status === 'approved' && (
                               <Button variant="outline" size="sm" asChild>
                                 <Link href={`/projects/${project.slug}`}>
-                                  {t('myProjects.view', '查看')}
+                                  {t('myProjects.view')}
                                 </Link>
                               </Button>
                             )}
                             <Button variant="outline" size="sm" asChild>
                               <Link href={`/dashboard/my-projects/${project.id}/edit`}>
                                 <Edit className="h-4 w-4 mr-1" />
-                                {t('myProjects.edit', '編輯')}
+                                {t('myProjects.edit')}
                               </Link>
                             </Button>
                           </div>

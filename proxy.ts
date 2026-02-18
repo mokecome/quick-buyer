@@ -1,10 +1,28 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+const SUPPORTED_LOCALES = ['en', 'zh', 'ch']
+const DEFAULT_LOCALE = 'zh'
+
+function detectLocale(request: NextRequest): string {
+  const cookie = request.cookies.get('NEXT_LOCALE')?.value
+  if (cookie && SUPPORTED_LOCALES.includes(cookie)) return cookie
+
+  const acceptLang = request.headers.get('accept-language')?.split(',')[0]?.split('-')[0]
+  if (acceptLang && SUPPORTED_LOCALES.includes(acceptLang)) return acceptLang
+
+  return DEFAULT_LOCALE
+}
+
 export async function proxy(request: NextRequest) {
+  const locale = detectLocale(request)
+
+  const requestHeaders = new Headers(request.headers)
+  requestHeaders.set('x-next-intl-locale', locale)
+
   let response = NextResponse.next({
     request: {
-      headers: request.headers,
+      headers: requestHeaders,
     },
   })
 

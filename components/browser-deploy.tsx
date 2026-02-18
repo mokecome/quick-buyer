@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowRight, Globe, Upload, Zap, Shield, Clock, Sparkles } from "lucide-react"
 import Link from "next/link"
-import { useTranslation } from "react-i18next"
+import { useTranslations } from "next-intl"
 
 const features = [
   { icon: Zap, key: 'instant' },
@@ -13,7 +13,7 @@ const features = [
 ]
 
 export function BrowserDeploy() {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <section className="py-20 md:py-28 bg-gradient-to-b from-emerald-50/50 via-background to-background dark:from-emerald-950/20 relative overflow-hidden">

@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Menu, Github, Bot, LogOut, User, ChevronDown } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import { usePathname, useRouter } from "next/navigation"
-import { useTranslation } from "react-i18next"
+import { useTranslations } from "next-intl"
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { CartDrawer } from "@/components/cart-drawer"
@@ -32,7 +32,7 @@ export function Header() {
   const pathname = usePathname()
   const router = useRouter()
   const loginMenuRef = useRef<HTMLDivElement>(null)
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   // Check if we're on the home page
   const isHomePage = pathname === '/'

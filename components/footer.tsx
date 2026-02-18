@@ -2,10 +2,10 @@
 
 import Link from "next/link"
 import { Bot, Github, Twitter } from "lucide-react"
-import { useTranslation } from "react-i18next"
+import { useTranslations } from "next-intl"
 
 export function Footer() {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <footer className="border-t border-border/40 bg-background">

@@ -2,7 +2,7 @@
 
 import { Bot, Zap, Shield, Brain, Cpu, Sparkles } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useTranslation } from "react-i18next"
+import { useTranslations } from "next-intl"
 
 const featureKeys = [
   { key: 'aiModels', icon: Brain, color: 'from-violet-500 to-purple-600' },
@@ -14,7 +14,7 @@ const featureKeys = [
 ]
 
 export function Features() {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <section id="features" className="py-20 md:py-28 bg-gradient-to-b from-muted/50 to-background relative overflow-hidden">

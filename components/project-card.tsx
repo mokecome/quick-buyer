@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Star, ShoppingCart, Check, Sparkles } from "lucide-react"
 import { useCart } from "@/lib/cart-context"
-import { useTranslation } from "react-i18next"
+import { useTranslations } from "next-intl"
 
 interface ProjectCardProps {
   id: string
@@ -37,7 +37,7 @@ export function ProjectCard({
   reviewCount = 0,
   author,
 }: ProjectCardProps) {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const { addItem, removeItem, isInCart } = useCart()
   const inCart = isInCart(id)
 
@@ -128,12 +128,12 @@ export function ProjectCard({
           {inCart ? (
             <>
               <Check className="h-4 w-4 mr-2" />
-              {t('cart.inCart', 'In Cart')}
+              {t('cart.inCart')}
             </>
           ) : (
             <>
               <ShoppingCart className="h-4 w-4 mr-2" />
-              {t('cart.addToCart', 'Add to Cart')}
+              {t('cart.addToCart')}
             </>
           )}
         </Button>

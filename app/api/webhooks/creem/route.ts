@@ -1,5 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
+import crypto from 'crypto'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+
+function verifyWebhookSignature(body: string, signature: string, secret: string): boolean {
+  try {
+    const computedSignature = crypto
+      .createHmac('sha256', secret)
+      .update(body, 'utf8')
+      .digest('hex')
+    // Use timingSafeEqual to prevent timing attacks
+    return crypto.timingSafeEqual(
+      Buffer.from(computedSignature, 'hex'),
+      Buffer.from(signature, 'hex')
+    )
+  } catch {
+    return false
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,13 +26,14 @@ export async function POST(request: NextRequest) {
 
     // Verify webhook signature if secret is configured
     const webhookSecret = process.env.CREEM_WEBHOOK_SECRET
-    if (webhookSecret && signature) {
-      // TODO: Implement signature verification
-      console.log('Received webhook with signature:', signature)
+    if (webhookSecret) {
+      if (!signature || !verifyWebhookSignature(body, signature, webhookSecret)) {
+        return NextResponse.json({ error: 'Invalid or missing signature' }, { status: 401 })
+      }
     }
 
     const event = JSON.parse(body)
-    console.log('Webhook event:', event.type, event)
+    console.log('Webhook event type:', event.type)
 
     // Handle different event types
     switch (event.type) {
@@ -48,9 +67,7 @@ export async function POST(request: NextRequest) {
 }
 
 async function handleCheckoutCompleted(data: any) {
-  console.log('Checkout completed:', data)
-
-  const { metadata, customer_email, checkout_id, amount, currency } = data
+  const { metadata } = data
 
   try {
     const supabase = await createClient()
@@ -80,23 +97,24 @@ async function handleCheckoutCompleted(data: any) {
 }
 
 async function handleCartPurchase(supabase: any, data: any) {
-  const { metadata, customer_email, checkout_id, amount, currency } = data
+  const { metadata, customer_email, checkout_id, currency } = data
 
   try {
     const items = JSON.parse(metadata.items)
     const userId = metadata.userId
+    const adminSupabase = createAdminClient()
 
     // Get user if we have userId or email
     let user = null
     if (userId) {
-      const { data: userData } = await supabase
+      const { data: userData } = await adminSupabase
         .from('auth.users')
         .select('id')
         .eq('id', userId)
         .single()
       user = userData
     } else if (customer_email) {
-      const { data: userData } = await supabase
+      const { data: userData } = await adminSupabase
         .from('auth.users')
         .select('id')
         .eq('email', customer_email)
@@ -147,17 +165,19 @@ async function handleProjectPurchase(supabase: any, data: any) {
       return
     }
 
+    const adminSupabase = createAdminClient()
+
     // Get user by email or userId
     let user = null
     if (metadata.userId) {
-      const { data: userData } = await supabase
+      const { data: userData } = await adminSupabase
         .from('auth.users')
         .select('id')
         .eq('id', metadata.userId)
         .single()
       user = userData
     } else if (customer_email) {
-      const { data: userData } = await supabase
+      const { data: userData } = await adminSupabase
         .from('auth.users')
         .select('id')
         .eq('email', customer_email)
@@ -191,10 +211,12 @@ async function handleSubscriptionPurchase(supabase: any, data: any) {
   const { metadata, customer_email, subscription_id, customer_id } = data
 
   try {
+    const adminSupabase = createAdminClient()
+
     // Get user by email or userId
     let userId = metadata.userId
     if (!userId && customer_email) {
-      const { data: userData } = await supabase
+      const { data: userData } = await adminSupabase
         .from('auth.users')
         .select('id')
         .eq('email', customer_email)
@@ -243,17 +265,16 @@ async function handleSubscriptionPurchase(supabase: any, data: any) {
 }
 
 async function handleSubscriptionCreated(data: any) {
-  console.log('Subscription created:', data)
-
   const { metadata, customer_email, subscription_id, customer_id } = data
 
   try {
     const supabase = await createClient()
+    const adminSupabase = createAdminClient()
 
     // Get user
     let userId = metadata?.userId
     if (!userId && customer_email) {
-      const { data: userData } = await supabase
+      const { data: userData } = await adminSupabase
         .from('auth.users')
         .select('id')
         .eq('email', customer_email)
@@ -297,8 +318,6 @@ async function handleSubscriptionCreated(data: any) {
 }
 
 async function handleSubscriptionCancelled(data: any) {
-  console.log('Subscription cancelled:', data)
-
   const { subscription_id } = data
 
   try {
@@ -319,8 +338,6 @@ async function handleSubscriptionCancelled(data: any) {
 }
 
 async function handleSubscriptionRenewed(data: any) {
-  console.log('Subscription renewed:', data)
-
   const { subscription_id, metadata } = data
 
   try {
@@ -352,8 +369,6 @@ async function handleSubscriptionRenewed(data: any) {
 }
 
 async function handlePaymentFailed(data: any) {
-  console.log('Payment failed:', data)
-
   const { subscription_id } = data
 
   if (subscription_id) {

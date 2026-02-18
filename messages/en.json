@@ -1,0 +1,441 @@
+{
+  "common": {
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "signingIn": "Signing in...",
+    "loading": "Loading...",
+    "processing": "Processing...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "viewAll": "View All",
+    "learnMore": "Learn More",
+    "contactUs": "Contact Us",
+    "search": "Search",
+    "sortBy": "Sort by",
+    "signInWithGitHub": "Sign in with GitHub",
+    "signInWithGoogle": "Sign in with Google"
+  },
+  "nav": {
+    "projects": "AI Projects",
+    "deploy": "Free Deploy",
+    "features": "Features",
+    "pricing": "Pricing",
+    "faq": "FAQ",
+    "dashboard": "Dashboard",
+    "sellProject": "Sell AI Project"
+  },
+  "hero": {
+    "title": "Discover Quality",
+    "titleHighlight": "AI Projects",
+    "titleEnd": "Accelerate Innovation",
+    "subtitle": "Focused on quality AI projects. Discover production-ready AI templates, machine learning and LLM apps.",
+    "browseProjects": "Browse AI Projects",
+    "sellYourProject": "Sell Your AI Project",
+    "stats": {
+      "projects": "AI Projects",
+      "developers": "AI Developers",
+      "categories": "AI Categories"
+    },
+    "orSell": "Want to sell?",
+    "scenarios": {
+      "learner": {
+        "title": "Learn & Grow",
+        "desc": "Master AI development best practices, code architecture and design patterns from real projects",
+        "cta": "Start Learning"
+      },
+      "freelancer": {
+        "title": "Freelance Boost",
+        "desc": "Customize templates for fast delivery, boost your freelance efficiency and profits",
+        "cta": "Boost Efficiency"
+      },
+      "enterprise": {
+        "title": "Enterprise Dev",
+        "desc": "Build on proven templates, save 70% development time and reduce costs",
+        "cta": "Browse Templates"
+      }
+    }
+  },
+  "features": {
+    "title": "Why Choose Quick Buyer?",
+    "subtitle": "The premium marketplace for AI projects. Built by AI developers, for AI developers.",
+    "items": {
+      "aiModels": {
+        "title": "Quality AI Models & Tools",
+        "description": "All projects are reviewed and verified. Get production-ready AI solutions including LLMs, computer vision, NLP, and more."
+      },
+      "instantDeploy": {
+        "title": "Instant Deployment",
+        "description": "Purchase and download immediately. Includes complete documentation and deployment guides for quick integration."
+      },
+      "secure": {
+        "title": "Secure & Reliable",
+        "description": "All transactions are processed securely. Your data and AI models are fully protected."
+      },
+      "categories": {
+        "title": "Diverse AI Categories",
+        "description": "Covering ChatGPT apps, image generation, speech recognition, automation bots, and more popular AI domains."
+      },
+      "developerFriendly": {
+        "title": "AI Developer Friendly",
+        "description": "Low fees, fast payouts. Focus on building great AI products, we handle the rest."
+      },
+      "updates": {
+        "title": "Continuous Updates",
+        "description": "One purchase, lifetime access. AI evolves rapidly, and you'll get all future updates."
+      }
+    }
+  },
+  "featuredProjects": {
+    "title": "Featured AI Projects",
+    "subtitle": "Hand-picked quality AI solutions",
+    "viewAll": "View All Projects",
+    "projects": {
+      "chatgpt": {
+        "title": "ChatGPT SaaS Complete Kit",
+        "description": "Complete GPT-4 based SaaS solution with user auth, conversation management, token billing, and admin dashboard. Next.js 14 + OpenAI API."
+      },
+      "imageGen": {
+        "title": "AI Image Generation Platform",
+        "description": "Image generation platform integrating DALL-E 3 and Stable Diffusion. Supports text-to-image, image-to-image, style transfer."
+      },
+      "rag": {
+        "title": "LangChain RAG Template",
+        "description": "Enterprise-grade RAG knowledge base solution. Supports multiple document formats, vector database integration, intelligent Q&A. Python + LangChain."
+      },
+      "voice": {
+        "title": "AI Voice Assistant Kit",
+        "description": "Complete voice assistant solution combining Whisper speech recognition and TTS. Multi-language support, real-time transcription, voice synthesis."
+      }
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about Quick Buyer AI Marketplace",
+    "items": {
+      "whatGet": {
+        "question": "What do I get when I purchase an AI project?",
+        "answer": "You'll receive complete source code, detailed documentation, model files (if applicable), and all related resources. All projects include a commercial license allowing unlimited personal and commercial use."
+      },
+      "updates": {
+        "question": "Are updates included after purchase?",
+        "answer": "Yes! All purchases include lifetime updates. When sellers release new versions, you can download them free from your dashboard. This is especially important in the fast-evolving AI field."
+      },
+      "refund": {
+        "question": "Can I get a refund?",
+        "answer": "We offer a 14-day money-back guarantee. If you're not satisfied with your purchase, contact our support team and we'll process your refund."
+      },
+      "payment": {
+        "question": "What payment methods are available?",
+        "answer": "All payments are securely processed through our payment partner Creem. We support all major credit cards, PayPal, and various local payment methods."
+      },
+      "sell": {
+        "question": "Can I sell my own AI projects on Quick Buyer?",
+        "answer": "Absolutely! Register for a seller account and submit your AI projects for review. Once approved, you can start selling to our AI developer community."
+      },
+      "types": {
+        "question": "What types of AI projects are available here?",
+        "answer": "We offer a rich variety of AI project types including: LLM applications (ChatGPT clones, RAG systems), image generation, speech recognition, NLP tools, machine learning templates, AI Agent frameworks, and more."
+      }
+    }
+  },
+  "pricing": {
+    "title": "Simple, Transparent Pricing",
+    "subtitle": "Choose the plan that fits your needs. No upfront costs, start selling your AI projects today.",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "save": "Save 20%",
+    "perMonth": "/month",
+    "perYear": "/year",
+    "mostPopular": "Most Popular",
+    "getStartedFree": "Get Started Free",
+    "subscribe": "Subscribe Now",
+    "trialInfo": "All paid plans include a 14-day free trial. Cancel anytime.",
+    "customPlan": "Need more features?",
+    "customPlanLink": "Contact us for a custom plan.",
+    "plans": {
+      "starter": {
+        "name": "Starter",
+        "description": "Perfect for individual sellers",
+        "features": [
+          "List up to 5 AI projects",
+          "15% platform fee",
+          "Basic analytics",
+          "Email support",
+          "Standard payouts (7 days)"
+        ]
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "For growing sellers",
+        "features": [
+          "Unlimited AI projects",
+          "10% platform fee",
+          "Advanced analytics",
+          "Priority support",
+          "Fast payouts (3 days)",
+          "Custom seller page",
+          "Featured listings"
+        ]
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "description": "For established businesses",
+        "features": [
+          "Everything in Pro",
+          "5% platform fee",
+          "White-label options",
+          "Dedicated account manager",
+          "Instant payouts",
+          "API access",
+          "Custom contracts"
+        ]
+      }
+    }
+  },
+  "footer": {
+    "description": "The premium marketplace for AI projects, providing one-stop solutions for AI developers.",
+    "aiCategories": "AI Categories",
+    "browseAll": "Browse All Projects",
+    "llmApps": "LLM Applications",
+    "imageAI": "Image Generation AI",
+    "voiceAI": "Voice AI",
+    "aboutUs": "About Us",
+    "about": "About",
+    "blog": "Blog",
+    "pricingPlans": "Pricing Plans",
+    "sellYourProject": "Sell Your Project",
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "refund": "Refund Policy",
+    "emailSupport": "Contact Us",
+    "copyright": "© {year} Quick Buyer. All rights reserved."
+  },
+  "auth": {
+    "signInWithGithub": "Sign in with GitHub",
+    "signInWithGoogle": "Sign in with Google",
+    "authError": {
+      "title": "Authentication Failed",
+      "description": "An error occurred during sign in. Please try again.",
+      "reasons": "Possible reasons:",
+      "expiredCode": "Authorization code expired or invalid",
+      "cancelled": "GitHub authorization was cancelled",
+      "network": "Network connection issues",
+      "retry": "Try Again",
+      "backHome": "Back to Home"
+    }
+  },
+  "success": {
+    "subscription": {
+      "title": "Subscription Successful!",
+      "description": "Thank you for subscribing to the {plan} plan! Your account has been upgraded.",
+      "planActivated": "{plan} Plan Activated",
+      "yearlyPlan": "Yearly Plan",
+      "monthlyPlan": "Monthly Plan",
+      "emailConfirm": "You'll receive a confirmation email with subscription details and invoice.",
+      "startUsing": "You can now start using all premium features!",
+      "goToDashboard": "Go to Dashboard",
+      "startSelling": "Start Selling AI Projects"
+    },
+    "purchase": {
+      "title": "Payment Successful!",
+      "description": "Thank you for your purchase. Your order has been confirmed.",
+      "emailInstructions": "You'll receive an email with download instructions shortly.",
+      "dashboardAccess": "You can also access your purchases from your dashboard.",
+      "goToDownloads": "Go to Downloads",
+      "browseMore": "Browse More AI Projects"
+    }
+  },
+  "language": {
+    "en": "English",
+    "zh": "繁體中文",
+    "ch": "简体中文"
+  },
+  "useCases": {
+    "title": "Who Is This For?",
+    "subtitle": "Whether you're a learner or an enterprise, find the solution that fits your needs",
+    "painPointLabel": "Pain: ",
+    "solutionLabel": "Solution: ",
+    "items": {
+      "learner": {
+        "title": "Learn & Grow",
+        "audience": "Junior Developers / AI Beginners",
+        "painPoint": "Want to learn AI but lack real project experience",
+        "solution": "Study best practices and code architecture from complete projects",
+        "cta": "Start Learning"
+      },
+      "pm": {
+        "title": "Quick Validation",
+        "audience": "Product Managers / Entrepreneurs",
+        "painPoint": "Need AI demos but lack technical resources",
+        "solution": "Ready-made apps for POC demonstrations to clients",
+        "cta": "View Demos"
+      },
+      "freelancer": {
+        "title": "Freelance Boost",
+        "audience": "Freelancers / Contract Developers",
+        "painPoint": "Projects require fast delivery, no time to build from scratch",
+        "solution": "Customize templates quickly to boost efficiency",
+        "cta": "Boost Efficiency"
+      },
+      "enterprise": {
+        "title": "Enterprise Dev",
+        "audience": "Dev Teams / Tech Companies",
+        "painPoint": "Building AI apps from scratch is costly and time-consuming",
+        "solution": "Secondary development on templates, save 70% time",
+        "cta": "Browse Templates"
+      }
+    }
+  },
+  "browserDeploy": {
+    "badge": "Static Site Free Hosting",
+    "title": "Let Code Create Value",
+    "subtitle": "Don't let technical barriers block your creativity. Sign in to deploy your static website for free!",
+    "howToUse": "How to Use",
+    "cta": "Upload Now",
+    "browseSites": "Browse Sites",
+    "features": {
+      "instant": "Instant Deploy",
+      "permanent": "Permanent Hosting",
+      "free": "Completely Free"
+    },
+    "preview": {
+      "title": "Your site will be displayed here",
+      "siteName": "my-portfolio.html",
+      "hosted": "Hosted on IPFS",
+      "live": "Live"
+    },
+    "upload": {
+      "title": "Deploy via Browser",
+      "tabs": {
+        "file": "File",
+        "folder": "Folder"
+      },
+      "dropzone": {
+        "text": "Drag and drop files here or ",
+        "click": "click to upload"
+      },
+      "note": "History will not be saved unless you are logged in.",
+      "loginRequired": "Please sign in to use the upload feature",
+      "uploading": "Uploading...",
+      "success": "Upload successful!"
+    }
+  },
+  "cart": {
+    "inCart": "In Cart",
+    "addToCart": "Add to Cart",
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "total": "Total",
+    "processing": "Processing...",
+    "checkout": "Checkout",
+    "clear": "Clear Cart"
+  },
+  "deploy": {
+    "title": "Deploy Static Sites for Free",
+    "subtitle": "Upload your HTML, CSS, JavaScript files and get a permanent hosted link instantly. No server required, no configuration needed.",
+    "uploadAnother": "Upload Another File",
+    "maxSize": "Max 20MB per file, 500MB per directory",
+    "history": "Upload History",
+    "loginForHistory": "Sign in to view upload history",
+    "noHistory": "No upload history yet",
+    "badge": "Free Permanent Hosting",
+    "pageSubtitle": "Browse community-shared static sites or upload your own",
+    "uploadYours": "Upload Your Site",
+    "searchPlaceholder": "Search static sites...",
+    "noResults": "No static sites yet",
+    "beFirst": "Be the first to upload",
+    "backToList": "Back to Site List",
+    "uploadTitle": "Upload Your Website",
+    "uploadSubtitle": "Upload your static site to IPFS and get a permanent hosted link",
+    "categories": {
+      "all": "All",
+      "portfolio": "Portfolio",
+      "landingpage": "Landing Page",
+      "blog": "Blog",
+      "dashboard": "Dashboard",
+      "e-commerce": "E-commerce",
+      "documentation": "Documentation"
+    },
+    "sort": {
+      "newest": "Newest",
+      "popular": "Most Popular",
+      "size_small": "Size: Small to Large",
+      "size_large": "Size: Large to Small"
+    }
+  },
+  "projects": {
+    "title": "Browse Projects",
+    "subtitle": "Discover production-ready code projects from talented developers worldwide",
+    "searchPlaceholder": "Search projects...",
+    "search": "Search",
+    "sortBy": "Sort by",
+    "showing": "Showing",
+    "of": "of",
+    "results": "results",
+    "for": "for",
+    "noResults": "No projects found matching your criteria.",
+    "clearFilters": "Clear Filters",
+    "sort": {
+      "popular": "Most Popular",
+      "newest": "Newest",
+      "price_low": "Price: Low to High",
+      "price_high": "Price: High to Low",
+      "rating": "Highest Rated"
+    }
+  },
+  "sell": {
+    "title": "Submit Your AI Project",
+    "subtitle": "Share your AI project with our community of developers",
+    "basicInfo": "Basic Information",
+    "basicInfoDesc": "Tell us about your project",
+    "filesLinks": "Files & Links",
+    "filesLinksDesc": "Provide download and documentation links",
+    "submit": "Submit for Review",
+    "submitting": "Submitting...",
+    "reviewNote": "Your project will be reviewed within 24-48 hours before being published.",
+    "error": "Failed to submit project",
+    "signInRequired": "Sign In Required",
+    "signInRequiredDesc": "Please sign in to submit your AI project",
+    "form": {
+      "title": "Project Title",
+      "titlePlaceholder": "e.g., ChatGPT Clone with Next.js",
+      "description": "Short Description",
+      "descriptionPlaceholder": "A brief description of your project (max 200 characters)",
+      "category": "Category",
+      "categoryPlaceholder": "Select a category",
+      "price": "Price (USD)",
+      "thumbnail": "Thumbnail Image",
+      "upload": "Upload",
+      "thumbnailHint": "Upload an image or enter URL. Auto-generated from Demo URL if left empty.",
+      "downloadUrl": "Download URL",
+      "downloadUrlHint": "Link to download the source code (GitHub, Google Drive, etc.)",
+      "demoUrl": "Live Demo URL",
+      "invalidFileType": "Invalid file type. Allowed: JPEG, PNG, WebP, GIF",
+      "fileTooLarge": "File too large. Maximum size is 5MB",
+      "uploadError": "Failed to upload image"
+    }
+  },
+  "myProjects": {
+    "title": "My Projects",
+    "subtitle": "Manage your listed projects",
+    "addNew": "Add New Project",
+    "empty": "You have no projects listed yet",
+    "emptyHint": "Start listing your first AI project!",
+    "submitFirst": "Submit First Project",
+    "downloads": "Downloads",
+    "view": "View",
+    "edit": "Edit"
+  },
+  "edit": {
+    "error": "Failed to update project",
+    "deleteError": "Failed to delete project"
+  }
+}

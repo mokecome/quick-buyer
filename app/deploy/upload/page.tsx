@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card"
 import { Github, Upload, FileCode, FolderOpen, ArrowLeft, ExternalLink, Copy, Check, Globe, Sparkles, Clock, Shield, Zap, CloudUpload } from "lucide-react"
 import { useState, useEffect, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { useTranslation } from "react-i18next"
+import { useTranslations } from "next-intl"
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client"
 import type { User as SupabaseUser, AuthChangeEvent, Session } from "@supabase/supabase-js"
 import Link from "next/link"
@@ -47,7 +47,7 @@ export default function UploadPage() {
   const router = useRouter()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const folderInputRef = useRef<HTMLInputElement>(null)
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   useEffect(() => {
     if (!isSupabaseConfigured()) {
@@ -267,7 +267,7 @@ export default function UploadPage() {
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-emerald-600 transition-colors mb-8 group"
           >
             <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-            {t('deploy.backToList', '返回網站列表')}
+            {t('deploy.backToList')}
           </Link>
 
           {/* Header */}
@@ -281,11 +281,11 @@ export default function UploadPage() {
             </div>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
               <span className="bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">
-                {t('deploy.uploadTitle', '上傳您的網站')}
+                {t('deploy.uploadTitle')}
               </span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              {t('deploy.uploadSubtitle', '將您的靜態網站上傳到 IPFS，獲得永久託管的連結')}
+              {t('deploy.uploadSubtitle')}
             </p>
 
             {/* Feature badges */}
@@ -438,7 +438,7 @@ export default function UploadPage() {
                             }}
                           >
                             <Upload className="h-4 w-4" />
-                            {t('deploy.uploadAnother')}
+                          {t('deploy.uploadAnother')}
                           </Button>
                         </div>
                       </div>
@@ -463,7 +463,7 @@ export default function UploadPage() {
                           </span>
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {t('deploy.maxSize')}
+                        {t('deploy.maxSize')}
                         </p>
                         <div className="flex flex-wrap justify-center gap-2 mt-6">
                           {['HTML', 'CSS', 'JS', 'Images', 'Fonts'].map((type) => (

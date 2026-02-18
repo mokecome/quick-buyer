@@ -1,6 +1,6 @@
 "use client"
 
-import { useTranslation } from 'react-i18next'
+import { useLocale, useTranslations } from 'next-intl'
 import { Globe } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -9,18 +9,31 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { supportedLanguages, type SupportedLanguage } from '@/src/i18n'
+import { useRouter } from 'next/navigation'
+
+const supportedLanguages = [
+  { code: 'en', name: 'English', nativeName: 'English' },
+  { code: 'zh', name: 'Traditional Chinese', nativeName: '繁體中文' },
+  { code: 'ch', name: 'Simplified Chinese', nativeName: '简体中文' },
+] as const
+
+type SupportedLanguage = (typeof supportedLanguages)[number]['code']
 
 export function LanguageSwitcher() {
-  const { i18n } = useTranslation()
+  const locale = useLocale()
+  const router = useRouter()
 
   const changeLanguage = (lng: SupportedLanguage) => {
-    i18n.changeLanguage(lng)
+    // Set cookie for server-side locale detection
+    document.cookie = `NEXT_LOCALE=${lng}; path=/; max-age=31536000`
+    // Also store in localStorage for compatibility
     localStorage.setItem('language', lng)
+    // Refresh to let server re-read locale
+    router.refresh()
   }
 
   const currentLanguage = supportedLanguages.find(
-    (lang) => lang.code === i18n.language
+    (lang) => lang.code === locale
   )
 
   return (
@@ -36,7 +49,7 @@ export function LanguageSwitcher() {
           <DropdownMenuItem
             key={lang.code}
             onClick={() => changeLanguage(lang.code)}
-            className={i18n.language === lang.code ? 'bg-accent' : ''}
+            className={locale === lang.code ? 'bg-accent' : ''}
           >
             <span className="mr-2">{lang.code === 'en' ? '🇺🇸' : '🇨🇳'}</span>
             {lang.nativeName}

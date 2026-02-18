@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Search, Loader2, ChevronLeft, ChevronRight, Upload, Globe, ExternalLink, Eye } from "lucide-react"
-import { useTranslation } from "react-i18next"
+import { useTranslations } from "next-intl"
 
 interface StaticSite {
   id: string
@@ -151,7 +151,7 @@ function StaticSiteCard({ site }: { site: StaticSite }) {
 }
 
 function DeployContent() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -214,10 +214,10 @@ function DeployContent() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                 </span>
-                {t("deploy.badge", "免費永久託管")}
+                {t("deploy.badge")}
               </div>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                {t("deploy.pageSubtitle", "瀏覽社群分享的靜態網站，或上傳您自己的作品")}
+                {t("deploy.pageSubtitle")}
               </p>
 
               {/* Upload CTA */}
@@ -225,7 +225,7 @@ function DeployContent() {
                 <Button size="lg" asChild>
                   <Link href="/deploy/upload">
                     <Upload className="mr-2 h-5 w-5" />
-                    {t("deploy.uploadYours", "上傳您的網站")}
+                    {t("deploy.uploadYours")}
                   </Link>
                 </Button>
               </div>
@@ -238,14 +238,14 @@ function DeployContent() {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder={t("deploy.searchPlaceholder", "搜尋靜態網站...")}
+                    placeholder={t("deploy.searchPlaceholder")}
                     className="pl-10"
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                   />
                 </div>
                 <Button type="submit">
-                  {t("common.search", "搜尋")}
+                  {t("common.search")}
                 </Button>
               </form>
 
@@ -261,7 +261,7 @@ function DeployContent() {
                       className="whitespace-nowrap"
                       onClick={() => handleCategoryChange(category)}
                     >
-                      {t(`deploy.categories.${category.toLowerCase().replace(' ', '')}`, category)}
+                      {category}
                     </Button>
                   ))}
                 </div>
@@ -269,12 +269,12 @@ function DeployContent() {
                 {/* Sort Dropdown */}
                 <Select value={currentSort} onValueChange={handleSortChange}>
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder={t("common.sortBy", "排序")} />
+                    <SelectValue placeholder={t("common.sortBy")} />
                   </SelectTrigger>
                   <SelectContent>
                     {sortOptions.map((option) => (
                       <SelectItem key={option.value} value={option.value}>
-                        {t(`deploy.sort.${option.value}`, option.label)}
+                        {option.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -292,12 +292,12 @@ function DeployContent() {
               <div className="text-center py-20">
                 <Globe className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
                 <p className="text-lg text-muted-foreground mb-4">
-                  {t("deploy.noResults", "尚無靜態網站")}
+                  {t("deploy.noResults")}
                 </p>
                 <Button asChild>
                   <Link href="/deploy/upload">
                     <Upload className="mr-2 h-4 w-4" />
-                    {t("deploy.beFirst", "成為第一個上傳者")}
+                    {t("deploy.beFirst")}
                   </Link>
                 </Button>
               </div>

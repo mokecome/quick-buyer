@@ -5,7 +5,7 @@ import { ProjectCard } from "@/components/project-card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ArrowRight, Loader2, Flame } from "lucide-react"
-import { useTranslation } from "react-i18next"
+import { useTranslations } from "next-intl"
 
 interface Project {
   id: string
@@ -69,7 +69,7 @@ const fallbackProjects = [
 ]
 
 export function FeaturedProjects() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [projects, setProjects] = useState<Project[]>(fallbackProjects)
   const [isLoading, setIsLoading] = useState(true)
 

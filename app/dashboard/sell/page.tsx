@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useTranslation } from "react-i18next"
+import { useTranslations } from "next-intl"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -33,7 +33,7 @@ const categories = [
 ]
 
 export default function SellPage() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -85,11 +85,11 @@ export default function SellPage() {
         router.push("/dashboard?submitted=true")
       } else {
         const error = await response.json()
-        alert(error.message || t('sell.error', 'Failed to submit project'))
+        alert(error.message || t('sell.error'))
       }
     } catch (error) {
       console.error("Submit error:", error)
-      alert(t('sell.error', 'Failed to submit project'))
+      alert(t('sell.error'))
     } finally {
       setIsSubmitting(false)
     }
@@ -106,14 +106,14 @@ export default function SellPage() {
     // Validate file type
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
     if (!allowedTypes.includes(file.type)) {
-      alert(t('sell.form.invalidFileType', 'Invalid file type. Allowed: JPEG, PNG, WebP, GIF'))
+      alert(t('sell.form.invalidFileType'))
       return
     }
 
     // Validate file size (max 5MB)
     const maxSize = 5 * 1024 * 1024
     if (file.size > maxSize) {
-      alert(t('sell.form.fileTooLarge', 'File too large. Maximum size is 5MB'))
+      alert(t('sell.form.fileTooLarge'))
       return
     }
 
@@ -132,11 +132,11 @@ export default function SellPage() {
       if (data.success && data.url) {
         handleChange('thumbnailUrl', data.url)
       } else {
-        alert(data.message || t('sell.form.uploadError', 'Failed to upload image'))
+        alert(data.message || t('sell.form.uploadError'))
       }
     } catch (error) {
       console.error('Upload error:', error)
-      alert(t('sell.form.uploadError', 'Failed to upload image'))
+      alert(t('sell.form.uploadError'))
     } finally {
       setIsUploading(false)
       // Reset input so same file can be selected again
@@ -171,20 +171,20 @@ export default function SellPage() {
                 <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <LogIn className="h-6 w-6 text-primary" />
                 </div>
-                <CardTitle>{t('sell.signInRequired', '需要登入')}</CardTitle>
+                <CardTitle>{t('sell.signInRequired')}</CardTitle>
                 <CardDescription>
-                  {t('sell.signInRequiredDesc', '請先登入以上架您的 AI 項目')}
+                  {t('sell.signInRequiredDesc')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <Button className="w-full" asChild>
                   <a href="/auth/signin">
-                    {t('common.signInWithGitHub', '使用 GitHub 登入')}
+                    {t('common.signInWithGitHub')}
                   </a>
                 </Button>
                 <Button variant="outline" className="w-full" asChild>
                   <a href="/auth/signin/google">
-                    {t('common.signInWithGoogle', '使用 Google 登入')}
+                    {t('common.signInWithGoogle')}
                   </a>
                 </Button>
               </CardContent>
@@ -203,10 +203,10 @@ export default function SellPage() {
         <div className="container px-4 md:px-6 max-w-3xl">
           <div className="mb-8">
             <h1 className="text-3xl font-bold tracking-tight">
-              {t('sell.title', 'Submit Your AI Project')}
+              {t('sell.title')}
             </h1>
             <p className="text-muted-foreground mt-2">
-              {t('sell.subtitle', 'Share your AI project with our community of developers')}
+              {t('sell.subtitle')}
             </p>
           </div>
 
@@ -214,30 +214,30 @@ export default function SellPage() {
             {/* Basic Info */}
             <Card>
               <CardHeader>
-                <CardTitle>{t('sell.basicInfo', 'Basic Information')}</CardTitle>
+                <CardTitle>{t('sell.basicInfo')}</CardTitle>
                 <CardDescription>
-                  {t('sell.basicInfoDesc', 'Tell us about your project')}
+                  {t('sell.basicInfoDesc')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="title">{t('sell.form.title', 'Project Title')} *</Label>
+                  <Label htmlFor="title">{t('sell.form.title')} *</Label>
                   <Input
                     id="title"
                     value={formData.title}
                     onChange={(e) => handleChange("title", e.target.value)}
-                    placeholder={t('sell.form.titlePlaceholder', 'e.g., ChatGPT Clone with Next.js')}
+                    placeholder={t('sell.form.titlePlaceholder')}
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">{t('sell.form.description', 'Short Description')}</Label>
+                  <Label htmlFor="description">{t('sell.form.description')}</Label>
                   <Textarea
                     id="description"
                     value={formData.description}
                     onChange={(e) => handleChange("description", e.target.value)}
-                    placeholder={t('sell.form.descriptionPlaceholder', 'A brief description of your project (max 200 characters)')}
+                    placeholder={t('sell.form.descriptionPlaceholder')}
                     maxLength={200}
                   />
                   <p className="text-xs text-muted-foreground">
@@ -247,14 +247,14 @@ export default function SellPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="category">{t('sell.form.category', 'Category')} *</Label>
+                    <Label htmlFor="category">{t('sell.form.category')} *</Label>
                     <Select
                       value={formData.category}
                       onValueChange={(value) => handleChange("category", value)}
                       required
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder={t('sell.form.categoryPlaceholder', 'Select a category')} />
+                        <SelectValue placeholder={t('sell.form.categoryPlaceholder')} />
                       </SelectTrigger>
                       <SelectContent>
                         {categories.map((cat) => (
@@ -267,7 +267,7 @@ export default function SellPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="price">{t('sell.form.price', 'Price (USD)')} *</Label>
+                    <Label htmlFor="price">{t('sell.form.price')} *</Label>
                     <div className="relative">
                       <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
@@ -290,16 +290,16 @@ export default function SellPage() {
             {/* Files & Links */}
             <Card>
               <CardHeader>
-                <CardTitle>{t('sell.filesLinks', 'Files & Links')}</CardTitle>
+                <CardTitle>{t('sell.filesLinks')}</CardTitle>
                 <CardDescription>
-                  {t('sell.filesLinksDesc', 'Provide download and documentation links')}
+                  {t('sell.filesLinksDesc')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="thumbnailUrl">
                     <ImageIcon className="inline h-4 w-4 mr-2" />
-                    {t('sell.form.thumbnail', 'Thumbnail Image')}
+                    {t('sell.form.thumbnail')}
                   </Label>
                   <div className="flex gap-2">
                     <Input
@@ -328,13 +328,13 @@ export default function SellPage() {
                       ) : (
                         <>
                           <Upload className="h-4 w-4 mr-1" />
-                          {t('sell.form.upload', 'Upload')}
+                          {t('sell.form.upload')}
                         </>
                       )}
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {t('sell.form.thumbnailHint', 'Upload an image or enter URL. Auto-generated from Demo URL if left empty.')}
+                    {t('sell.form.thumbnailHint')}
                   </p>
                   {formData.thumbnailUrl && (
                     <div className="mt-2 relative aspect-video w-full max-w-sm bg-muted rounded-lg overflow-hidden">
@@ -353,7 +353,7 @@ export default function SellPage() {
                 <div className="space-y-2">
                   <Label htmlFor="downloadUrl">
                     <Upload className="inline h-4 w-4 mr-2" />
-                    {t('sell.form.downloadUrl', 'Download URL')}
+                    {t('sell.form.downloadUrl')}
                   </Label>
                   <Input
                     id="downloadUrl"
@@ -363,14 +363,14 @@ export default function SellPage() {
                     placeholder="https://github.com/... or https://drive.google.com/..."
                   />
                   <p className="text-xs text-muted-foreground">
-                    {t('sell.form.downloadUrlHint', 'Link to download the source code (GitHub, Google Drive, etc.)')}
+                    {t('sell.form.downloadUrlHint')}
                   </p>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="demoUrl">
                     <LinkIcon className="inline h-4 w-4 mr-2" />
-                    {t('sell.form.demoUrl', 'Live Demo URL')}
+                    {t('sell.form.demoUrl')}
                   </Label>
                   <Input
                     id="demoUrl"
@@ -390,17 +390,17 @@ export default function SellPage() {
                 variant="outline"
                 onClick={() => router.back()}
               >
-                {t('common.cancel', 'Cancel')}
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting
-                  ? t('sell.submitting', 'Submitting...')
-                  : t('sell.submit', 'Submit for Review')}
+                  ? t('sell.submitting')
+                  : t('sell.submit')}
               </Button>
             </div>
 
             <p className="text-sm text-muted-foreground text-center">
-              {t('sell.reviewNote', 'Your project will be reviewed within 24-48 hours before being published.')}
+              {t('sell.reviewNote')}
             </p>
           </form>
         </div>

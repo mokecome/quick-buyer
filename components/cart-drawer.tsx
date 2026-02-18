@@ -12,10 +12,10 @@ import { ShoppingCart, Trash2 } from "lucide-react"
 import { useCart } from "@/lib/cart-context"
 import { useState } from "react"
 import Link from "next/link"
-import { useTranslation } from "react-i18next"
+import { useTranslations } from "next-intl"
 
 export function CartDrawer() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const { items, removeItem, total, itemCount, clearCart } = useCart()
   const [isOpen, setIsOpen] = useState(false)
   const [isCheckingOut, setIsCheckingOut] = useState(false)
@@ -57,13 +57,13 @@ export function CartDrawer() {
       </SheetTrigger>
       <SheetContent className="flex flex-col">
         <SheetHeader>
-          <SheetTitle>{t('cart.title', 'Shopping Cart')} ({itemCount})</SheetTitle>
+          <SheetTitle>{t('cart.title')} ({itemCount})</SheetTitle>
         </SheetHeader>
 
         <div className="flex flex-col flex-1 overflow-hidden">
           {items.length === 0 ? (
             <div className="flex-1 flex items-center justify-center">
-              <p className="text-muted-foreground">{t('cart.empty', 'Your cart is empty')}</p>
+              <p className="text-muted-foreground">{t('cart.empty')}</p>
             </div>
           ) : (
             <>
@@ -94,7 +94,7 @@ export function CartDrawer() {
 
               <div className="border-t pt-4 space-y-4">
                 <div className="flex justify-between text-lg font-semibold">
-                  <span>{t('cart.total', 'Total')}</span>
+                  <span>{t('cart.total')}</span>
                   <span>${total}</span>
                 </div>
                 <Button
@@ -103,14 +103,14 @@ export function CartDrawer() {
                   onClick={handleCheckout}
                   disabled={isCheckingOut}
                 >
-                  {isCheckingOut ? t('cart.processing', 'Processing...') : t('cart.checkout', 'Checkout')}
+                  {isCheckingOut ? t('cart.processing') : t('cart.checkout')}
                 </Button>
                 <Button
                   variant="outline"
                   className="w-full"
                   onClick={clearCart}
                 >
-                  {t('cart.clear', 'Clear Cart')}
+                  {t('cart.clear')}
                 </Button>
               </div>
             </>

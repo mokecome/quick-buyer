@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Check, Loader2 } from "lucide-react"
-import { useTranslation } from "react-i18next"
+import { useTranslations } from "next-intl"
 
 const planKeys = ['starter', 'pro', 'enterprise'] as const
 
@@ -33,7 +33,7 @@ const planConfigs = {
 }
 
 export function PricingCards() {
-  const { t } = useTranslation()
+  const t = useTranslations()
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly")
   const [loading, setLoading] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -124,7 +124,8 @@ export function PricingCards() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
         {planKeys.map((planKey) => {
           const config = planConfigs[planKey]
-          const features = t(`pricing.plans.${planKey}.features`, { returnObjects: true }) as string[]
+          // next-intl returns arrays natively - no returnObjects needed
+          const features = t.raw(`pricing.plans.${planKey}.features`) as string[]
 
           return (
             <Card

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
 import { ArrowRight, GraduationCap, Laptop, Building2, Sparkles } from "lucide-react"
-import { useTranslation } from "react-i18next"
+import { useTranslations } from "next-intl"
 
 const scenarios = [
   { key: 'learner', icon: GraduationCap, color: 'from-blue-500 to-cyan-500' },
@@ -13,7 +13,7 @@ const scenarios = [
 ]
 
 export function Hero() {
-  const { t } = useTranslation()
+  const t = useTranslations()
 
   return (
     <section className="relative overflow-hidden pt-16 pb-12 md:pt-24 md:pb-16">
