@@ -27,7 +27,7 @@ export function BrowserDeploy() {
       <div className="container px-4 md:px-6 relative">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left content */}
-          <div className="space-y-8 lg:pl-4">
+          <div className="space-y-8">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-sm font-medium border border-emerald-500/20">
               <span className="relative flex h-2 w-2">
@@ -81,7 +81,7 @@ export function BrowserDeploy() {
           </div>
 
           {/* Right content - Preview Card */}
-          <div className="relative lg:pl-8">
+          <div className="relative">
             {/* Glow effect behind card */}
             <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-3xl blur-2xl scale-95" />
 

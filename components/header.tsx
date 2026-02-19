@@ -218,72 +218,75 @@ export function Header() {
           <LanguageSwitcher />
           <CartDrawer />
 
-          {isLoading ? (
-            <div className="w-20 h-9 bg-muted animate-pulse rounded-md" />
-          ) : user ? (
-            <div className="flex items-center gap-3">
-              <Link href="/dashboard">
-                <Button variant="ghost" size="sm" className="gap-2">
-                  {user.user_metadata?.avatar_url ? (
-                    <img
-                      src={user.user_metadata.avatar_url}
-                      alt="Avatar"
-                      className="w-6 h-6 rounded-full"
-                    />
-                  ) : (
-                    <User className="h-4 w-4" />
-                  )}
-                  <span className="hidden sm:inline">
-                    {user.user_metadata?.user_name || user.user_metadata?.full_name || user.email?.split('@')[0]}
-                  </span>
+          <div className="flex items-center justify-end gap-3 min-w-[112px]">
+            {isLoading ? (
+              <div className="w-[112px] h-9 bg-muted animate-pulse rounded-md" />
+            ) : user ? (
+              <>
+                <Link href="/dashboard">
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    {user.user_metadata?.avatar_url ? (
+                      <img
+                        src={user.user_metadata.avatar_url}
+                        alt="Avatar"
+                        className="w-6 h-6 rounded-full"
+                      />
+                    ) : (
+                      <User className="h-4 w-4" />
+                    )}
+                    <span className="hidden sm:inline">
+                      {user.user_metadata?.user_name || user.user_metadata?.full_name || user.email?.split('@')[0]}
+                    </span>
+                  </Button>
+                </Link>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="gap-2"
+                >
+                  <LogOut className="h-4 w-4" />
+                  {t('common.signOut')}
                 </Button>
-              </Link>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleSignOut}
-                className="gap-2"
-              >
-                <LogOut className="h-4 w-4" />
-                {t('common.signOut')}
-              </Button>
-            </div>
-          ) : (
-            <div className="relative" ref={loginMenuRef}>
-              <Button
-                variant="outline"
-                size="sm"
-                className="hover:bg-accent gap-2"
-                onClick={() => setLoginMenuOpen(!loginMenuOpen)}
-                disabled={isSigningIn !== null}
-              >
-                {isSigningIn ? t('common.signingIn') : t('common.signIn')}
-                <ChevronDown className="h-3 w-3" />
-              </Button>
+              </>
+            ) : (
+              <div className="relative" ref={loginMenuRef}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="hover:bg-accent gap-2"
+                  onClick={() => setLoginMenuOpen(!loginMenuOpen)}
+                  disabled={isSigningIn !== null}
+                >
+                  {isSigningIn ? t('common.signingIn') : t('common.signIn')}
+                  <ChevronDown className="h-3 w-3" />
+                </Button>
 
-              {/* Login Dropdown Menu */}
-              {loginMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 rounded-md border bg-background shadow-lg z-50">
-                  <div className="py-1">
-                    <button
-                      onClick={handleGitHubSignIn}
-                      className="flex w-full items-center gap-3 px-4 py-2 text-sm hover:bg-accent transition-colors"
-                    >
-                      <Github className="h-4 w-4" />
-                      {t('auth.signInWithGithub')}
-                    </button>
-                    <button
-                      onClick={handleGoogleSignIn}
-                      className="flex w-full items-center gap-3 px-4 py-2 text-sm hover:bg-accent transition-colors"
-                    >
-                      <GoogleIcon className="h-4 w-4" />
-                      {t('auth.signInWithGoogle')}
-                    </button>
+                {/* Login Dropdown Menu */}
+                {loginMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 rounded-md border bg-background shadow-lg z-50">
+                    <div className="py-1">
+                      <button
+                        onClick={handleGitHubSignIn}
+                        className="flex w-full items-center gap-3 px-4 py-2 text-sm hover:bg-accent transition-colors"
+                      >
+                        <Github className="h-4 w-4" />
+                        {t('auth.signInWithGithub')}
+                      </button>
+                      <button
+                        onClick={handleGoogleSignIn}
+                        className="flex w-full items-center gap-3 px-4 py-2 text-sm hover:bg-accent transition-colors"
+                      >
+                        <GoogleIcon className="h-4 w-4" />
+                        {t('auth.signInWithGoogle')}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
+          </div>
+
           <Button
             size="sm"
             className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl"
