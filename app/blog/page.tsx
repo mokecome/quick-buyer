@@ -6,7 +6,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations()
   return {
     title: `Blog | Quick Buyer`,
-    description: t('footer.blog'),
+    description: t('blog.metaDescription'),
   }
 }
 

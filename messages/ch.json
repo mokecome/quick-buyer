@@ -437,5 +437,8 @@
   "edit": {
     "error": "更新项目失败",
     "deleteError": "删除项目失败"
+  },
+  "blog": {
+    "metaDescription": "AI 开发技巧、行业趋势与最佳实践。学习如何构建、部署与变现 AI 项目。"
   }
 }

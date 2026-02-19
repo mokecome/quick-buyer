@@ -4,10 +4,11 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Star, ShoppingCart, Check, Eye, Code2 } from "lucide-react"
+import { Star, Check, Eye, Code2 } from "lucide-react"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
+import { AddToCartButton } from "@/components/add-to-cart-button"
 
 // Fallback project data
 const fallbackProjects: Record<string, Project> = {
@@ -147,7 +148,6 @@ const defaultFeatures = ["完整源代碼", "終身更新", "商業授權", "部
 async function getProject(slug: string): Promise<Project | null> {
   try {
     const supabase = await createClient()
-
     const { data: project, error } = await supabase
       .from('projects')
       .select('*')
@@ -155,20 +155,16 @@ async function getProject(slug: string): Promise<Project | null> {
       .eq('status', 'approved')
       .single()
 
-    if (error || !project) {
-      // Try fallback data
-      return fallbackProjects[slug] || null
-    }
+    if (error || !project) return fallbackProjects[slug] ?? null
 
-    // Generate thumbnail URL if missing but has demo URL
     if (!project.thumbnail_url && project.demo_url) {
       project.thumbnail_url = `https://api.microlink.io/?url=${encodeURIComponent(project.demo_url)}&screenshot=true&meta=false&embed=screenshot.url`
     }
 
     return project
-  } catch (error) {
-    console.error('Error fetching project:', error)
-    return fallbackProjects[slug] || null
+  } catch (err) {
+    console.error('Error fetching project:', err)
+    return fallbackProjects[slug] ?? null
   }
 }
 
@@ -180,17 +176,19 @@ export async function generateMetadata({
   const { slug } = await params
   const project = await getProject(slug)
 
-  if (!project) {
-    return { title: 'Project Not Found' }
-  }
+  if (!project) return { title: 'Project Not Found' }
 
+  const { title, description, thumbnail_url } = project
   return {
-    title: `${project.title} | Quick Buyer`,
-    description: project.description,
+    title: `${title} | Quick Buyer`,
+    description,
     openGraph: {
-      title: project.title,
-      description: project.description,
+      title,
+      description,
       type: 'website',
+      ...(thumbnail_url && {
+        images: [{ url: thumbnail_url, width: 1200, height: 630, alt: title }],
+      }),
     },
   }
 }
@@ -214,30 +212,24 @@ export default async function ProjectDetailPage({
     "description": project.description,
     "category": project.category,
     "url": `https://quick-buyer.com/projects/${project.slug}`,
-    ...(project.thumbnail_url ? { "image": project.thumbnail_url } : {}),
-    "brand": {
-      "@type": "Brand",
-      "name": project.author_name
-    },
+    ...(project.thumbnail_url && { "image": project.thumbnail_url }),
+    "brand": { "@type": "Brand", "name": project.author_name },
     "offers": {
       "@type": "Offer",
       "price": project.price,
       "priceCurrency": "USD",
       "availability": "https://schema.org/InStock",
-      "seller": {
-        "@type": "Organization",
-        "@id": "https://quick-buyer.com/#organization"
-      }
+      "seller": { "@type": "Organization", "@id": "https://quick-buyer.com/#organization" }
     },
-    ...(project.rating != null ? {
+    ...(project.rating != null && {
       "aggregateRating": {
         "@type": "AggregateRating",
         "ratingValue": project.rating,
-        "reviewCount": project.review_count || 0,
+        "reviewCount": project.review_count ?? 0,
         "bestRating": 5,
         "worstRating": 1
       }
-    } : {})
+    }),
   }
 
   return (
@@ -317,10 +309,13 @@ export default async function ProjectDetailPage({
 
                     {/* CTA Buttons */}
                     <div className="space-y-3">
-                      <Button size="lg" className="w-full">
-                        <ShoppingCart className="mr-2 h-4 w-4" />
-                        Add to Cart
-                      </Button>
+                      <AddToCartButton
+                        id={project.id}
+                        slug={project.slug}
+                        title={project.title}
+                        price={project.price}
+                        thumbnail={project.thumbnail_url}
+                      />
                       {project.demo_url && (
                         <Button size="lg" variant="outline" className="w-full" asChild>
                           <a href={project.demo_url} target="_blank" rel="noopener noreferrer">

@@ -4,7 +4,7 @@ import { Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { ThemeProvider } from "@/components/theme-provider"
 import { NextIntlClientProvider } from 'next-intl'
-import { getMessages } from 'next-intl/server'
+import { getMessages, getLocale } from 'next-intl/server'
 import { CartProvider } from "@/lib/cart-context"
 import { SubscriptionProvider } from "@/lib/subscription-context"
 import "@/styles/globals.css"
@@ -48,13 +48,13 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
-  const messages = await getMessages()
+}) {
+  const [messages, locale] = await Promise.all([getMessages(), getLocale()])
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body className={`${inter.className} font-sans antialiased`}>
         <ThemeProvider
           attribute="class"

@@ -437,5 +437,8 @@
   "edit": {
     "error": "Failed to update project",
     "deleteError": "Failed to delete project"
+  },
+  "blog": {
+    "metaDescription": "AI development tips, industry trends, and best practices. Learn how to build, deploy, and monetize AI projects."
   }
 }
